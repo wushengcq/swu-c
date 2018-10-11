@@ -1,0 +1,1806 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Class and Object-oriented Methodology &mdash; akabook 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="akabook 3.0 documentation" href="../index.html" />
+    <link rel="up" title="English Version: Learning Linux C/C++ Programming from Scratch" href="index.html" />
+    <link rel="next" title="3. Template and Generic Programming" href="cppgp.html" />
+    <link rel="prev" title="1. Basics" href="cppbasics.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cppgp.html" title="3. Template and Generic Programming"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cppbasics.html" title="1. Basics"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">English Version: Learning Linux C/C++ Programming from Scratch</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="class-and-object-oriented-methodology">
+<h1>2. Class and Object-oriented Methodology<a class="headerlink" href="#class-and-object-oriented-methodology" title="Permalink to this headline">¶</a></h1>
+<p><strong>TODO: THIS WHOLE CHAPTER NEEDS OVERHAUL</strong></p>
+<div class="figure">
+<img alt="../_images/road-works-sign.gif" src="../_images/road-works-sign.gif" />
+</div>
+<p><code class="docutils literal"><span class="pre">class</span></code> is a C++ keyword to define a class type, which is an extension to C&#8217;s <code class="docutils literal"><span class="pre">struct</span></code>. Similiar to struct type, after defining a class type, we can define a variable of that class type. This variable is called an <strong>instance</strong> or <strong>object</strong> of that class. From this point on, a whole bunch of theories and practices are developed under the name of <strong>object-oriented methodology</strong>. <strong>Encapsulation</strong>, <strong>inheritance</strong>, and <strong>polymorphism</strong> are the three most significant characteristics of object-oriented methodology. We will introduce these as well as related C++ syntax.</p>
+<div class="section" id="encapsulation">
+<h2>2.1. Encapsulation<a class="headerlink" href="#encapsulation" title="Permalink to this headline">¶</a></h2>
+<p>When programming in C, we often encapsulate related variables and functions in a .c source file and call that a module. We declare those variables and functions interior to the module as <code class="docutils literal"><span class="pre">static</span></code>, which are invisible outside the module. We export public variables and functions, i.e. those declared without <code class="docutils literal"><span class="pre">static</span></code>, by putting their declarations in a .h header file. By including the header file, those public interfaces can be used from outside.</p>
+<p>Take a look at the <code class="docutils literal"><span class="pre">FILE</span> <span class="pre">*</span></code> pointer from <code class="docutils literal"><span class="pre">stdio.h</span></code>, this reflects another way of modularization. The <code class="docutils literal"><span class="pre">FILE</span> <span class="pre">*</span></code> pointer is an <strong>opaque handler</strong>, which means <code class="docutils literal"><span class="pre">FILE</span></code> struct encapsulates some data members that the caller should never know about. All that can be done by the caller is to get the <code class="docutils literal"><span class="pre">FILE</span> <span class="pre">*</span></code> pointer from <code class="docutils literal"><span class="pre">fopen</span></code> and pass it to other library functions, letting those library functions maintain private data within <code class="docutils literal"><span class="pre">FILE</span></code> struct. The library functions know about private data in <code class="docutils literal"><span class="pre">FILE</span></code> struct because they all come from the same module. We will mimic this method in the following C code:</p>
+<p><code class="docutils literal"><span class="pre">person.h</span></code></p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifndef PERSON_H</span>
+<span class="cp">#define PERSON_H</span>
+
+<span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HPERSON</span><span class="p">;</span>
+
+<span class="n">HPERSON</span> <span class="nf">person_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">person_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HPERSON</span> <span class="n">p</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">person_delete</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">);</span>
+
+<span class="cp">#endif </span><span class="cm">/* PERSON_H */</span><span class="cp"></span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">person.c</span></code></p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;person.h&quot;</span><span class="cp"></span>
+
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+     <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">person_t</span><span class="p">;</span>
+
+<span class="n">HPERSON</span> <span class="nf">person_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;create person</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">person_t</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">person_t</span><span class="p">));</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+
+     <span class="n">strcpy</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+     <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">person_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;&lt;&lt;&lt;&lt; display person information &gt;&gt;&gt;&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot; Name:%s</span><span class="se">\n</span><span class="s"> Age:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">age</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">person_delete</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;delete person</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">main.c</span></code></p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;person.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">HPERSON</span> <span class="n">person</span> <span class="o">=</span> <span class="n">person_create</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span>
+     <span class="n">person_display</span><span class="p">(</span><span class="n">person</span><span class="p">);</span>
+     <span class="n">person_delete</span><span class="p">(</span><span class="n">person</span><span class="p">);</span>
+     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">person.c</span></code> is a module. It encapsulates some private data in <code class="docutils literal"><span class="pre">person_t</span></code> struct. All functions provided in this module have access to private members in <code class="docutils literal"><span class="pre">person_t</span></code> struct. They can initialize a <code class="docutils literal"><span class="pre">person_t</span></code> object, display it in a user-friendly way, or delete it. However, codes from outside can only keep and pass pointers to <code class="docutils literal"><span class="pre">person_t</span></code> objects, but can&#8217;t access private members. The trick is to expose the pointer to <code class="docutils literal"><span class="pre">person_t</span></code> as a <code class="docutils literal"><span class="pre">void</span></code> pointer type <code class="docutils literal"><span class="pre">HPERSON</span></code>, which cannot be dereferenced.</p>
+<p>The above C code achieve the effect of encapsulation by modularization and some tricks, whereas C++ supports encapsulation by its syntax. Now we rewrite the code in C++. First, define a <code class="docutils literal"><span class="pre">Person</span></code> class in <code class="docutils literal"><span class="pre">person.h</span></code>:</p>
+<p><code class="docutils literal"><span class="pre">person.h</span></code></p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifndef PERSON_H</span>
+<span class="cp">#define PERSON_H</span>
+
+<span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+     <span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+     <span class="o">~</span><span class="n">Person</span><span class="p">();</span>
+     <span class="kt">void</span> <span class="nf">display</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+     <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif </span><span class="c1">//PERSON_H</span>
+</pre></div>
+</td></tr></table></div>
+<p>C++&#8217;s class extends C&#8217;s struct in two ways. First, C++&#8217;s class can have not only data members but also member functions. Second, class memebers can have <strong>access specifiers</strong>: <code class="docutils literal"><span class="pre">private</span></code> member can only be accessed by member functions of the same class, and <code class="docutils literal"><span class="pre">public</span></code> members can be accessed from outside. In the above example, <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code> are two private members, they can only be accessed by <code class="docutils literal"><span class="pre">Person()</span></code>, <code class="docutils literal"><span class="pre">~Person()</span></code>, and <code class="docutils literal"><span class="pre">display()</span></code>, but those member functions in turn are public members and can be accessed from <code class="docutils literal"><span class="pre">main</span></code> function or member functions of other classes. In other words, <code class="docutils literal"><span class="pre">main</span></code> function can only access data members in <code class="docutils literal"><span class="pre">Person</span></code> class through public member functions provided by it. This is essentially the same way we did in the above C code.</p>
+<p>Note the semicolon <code class="docutils literal"><span class="pre">;</span></code> at the end of the class definition, which is often omitted by C++ newbies. This follows the same syntax as C&#8217;s struct. In fact, class and struct have the same syntax in C++. C++&#8217;s struct can also have member functions and access specifiers. There&#8217;s only one little difference: if the access specifier is not explicitly specified, the default specifier for a class member is private, but for a struct member it is public. This syntax keeps compatible with C. If we compile C code with a C++ compiler, C&#8217;s struct is taken as C++&#8217;s struct with no member functions and with all data members public.</p>
+<p>Now look at the implementation of <code class="docutils literal"><span class="pre">Person</span></code> class:</p>
+<p><code class="docutils literal"><span class="pre">person.cpp</span></code></p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;person.h&quot;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="n">Person</span><span class="o">::</span><span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+  <span class="o">:</span><span class="n">name</span><span class="p">(</span><span class="nb">NULL</span><span class="p">),</span> <span class="n">age</span><span class="p">(</span><span class="n">age</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;create person&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">Person</span><span class="o">::</span><span class="n">display</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;&lt;&lt;&lt;&lt; display person information &gt;&gt;&gt;&gt;&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span>
+      <span class="o">&lt;&lt;</span><span class="s">&quot; Name:&quot;</span><span class="o">&lt;&lt;</span><span class="n">name</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="s">&quot; Age:&quot;</span><span class="o">&lt;&lt;</span><span class="n">age</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Person</span><span class="o">::~</span><span class="n">Person</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;delete person&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">delete</span><span class="p">[]</span> <span class="n">name</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Member function names are under the namespace of their class. Therefore, the full name of member function <code class="docutils literal"><span class="pre">display</span></code> is <code class="docutils literal"><span class="pre">Person::display</span></code>, similar to <code class="docutils literal"><span class="pre">person_display</span></code> in the above C code. We can see from <code class="docutils literal"><span class="pre">nm</span></code> output what constitutes a member function name:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ g++ -c person.cpp
+$ nm person.o
+......
+00000200 T _ZNK6Person7displayEv
+......
+</pre></div>
+</div>
+<p>Member function names should not be prefixed by their class namespace when declared within <code class="docutils literal"><span class="pre">class</span> <span class="pre">{...}</span></code> declaration, but must be prefixed when declared outside. <code class="docutils literal"><span class="pre">Person::Person</span></code> and <code class="docutils literal"><span class="pre">Person::~Person</span></code> are two special member functions called <strong>constructor</strong> and <strong>destructor</strong> respectively. A constructor has the same name as its class. A destructor&#8217;s name is composed of a tilde <code class="docutils literal"><span class="pre">~</span></code> and its class name. These two functions have no return values. Note they do not return <code class="docutils literal"><span class="pre">void</span></code>, they have no return values or return types at all.</p>
+<p>We will take a look at the <code class="docutils literal"><span class="pre">main</span></code> function first, and then see how it interacts with <code class="docutils literal"><span class="pre">Person</span></code> class.</p>
+<p><code class="docutils literal"><span class="pre">main.cpp</span></code></p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;person.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Person</span> <span class="o">*</span><span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span>
+  <span class="n">person</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">();</span>
+  <span class="k">delete</span> <span class="n">person</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">person</span></code> points to an object allocated by <code class="docutils literal"><span class="pre">new</span></code> operator and initialized by <code class="docutils literal"><span class="pre">()</span></code> operator. We have seen this syntax before. But now we deal with a custom type instead of built-in type, and we pass two arguments. Actually we are calling a constructor called <code class="docutils literal"><span class="pre">Person</span></code>.</p>
+<p>The caller:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Person</span> <span class="o">*</span><span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>The callee:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Person</span><span class="o">::</span><span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+  <span class="o">:</span><span class="n">name</span><span class="p">(</span><span class="nb">NULL</span><span class="p">),</span> <span class="n">age</span><span class="p">(</span><span class="n">age</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;create person&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The <code class="docutils literal"><span class="pre">:name(NULL),</span> <span class="pre">age(age)</span></code> part in constructor is called <strong>initializer list</strong>. Member <code class="docutils literal"><span class="pre">name</span></code> is initialized to <code class="docutils literal"><span class="pre">NULL</span></code>, and member <code class="docutils literal"><span class="pre">age</span></code> is initialized to parameter <code class="docutils literal"><span class="pre">age</span></code>, which is 12. Then in the body of constructor a string is allocated to member <code class="docutils literal"><span class="pre">name</span></code>, and parameter <code class="docutils literal"><span class="pre">name</span></code>, which values <code class="docutils literal"><span class="pre">&quot;XiaoMing&quot;</span></code>, is copied into the string pointed to by member <code class="docutils literal"><span class="pre">name</span></code>. After construction, the object looks like:</p>
+<div class="figure">
+<img alt="../_images/cppoo.personobject.png" src="../_images/cppoo.personobject.png" />
+</div>
+<p>Why didn&#8217;t I show any member functions in the object? In fact, each <code class="docutils literal"><span class="pre">Person</span></code> object has its own data members, but the three member functions are shared among all <code class="docutils literal"><span class="pre">Person</span></code> objects. Then how does a member function such as <code class="docutils literal"><span class="pre">Person::display</span></code> differentiate between object A and object B? It has to know who&#8217;s calling it so as to display the caller&#8217;s information. The C code above solves this problem by providing a parameter identifying the caller.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">person_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HPERSON</span> <span class="n">p</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">Person::display</span></code> does have an <strong>implied parameter</strong> for identifying the caller. It is called <code class="docutils literal"><span class="pre">this</span></code> pointer. When we invoke a member function like <code class="docutils literal"><span class="pre">person-&gt;display()</span></code>, we actually pass <code class="docutils literal"><span class="pre">person</span></code> to <code class="docutils literal"><span class="pre">Person::display</span></code> as the implied parameter <code class="docutils literal"><span class="pre">this</span></code>. We can think of this invocation like <code class="docutils literal"><span class="pre">Person::display(person)</span></code>. <code class="docutils literal"><span class="pre">this</span></code> pointer can be used in member functions to refer to the caller object. For example, in constructor we refer to member <code class="docutils literal"><span class="pre">name</span></code> by <code class="docutils literal"><span class="pre">this-&gt;name</span></code>, and refer to parameter <code class="docutils literal"><span class="pre">name</span></code> by <code class="docutils literal"><span class="pre">name</span></code> alone. In an unambiguous context, such as <code class="docutils literal"><span class="pre">Person::display</span></code>, <code class="docutils literal"><span class="pre">this-&gt;</span></code> can be omitted, so we can refer to member <code class="docutils literal"><span class="pre">name</span></code> by <code class="docutils literal"><span class="pre">name</span></code> alone.</p>
+<p>Note the keyword <code class="docutils literal"><span class="pre">const</span></code> at the end of the prototype of <code class="docutils literal"><span class="pre">Person::display</span></code>. That means the object pointed to by <code class="docutils literal"><span class="pre">this</span></code> pointer is readonly, thus inhibiting <code class="docutils literal"><span class="pre">Person::display</span></code> from modifying its data members.</p>
+<p>The <code class="docutils literal"><span class="pre">delete</span> <span class="pre">person;</span></code> statement at the end of <code class="docutils literal"><span class="pre">main</span></code> function calls the destructor <code class="docutils literal"><span class="pre">Person::~Person</span></code>. We have allocated a string in the constructor, so the destructor is responsible for freeing it. If we do not do this in the destructor, and we <code class="docutils literal"><span class="pre">new</span></code> and <code class="docutils literal"><span class="pre">delete</span></code> many objects, the memory will be clumped with many strings with no pointer referencing them. This is called <strong>memory leak</strong>. A class can have many overloaded constructors, each with different parameter list, but can have only one destructor, because the destructor cannnot take any parameter.</p>
+</div>
+<div class="section" id="const-members">
+<h2>2.2. const Members<a class="headerlink" href="#const-members" title="Permalink to this headline">¶</a></h2>
+<p>Data members of a class can be qualified with <code class="docutils literal"><span class="pre">const</span></code>. <code class="docutils literal"><span class="pre">const</span></code> data members can be initialized with a constant in the initializer list of a constructor. From then on they cannot be modified. For example,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">A</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="n">A</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">)</span><span class="o">:</span><span class="n">SIZE</span><span class="p">(</span><span class="n">size</span><span class="p">){};</span>
+        <span class="k">const</span> <span class="kt">int</span> <span class="n">SIZE</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+        <span class="n">A</span> <span class="n">a</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+        <span class="n">A</span> <span class="n">b</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Two objects <code class="docutils literal"><span class="pre">a</span></code> and <code class="docutils literal"><span class="pre">b</span></code> are allocated on the stack of <code class="docutils literal"><span class="pre">main</span></code> function. They will be automatically destructed when their lifetimes are over, i.e. when <code class="docutils literal"><span class="pre">main</span></code> function returns. <code class="docutils literal"><span class="pre">a</span></code> has a member <code class="docutils literal"><span class="pre">SIZE</span></code> initialized to 100, and <code class="docutils literal"><span class="pre">b</span></code> has a member <code class="docutils literal"><span class="pre">SIZE</span></code> initialized to 200. Once initialized, those <code class="docutils literal"><span class="pre">const</span></code> data members cannot be modified, even in the body of the constructor. Thus, we cannot write the constructor as</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span><span class="p">(</span><span class="kt">int</span> <span class="n">size</span><span class="p">){</span> <span class="n">SIZE</span><span class="o">=</span><span class="n">size</span><span class="p">;</span> <span class="p">};</span>
+</pre></div>
+</td></tr></table></div>
+<p>Initialization and assignment are different. Remember the same principle holds when we initialize a <code class="docutils literal"><span class="pre">const</span></code> variable in C. We can write</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">const</span> <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">10</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>but not</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">const</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+<span class="n">i</span><span class="o">=</span><span class="mi">10</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note in this example we implement the constructor within the <code class="docutils literal"><span class="pre">class</span> <span class="pre">{...}</span></code> declaration, rather than merely declare it first and implement later. Member functions directly implemented in <code class="docutils literal"><span class="pre">class</span> <span class="pre">{...}</span></code> declaration are taken as <code class="docutils literal"><span class="pre">inline</span></code> functions.</p>
+</div>
+<div class="section" id="static-members">
+<h2>2.3. static Members<a class="headerlink" href="#static-members" title="Permalink to this headline">¶</a></h2>
+<p>We know that each object of a class has its own copy of data members, but data members qualified with <code class="docutils literal"><span class="pre">static</span></code> are exceptional. <code class="docutils literal"><span class="pre">static</span></code> data members are shared by all objects of one class. They don&#8217;t belong to any specific object. There won&#8217;t be multiple copies of <code class="docutils literal"><span class="pre">static</span></code> data members. For each class there&#8217;s only one copy. For example,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">A</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="k">static</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="n">A</span><span class="o">::</span><span class="n">i</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">A</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+  <span class="n">a</span><span class="p">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="n">b</span><span class="p">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="p">.</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="n">b</span><span class="p">.</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="n">A</span><span class="o">::</span><span class="n">i</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="p">.</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="n">b</span><span class="p">.</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">i</span></code> is a <code class="docutils literal"><span class="pre">static</span></code> data member. Although there are two instances of class <code class="docutils literal"><span class="pre">A</span></code>, there&#8217;s only one instance of <code class="docutils literal"><span class="pre">i</span></code>. It can be accessed through either <code class="docutils literal"><span class="pre">a.i</span></code> or <code class="docutils literal"><span class="pre">b.i</span></code>, or even through <code class="docutils literal"><span class="pre">A::i</span></code>. <code class="docutils literal"><span class="pre">i</span></code> is not allocated with object <code class="docutils literal"><span class="pre">a</span></code> or <code class="docutils literal"><span class="pre">b</span></code>, it&#8217;s allocated and initialized when the program starts to run, in the same way as global variables. Note in the <code class="docutils literal"><span class="pre">class</span> <span class="pre">{...}</span></code> declaration we can only declare a static member, but not define it. We should define it in the global scope, just like we define a global variable.</p>
+<p><code class="docutils literal"><span class="pre">static</span></code> can also be used to qualify member functions. We know a member function is special in that it has an implied <code class="docutils literal"><span class="pre">this</span></code> parameter. But a <code class="docutils literal"><span class="pre">static</span></code> member function doesn&#8217;t have <code class="docutils literal"><span class="pre">this</span></code> parameter. Therefore it cannot access non-static data members through <code class="docutils literal"><span class="pre">this</span></code> pointer. In other words, <code class="docutils literal"><span class="pre">static</span></code> member functions can only access <code class="docutils literal"><span class="pre">static</span></code> data members, they are just another form of global functions and variables with a namespace prefix.</p>
+</div>
+<div class="section" id="overloaded-member-operators">
+<h2>2.4. Overloaded Member Operators<a class="headerlink" href="#overloaded-member-operators" title="Permalink to this headline">¶</a></h2>
+<p>We have seen that an overloaded operator is a special form of function. The same is true with an overloaded member operator. Then which operator should be implemented within a class as a member function, and which should be implemented outside? By convention, asymmetric operators such as <code class="docutils literal"><span class="pre">+=</span></code> and <code class="docutils literal"><span class="pre">-=</span></code> should be implemented as member functions, while symmetric operators such as <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">-</span></code> should not. That&#8217;s only a convention, not a syntax restriction.</p>
+<p>Let&#8217;s continue our example of <code class="docutils literal"><span class="pre">Complex</span></code> type. We overload <code class="docutils literal"><span class="pre">+=</span></code> operator as a member function:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Complex</span><span class="o">&amp;</span> <span class="n">Complex</span><span class="o">::</span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span> <span class="n">Complex</span><span class="o">&amp;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>In an earlier section we overloaded <code class="docutils literal"><span class="pre">+</span></code> operator as:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Complex</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">Complex</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">Complex</span><span class="o">&amp;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Naturally it has two parameters, since it&#8217;s a binary operator. But the member operator <code class="docutils literal"><span class="pre">+=</span></code> has only one parameter, where is the other? Remember a member function has an implied <code class="docutils literal"><span class="pre">this</span></code> parameter. That&#8217;s the left operand, while the only parameter is the right operand. There&#8217;s another difference. The <code class="docutils literal"><span class="pre">+</span></code> operator has a return value of type <code class="docutils literal"><span class="pre">Complex</span></code>, whereas the <code class="docutils literal"><span class="pre">+=</span></code> operator has a return value of type <code class="docutils literal"><span class="pre">Complex&amp;</span></code>. Think about it for a while.</p>
+<p>Here is the full code.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Complex</span>
+<span class="p">{</span>
+        <span class="k">friend</span> <span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">Complex</span><span class="o">&amp;</span><span class="p">);</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="n">Complex</span><span class="p">(</span><span class="kt">double</span> <span class="n">real</span><span class="p">,</span> <span class="kt">double</span> <span class="n">img</span><span class="p">)</span><span class="o">:</span><span class="n">real</span><span class="p">(</span><span class="n">real</span><span class="p">),</span><span class="n">img</span><span class="p">(</span><span class="n">img</span><span class="p">){}</span>
+        <span class="n">Complex</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span> <span class="n">Complex</span><span class="o">&amp;</span> <span class="n">b</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="n">real</span> <span class="o">+=</span> <span class="n">b</span><span class="p">.</span><span class="n">real</span><span class="p">;</span>
+                <span class="n">img</span> <span class="o">+=</span> <span class="n">b</span><span class="p">.</span><span class="n">img</span><span class="p">;</span>
+                <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+        <span class="kt">double</span> <span class="n">real</span><span class="p">,</span><span class="n">img</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span> <span class="n">o</span><span class="p">,</span> <span class="k">const</span> <span class="n">Complex</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">o</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="p">.</span><span class="n">real</span><span class="o">&lt;&lt;</span><span class="sc">&#39;+&#39;</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="p">.</span><span class="n">img</span><span class="o">&lt;&lt;</span><span class="sc">&#39;i&#39;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">o</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">Complex</span> <span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">b</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+        <span class="n">a</span> <span class="o">+=</span> <span class="n">b</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>We declare <code class="docutils literal"><span class="pre">real</span></code> and <code class="docutils literal"><span class="pre">img</span></code> as private members to protect them from being accessed outside. Then how to implement <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> operator? To print a Complex object, we must access its two private members. Besides, <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> operator cannot be implemented as a member of <code class="docutils literal"><span class="pre">Complex</span></code> class, because its left operand is an <code class="docutils literal"><span class="pre">ostream</span></code> object, not a <code class="docutils literal"><span class="pre">Complex</span></code> object. We introduce a new keyword <code class="docutils literal"><span class="pre">friend</span></code>, which can declare a function or class as a &#8220;friend&#8221; of another class and allow access to its private members.</p>
+</div>
+<div class="section" id="the-big-three">
+<h2>2.5. The Big Three<a class="headerlink" href="#the-big-three" title="Permalink to this headline">¶</a></h2>
+<p>Constructor, destructor and assignment operator are the most important functions of a class. They are usually referred to as the big three. The big three are special because if they are absent the compiler will automatically generate a synthesized version for the class.</p>
+<p>For a class <code class="docutils literal"><span class="pre">A</span></code>, if there isn&#8217;t any constructor, the compiler will synthesize a default constructor with no parameter.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>If we define an object <code class="docutils literal"><span class="pre">a</span></code> of class <code class="docutils literal"><span class="pre">A</span></code>,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span> <span class="n">a</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>then the default constructor is called and all data members get allocated. Note if <code class="docutils literal"><span class="pre">a</span></code> has a data member of pointer type, only the pointer itself is allocated. To allocate the space pointed to by the pointer we have to implement our own constructor. As long as we provide at least one constructor for the class, whether it has any parameter or not, the compiler will not synthesize a default constructor. Note we can&#8217;t call a constructor with no parameter as:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span> <span class="nf">a</span><span class="p">();</span>
+</pre></div>
+</td></tr></table></div>
+<p>This statement has ambiguity. We can also take it as a function declaration which is named <code class="docutils literal"><span class="pre">a</span></code>, has no parameter, and returns an object of type <code class="docutils literal"><span class="pre">A</span></code>. Therefore C++ syntax forbids this usage, although it makes good sense.</p>
+<p>Copy constructor is a special constructor with the following form:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span><span class="p">(</span><span class="k">const</span> <span class="n">A</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>If a copy constructor is absent, the compiler will also provide a synthesized version for the class. A copy constructor is invoked in the following case.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span> <span class="n">a</span><span class="p">;</span>
+<span class="n">A</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+<span class="n">A</span> <span class="nf">c</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Here the <code class="docutils literal"><span class="pre">=</span></code> isn&#8217;t an assignment operator, but an initializor. <code class="docutils literal"><span class="pre">A</span> <span class="pre">b</span> <span class="pre">=</span> <span class="pre">a;</span></code> is identical to <code class="docutils literal"><span class="pre">A</span> <span class="pre">b(a);</span></code>. In both cases the copy constructor is called with a parameter <code class="docutils literal"><span class="pre">a</span></code>. Therefore <code class="docutils literal"><span class="pre">b</span></code> and <code class="docutils literal"><span class="pre">c</span></code> are constructed with <code class="docutils literal"><span class="pre">a</span></code> as the role model. If the synthesized copy constructor is called, all data members of <code class="docutils literal"><span class="pre">a</span></code> will be copied to <code class="docutils literal"><span class="pre">b</span></code> and <code class="docutils literal"><span class="pre">c</span></code>. If <code class="docutils literal"><span class="pre">A</span></code> has a data member of pointer type, only the pointer itself is copied to <code class="docutils literal"><span class="pre">b</span></code> and <code class="docutils literal"><span class="pre">c</span></code>, rendering three pointers pointing to the same space. This behavior is called shallow copy. If we want the behavior of deep copy, that is, both the pointer and the space being pointed to are copied, we should implement our own version of copy constructor.</p>
+<p>If a destructor is absent, the compiler will provide a synthesized version:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="o">~</span><span class="n">A</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>The destructor will be called when an object allocated by <code class="docutils literal"><span class="pre">new</span></code> operator is <code class="docutils literal"><span class="pre">delete``ed,</span> <span class="pre">or</span> <span class="pre">when</span> <span class="pre">an</span> <span class="pre">object</span> <span class="pre">allocated</span> <span class="pre">on</span> <span class="pre">stack</span> <span class="pre">runs</span> <span class="pre">out</span> <span class="pre">of</span> <span class="pre">its</span> <span class="pre">duration.</span> <span class="pre">Global</span> <span class="pre">and</span> <span class="pre">``static</span></code> objects are constructed when the program starts and destructed when the program terminates. If the synthesized destructor is called, all data members are deallocated. If <code class="docutils literal"><span class="pre">A</span></code> has a data member of pointer type, only the pointer itself is deallocated, the space pointed to will be left unchanged, and probably with no pointer referencing it. This is called <strong>memory leak</strong>. We have to implement our own version of destructor to avoid this behavior.</p>
+<p>Assignment operator has the form:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">A</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>If an assignment operator is absent, the compiler will provide a synthesized version for the class. An assignment operator is invoked in the following case.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">A</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">a;</span></code> is an assignment, not initialization. Note the difference between <code class="docutils literal"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">a;</span></code> and <code class="docutils literal"><span class="pre">A</span> <span class="pre">b</span> <span class="pre">=</span> <span class="pre">a;</span></code>. If the synthesized assignment operator is called, all data members of <code class="docutils literal"><span class="pre">a</span></code> will be copied to <code class="docutils literal"><span class="pre">b</span></code>. If <code class="docutils literal"><span class="pre">A</span></code> has a data member of pointer type, only the pointer itself is copied to <code class="docutils literal"><span class="pre">b</span></code>, rendering two pointers pointing to the same space. If we want the behavior of deep copy, we should implement our own version of assignment operator.</p>
+<p>To summarize, if a class has data members of pointer type, the behavior of compiler synthesized functions usually isn&#8217;t what we want. Therefore, to define a class with pointer members, we must implement the big three ourselves. Even if you define a class without pointer members, you&#8217;d better implement the big three to make sure everything works as you expect.</p>
+<p>There&#8217;s no string type in C, strings can only be represented by <code class="docutils literal"><span class="pre">char</span></code> pointer or array. Now we implement a C++ string class, supporting operations such as getting length, concatenating, and printing. Once the class is done, codes using this class can be very tidy.</p>
+<p>mystring.h</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">MyString</span>
+<span class="p">{</span>
+<span class="k">friend</span> <span class="n">ostream</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="p">);</span>
+<span class="k">friend</span> <span class="n">MyString</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="p">);</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="n">MyString</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">);</span>
+        <span class="n">MyString</span><span class="p">(</span><span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="p">);</span>
+        <span class="o">~</span><span class="n">MyString</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+        <span class="n">MyString</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="nf">length</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+        <span class="kt">bool</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+        <span class="kt">char</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</td></tr></table></div>
+<p>Because <code class="docutils literal"><span class="pre">MyString</span></code> class encapsulates a pointer member <code class="docutils literal"><span class="pre">data</span></code>, we must implement the big three ourselves. We overload <code class="docutils literal"><span class="pre">+</span></code> operator for string concatenation.</p>
+<p>mystring.cpp</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;mystring.h&quot;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="n">MyString</span><span class="o">::</span><span class="n">MyString</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;ctor&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="n">str</span><span class="o">==</span><span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">len</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">len</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">MyString</span><span class="o">::</span><span class="n">MyString</span><span class="p">(</span><span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;copy ctor&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="n">len</span> <span class="o">=</span> <span class="n">other</span><span class="p">.</span><span class="n">len</span><span class="p">;</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">len</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">MyString</span><span class="o">::~</span><span class="n">MyString</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;dtor&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">MyString</span> <span class="o">&amp;</span><span class="n">MyString</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;assignment&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="o">==&amp;</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+
+  <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span>
+  <span class="n">len</span> <span class="o">=</span> <span class="n">other</span><span class="p">.</span><span class="n">len</span><span class="p">;</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">len</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+  <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">MyString</span><span class="o">::</span><span class="n">length</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="k">const</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">len</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">bool</span> <span class="n">MyString</span><span class="o">::</span><span class="n">isEmpty</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="k">const</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">len</span><span class="o">==</span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ostream</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="n">str</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">str</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">MyString</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyString</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;concatenate&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="n">MyString</span> <span class="nf">temp</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+
+  <span class="k">delete</span><span class="p">[]</span> <span class="n">temp</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
+  <span class="n">temp</span><span class="p">.</span><span class="n">len</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">len</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">len</span><span class="p">;</span>
+  <span class="n">temp</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">temp</span><span class="p">.</span><span class="n">len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="n">temp</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+  <span class="n">strcat</span><span class="p">(</span><span class="n">temp</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">temp</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note we do sanity check at the beginning of the assignment operator:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Think about it: What if we didn&#8217;t check it?</p>
+<p>main.cpp</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;mystring.h&quot;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+        <span class="n">MyString</span> <span class="n">str</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span>
+        <span class="n">MyString</span> <span class="n">str1</span> <span class="o">=</span> <span class="n">str</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Length of str1: &quot;</span><span class="o">&lt;&lt;</span><span class="n">str1</span><span class="p">.</span><span class="n">length</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Value of str1: &quot;</span><span class="o">&lt;&lt;</span><span class="n">str1</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+        <span class="n">MyString</span> <span class="n">str2</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Is str2 empty? &quot;</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">str2</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">()</span><span class="o">?</span><span class="s">&quot;true&quot;</span><span class="o">:</span><span class="s">&quot;false&quot;</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+        <span class="n">str2</span> <span class="o">=</span> <span class="s">&quot; world&quot;</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Now value of str2: &quot;</span><span class="o">&lt;&lt;</span><span class="n">str2</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Now value of str: &quot;</span><span class="o">&lt;&lt;</span><span class="n">str1</span><span class="o">+</span><span class="n">str2</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Value of another expression: &quot;</span><span class="o">&lt;&lt;</span><span class="n">str1</span> <span class="o">+</span> <span class="s">&quot;_world&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Value of yet another expression: &quot;</span><span class="o">&lt;&lt;</span><span class="s">&quot;Hello,&quot;</span> <span class="o">+</span> <span class="n">str2</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+        <span class="n">MyString</span> <span class="n">str3</span> <span class="o">=</span> <span class="n">str1</span> <span class="o">+</span> <span class="n">str2</span><span class="p">;</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;Value of str3: &quot;</span><span class="o">&lt;&lt;</span><span class="n">str3</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The user code is really clean. No <code class="docutils literal"><span class="pre">malloc</span></code>, <code class="docutils literal"><span class="pre">free</span></code>, <code class="docutils literal"><span class="pre">strlen</span></code>, <code class="docutils literal"><span class="pre">strcat</span></code> any more. Perhaps much to your surprise, you can make such assignment:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">str2</span> <span class="o">=</span> <span class="s">&quot; world&quot;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>The right operand of our assignment operator has type <code class="docutils literal"><span class="pre">MyString&amp;</span></code>, not <code class="docutils literal"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code>. How can that be done? The compiler does an <strong>implicit conversion</strong> here, converting from <code class="docutils literal"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code> to <code class="docutils literal"><span class="pre">MyString</span></code>, based on our constructor. The steps are:</p>
+<ol class="arabic simple">
+<li>Taking <code class="docutils literal"><span class="pre">&quot;world&quot;</span></code> as an argument, construct a temporary object.</li>
+<li>Taking the temporary object as the right operand, invoke the assigment operator.</li>
+<li>Destruct the temporary object.</li>
+</ol>
+<p>Here&#8217;s a segment taken from the output, which verifies these steps:</p>
+<div class="highlight-python"><div class="highlight"><pre>...
+ctor
+assignment
+dtor
+Now value of str2:  world
+...
+</pre></div>
+</div>
+<p>This rule also applies to the code <code class="docutils literal"><span class="pre">str1</span> <span class="pre">+</span> <span class="pre">&quot;_world&quot;</span></code>. In a word, defining a constructor taking one parameter also implies an implicit conversion rule.</p>
+<p>The statement <code class="docutils literal"><span class="pre">MyString</span> <span class="pre">str3</span> <span class="pre">=</span> <span class="pre">str1</span> <span class="pre">+</span> <span class="pre">str2;</span></code> also involves complicated steps:</p>
+<ol class="arabic simple">
+<li>Taking <code class="docutils literal"><span class="pre">str1</span></code> and <code class="docutils literal"><span class="pre">str2</span></code> as operands, invoking overloaded operator <code class="docutils literal"><span class="pre">+</span></code>.</li>
+<li>Within the operator <code class="docutils literal"><span class="pre">+</span></code>, construct a local variable <code class="docutils literal"><span class="pre">temp</span></code> on stack.</li>
+<li>Concatenate <code class="docutils literal"><span class="pre">str1</span></code> and <code class="docutils literal"><span class="pre">str2</span></code> and save the result in <code class="docutils literal"><span class="pre">temp</span></code>.</li>
+<li>When it arrives <code class="docutils literal"><span class="pre">return</span> <span class="pre">temp;</span></code>, first copy construct a temporary object from <code class="docutils literal"><span class="pre">temp</span></code>, then return from operator <code class="docutils literal"><span class="pre">+</span></code> and destruct <code class="docutils literal"><span class="pre">temp</span></code>.</li>
+<li>Copy construct <code class="docutils literal"><span class="pre">str3</span></code> from the temporary object constructed in the last step, then destruct the temporary object.</li>
+</ol>
+<p>Although in theory we should take all five steps, <code class="docutils literal"><span class="pre">g++</span></code> actually makes proper optimizations. Please analyze the output and figure out the actual steps.</p>
+</div>
+<div class="section" id="inheritance">
+<h2>2.6. Inheritance<a class="headerlink" href="#inheritance" title="Permalink to this headline">¶</a></h2>
+<p>A class can <strong>inherit</strong> from another class to get its data members and member functions. They are called <strong>derived class</strong> and <strong>base class</strong> respectively. The main purpose for inventing class inheritance is to reuse existing code.</p>
+<p>The <code class="docutils literal"><span class="pre">Person</span></code> class has two members, <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code>. Now we need a <code class="docutils literal"><span class="pre">Student</span></code> class, which conceptually is a kind of <code class="docutils literal"><span class="pre">Person</span></code>. It has another member <code class="docutils literal"><span class="pre">score</span></code> besides <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code>. If we write the new class from scratch, <code class="docutils literal"><span class="pre">Person</span></code> and <code class="docutils literal"><span class="pre">Student</span></code> each has its own <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code>, duplicated code is produced. Duplicated code has a bad smell. Since <code class="docutils literal"><span class="pre">Student</span></code> is a kind of <code class="docutils literal"><span class="pre">Person</span></code>, it should have what <code class="docutils literal"><span class="pre">Person</span></code> has and behave like <code class="docutils literal"><span class="pre">Person</span></code>. Each time we update <code class="docutils literal"><span class="pre">Person</span></code> class, adding new members or changing behaviors, we should update <code class="docutils literal"><span class="pre">Student</span></code> class as well and produce even more duplicated code. If we find a bug in <code class="docutils literal"><span class="pre">Person</span></code> class, we should fix it in both <code class="docutils literal"><span class="pre">Person</span></code> and <code class="docutils literal"><span class="pre">Student</span></code> class. The resulting code is both hard to maintain and error-prone, until class inheritance comes into play.</p>
+<p>Let&#8217;s begin with our familiar C code first, then we&#8217;ll rewrite it in C++.</p>
+<p>student.h</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifndef STUDENT_H</span>
+<span class="cp">#define STUDENT_H</span>
+
+<span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HPERSON</span><span class="p">;</span>
+
+<span class="n">HPERSON</span> <span class="nf">person_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">person_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HPERSON</span> <span class="n">p</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">person_delete</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">);</span>
+
+<span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HSTUDENT</span><span class="p">;</span>
+
+<span class="n">HSTUDENT</span> <span class="nf">student_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">student_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">student_delete</span><span class="p">(</span><span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">);</span>
+
+<span class="cp">#endif </span><span class="cm">/* STUDENT_H */</span><span class="cp"></span>
+</pre></div>
+</td></tr></table></div>
+<p>student.c</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+     <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">person_t</span><span class="p">;</span>
+
+<span class="n">HPERSON</span> <span class="nf">person_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;create person</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">person_t</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">person_t</span><span class="p">));</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+
+     <span class="n">strcpy</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+     <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">person_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;&lt;&lt;&lt;&lt; display person information &gt;&gt;&gt;&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot; Name:%s</span><span class="se">\n</span><span class="s"> Age:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">age</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">person_delete</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;delete person</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+     <span class="n">person_t</span> <span class="n">person</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">score</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">student_t</span><span class="p">;</span>
+
+<span class="n">HSTUDENT</span> <span class="nf">student_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;create student</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">student_t</span> <span class="o">*</span><span class="n">student</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">student_t</span><span class="p">));</span>
+     <span class="n">student</span><span class="o">-&gt;</span><span class="n">person</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+
+     <span class="n">strcpy</span><span class="p">(</span><span class="n">student</span><span class="o">-&gt;</span><span class="n">person</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+     <span class="n">student</span><span class="o">-&gt;</span><span class="n">person</span><span class="p">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+     <span class="n">student</span><span class="o">-&gt;</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span><span class="p">;</span>
+     <span class="k">return</span> <span class="n">student</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">student_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;&lt;&lt;&lt;&lt; display student information &gt;&gt;&gt;&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot; Name:%s</span><span class="se">\n</span><span class="s"> Age:%d</span><span class="se">\n</span><span class="s"> Score:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+            <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">age</span><span class="p">,</span> <span class="p">((</span><span class="n">student_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">score</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">student_delete</span><span class="p">(</span><span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;delete student</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>main.c</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+
+     <span class="n">HSTUDENT</span> <span class="n">student</span> <span class="o">=</span> <span class="n">student_create</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
+     <span class="n">student_display</span><span class="p">(</span><span class="n">student</span><span class="p">);</span>
+     <span class="n">person_display</span><span class="p">(</span><span class="n">student</span><span class="p">);</span>
+     <span class="n">student_delete</span><span class="p">(</span><span class="n">student</span><span class="p">);</span>
+     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>A <code class="docutils literal"><span class="pre">person_t</span></code> object is embedded at the beginning of a <code class="docutils literal"><span class="pre">student_t</span></code> object.</p>
+<div class="figure">
+<img alt="../_images/cppoo.studentobject.png" src="../_images/cppoo.studentobject.png" />
+</div>
+<p>Therefore a pointer pointing to a <code class="docutils literal"><span class="pre">student_t</span></code> object can also be taken as a pointer pointing to a <code class="docutils literal"><span class="pre">person_t</span></code> object. Although we specifically define a <code class="docutils literal"><span class="pre">student_display</span></code> function for a <code class="docutils literal"><span class="pre">student_t</span></code> object, the original <code class="docutils literal"><span class="pre">person_display</span></code> function can also apply to a <code class="docutils literal"><span class="pre">student_t</span></code> object.</p>
+<p>Now let&#8217;s see the equivalent C++ code.</p>
+<p>student.h</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifndef STUDENT_H</span>
+<span class="cp">#define STUDENT_H</span>
+
+<span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+     <span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+     <span class="o">~</span><span class="n">Person</span><span class="p">();</span>
+     <span class="kt">void</span> <span class="nf">display</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">protected</span><span class="o">:</span>
+     <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Student</span><span class="o">:</span> <span class="k">public</span> <span class="n">Person</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+     <span class="n">Student</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">);</span>
+     <span class="o">~</span><span class="n">Student</span><span class="p">();</span>
+     <span class="kt">void</span> <span class="nf">display</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+     <span class="kt">int</span> <span class="n">score</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif </span><span class="c1">//STUDENT_H</span>
+</pre></div>
+</td></tr></table></div>
+<p>The <code class="docutils literal"><span class="pre">protected</span></code> access specifier allows corresponding members to be accessed within derived class, while still protecting them from being accessed outside. The <code class="docutils literal"><span class="pre">private</span></code> members of a class are inaccessible to its derived class, so <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code> should be declared as <code class="docutils literal"><span class="pre">protected</span></code> instead of <code class="docutils literal"><span class="pre">private</span></code>. Note the first line of <code class="docutils literal"><span class="pre">class</span> <span class="pre">Student</span></code> declaration:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Student</span><span class="o">:</span> <span class="k">public</span> <span class="n">Person</span>
+</pre></div>
+</td></tr></table></div>
+<p>Here the <code class="docutils literal"><span class="pre">public</span></code> keyword indicates how <code class="docutils literal"><span class="pre">Student</span></code> class inherits from <code class="docutils literal"><span class="pre">Person</span></code> class. It determines the access specifier of inherited members in derived class. If the inheritance is <code class="docutils literal"><span class="pre">public</span></code>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">access specifier of base class members</th>
+<th class="head">access specifier of inherited members</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>public</td>
+<td>public</td>
+</tr>
+<tr class="row-odd"><td>protected</td>
+<td>protected</td>
+</tr>
+<tr class="row-even"><td>private</td>
+<td>inaccessible</td>
+</tr>
+</tbody>
+</table>
+<p>If the inheritance is <code class="docutils literal"><span class="pre">protected</span></code>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">access specifier of base class members</th>
+<th class="head">access specifier of inherited members</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>public</td>
+<td>protected</td>
+</tr>
+<tr class="row-odd"><td>protected</td>
+<td>protected</td>
+</tr>
+<tr class="row-even"><td>private</td>
+<td>inaccessible</td>
+</tr>
+</tbody>
+</table>
+<p>If the inheritance is <code class="docutils literal"><span class="pre">private</span></code>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">access specifier of base class members</th>
+<th class="head">access specifier of inherited members</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>public</td>
+<td>private</td>
+</tr>
+<tr class="row-odd"><td>protected</td>
+<td>private</td>
+</tr>
+<tr class="row-even"><td>private</td>
+<td>inaccessible</td>
+</tr>
+</tbody>
+</table>
+<p>Just like <code class="docutils literal"><span class="pre">person_t</span></code> and <code class="docutils literal"><span class="pre">student_t</span></code> in the prior C code, a <code class="docutils literal"><span class="pre">Person</span></code> object is embedded at the beginning of a <code class="docutils literal"><span class="pre">Student</span></code> object. Note if the embedded <code class="docutils literal"><span class="pre">Person</span></code> object has private members, they are accessible to member functions inherited from <code class="docutils literal"><span class="pre">Person</span></code> class but inaccessible to other member functions of <code class="docutils literal"><span class="pre">Student</span></code> class.</p>
+<p>Here is the implementation:</p>
+<p>student.cpp</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="n">Person</span><span class="o">::</span><span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+  <span class="o">:</span><span class="n">name</span><span class="p">(</span><span class="nb">NULL</span><span class="p">),</span> <span class="n">age</span><span class="p">(</span><span class="n">age</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;create person&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">Person</span><span class="o">::</span><span class="n">display</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;&lt;&lt;&lt;&lt; display person information &gt;&gt;&gt;&gt;&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span>
+      <span class="o">&lt;&lt;</span><span class="s">&quot; Name:&quot;</span><span class="o">&lt;&lt;</span><span class="n">name</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="s">&quot; Age:&quot;</span><span class="o">&lt;&lt;</span><span class="n">age</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Person</span><span class="o">::~</span><span class="n">Person</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;delete person&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">delete</span><span class="p">[]</span> <span class="n">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Student</span><span class="o">::</span><span class="n">Student</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">)</span>
+  <span class="o">:</span><span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">),</span> <span class="n">score</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;create student&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">Student</span><span class="o">::</span><span class="n">display</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;&lt;&lt;&lt;&lt; display student information &gt;&gt;&gt;&gt;&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span>
+      <span class="o">&lt;&lt;</span><span class="s">&quot; Name:&quot;</span><span class="o">&lt;&lt;</span><span class="n">name</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="s">&quot; Age:&quot;</span><span class="o">&lt;&lt;</span><span class="n">age</span><span class="o">&lt;&lt;</span><span class="n">endl</span>
+      <span class="o">&lt;&lt;</span><span class="s">&quot; Score:&quot;</span><span class="o">&lt;&lt;</span><span class="n">score</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Student</span><span class="o">::~</span><span class="n">Student</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;delete student&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note the initializer list in the constructor of <code class="docutils literal"><span class="pre">Student</span></code> class:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Student</span><span class="o">::</span><span class="n">Student</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">)</span>
+    <span class="o">:</span><span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">),</span> <span class="n">score</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>When we construct an object from a class, the constructor of its base class is always invoked before other initialization steps. If class <code class="docutils literal"><span class="pre">C</span></code> inherits class <code class="docutils literal"><span class="pre">B</span></code>, which in turn inherits class <code class="docutils literal"><span class="pre">A</span></code>, then when we construct an object from class <code class="docutils literal"><span class="pre">C</span></code>, <code class="docutils literal"><span class="pre">A</span></code>&#8216;s constructor is invoked first to initialize members of part <code class="docutils literal"><span class="pre">A</span></code>, <code class="docutils literal"><span class="pre">B</span></code>&#8216;s constructor is invoked next to initialize members of part <code class="docutils literal"><span class="pre">B</span></code>, <code class="docutils literal"><span class="pre">C</span></code>&#8216;s constructor is invoked last to initialize the remaining part of the object.</p>
+<p>If we do not call <code class="docutils literal"><span class="pre">Person(name,</span> <span class="pre">age)</span></code> in the initializer list, the default <code class="docutils literal"><span class="pre">Person()</span></code> constructor with no parameter will be called. Because we do not define such a constructor, and because we do provide a constructor so that compiler&#8217;s synthesized version is suppressed, the code will end up with a compile error. Please try it yourself.</p>
+<p>Here is the user code:</p>
+<p>main.cpp</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Student</span> <span class="o">*</span><span class="n">student</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Student</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
+  <span class="n">student</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">();</span>
+
+  <span class="n">Person</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">student</span><span class="p">;</span>
+  <span class="n">p</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">();</span>
+
+  <span class="k">delete</span> <span class="n">student</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>As we can see, <code class="docutils literal"><span class="pre">p-&gt;display()</span></code> is invoking <code class="docutils literal"><span class="pre">Person::display()</span></code> because <code class="docutils literal"><span class="pre">p</span></code> is of type <code class="docutils literal"><span class="pre">Person</span> <span class="pre">*</span></code>, while <code class="docutils literal"><span class="pre">student-&gt;display()</span></code> is invoking <code class="docutils literal"><span class="pre">Student::display()</span></code> becase <code class="docutils literal"><span class="pre">student</span></code> is of type <code class="docutils literal"><span class="pre">Student</span> <span class="pre">*</span></code>. If the derived class inherits a member function from the base class and implements another function with the same name, it&#8217;s own version <strong>overrrides</strong> the inherited version. In this case, if we don&#8217;t implement <code class="docutils literal"><span class="pre">Student::display()</span></code>, then <code class="docutils literal"><span class="pre">student-&gt;desplay()</span></code> is also invoking <code class="docutils literal"><span class="pre">Person::display()</span></code>, because that function is inherited and not overridden.</p>
+<p>Think about this: we already see a pointer of base class type points to an object of derived class, then can we make a pointer of derived class type point to an object of base class? Why?</p>
+</div>
+<div class="section" id="polymorphism">
+<h2>2.7. Polymorphism<a class="headerlink" href="#polymorphism" title="Permalink to this headline">¶</a></h2>
+<p>In the example of the last section, <code class="docutils literal"><span class="pre">p-&gt;display()</span></code> is invoking <code class="docutils literal"><span class="pre">Person::display()</span></code>. If <code class="docutils literal"><span class="pre">p</span></code> points to a <code class="docutils literal"><span class="pre">Student</span></code> object, only <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code> will be displayed, and <code class="docutils literal"><span class="pre">Person::display()</span></code> knows nothing about <code class="docutils literal"><span class="pre">score</span></code>. Sometimes what we really want is that the most verbose information should be displayed. If <code class="docutils literal"><span class="pre">p</span></code> points to a <code class="docutils literal"><span class="pre">Person</span></code> object, <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">age</span></code> should be displayed by <code class="docutils literal"><span class="pre">p-&gt;display()</span></code>. If <code class="docutils literal"><span class="pre">p</span></code> points to a <code class="docutils literal"><span class="pre">Student</span></code> object, <code class="docutils literal"><span class="pre">name</span></code>, <code class="docutils literal"><span class="pre">age</span></code> and <code class="docutils literal"><span class="pre">score</span></code> should be displayed by <code class="docutils literal"><span class="pre">p-&gt;display()</span></code>. This is called <strong>polymorphism</strong>. How to achieve this? Again we will start from C code.</p>
+<p>student.h</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifndef STUDENT_H</span>
+<span class="cp">#define STUDENT_H</span>
+
+<span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HPERSON</span><span class="p">;</span>
+
+<span class="n">HPERSON</span> <span class="nf">person_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">person_delete</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">);</span>
+
+<span class="k">typedef</span> <span class="kt">void</span><span class="o">*</span> <span class="n">HSTUDENT</span><span class="p">;</span>
+
+<span class="n">HSTUDENT</span> <span class="nf">student_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">student_delete</span><span class="p">(</span><span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">display</span><span class="p">(</span><span class="n">HPERSON</span><span class="p">);</span>
+
+<span class="cp">#endif </span><span class="cm">/* STUDENT_H */</span><span class="cp"></span>
+</pre></div>
+</td></tr></table></div>
+<p>student.c</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+     <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+     <span class="k">struct</span> <span class="n">operations</span> <span class="o">*</span><span class="n">ops</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">person_t</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">operations</span>
+<span class="p">{</span>
+     <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">display</span><span class="p">)(</span><span class="k">const</span> <span class="n">HPERSON</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">p_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;&lt;&lt;&lt;&lt; display person information &gt;&gt;&gt;&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot; Name:%s</span><span class="se">\n</span><span class="s"> Age:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">age</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="k">struct</span> <span class="n">operations</span> <span class="n">person_ops</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p_display</span> <span class="p">};</span>
+
+<span class="n">HPERSON</span> <span class="nf">person_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;create person</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">person_t</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">person_t</span><span class="p">));</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">ops</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">person_ops</span><span class="p">;</span>
+
+     <span class="n">strcpy</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+     <span class="n">p</span><span class="o">-&gt;</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+     <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">person_delete</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;delete person</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+     <span class="n">person_t</span> <span class="n">person</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">score</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">student_t</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">s_display</span><span class="p">(</span><span class="k">const</span> <span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;&lt;&lt;&lt;&lt; display student information &gt;&gt;&gt;&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot; Name:%s</span><span class="se">\n</span><span class="s"> Age:%d</span><span class="se">\n</span><span class="s"> Score:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+            <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">age</span><span class="p">,</span> <span class="p">((</span><span class="n">student_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">score</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="k">struct</span> <span class="n">operations</span> <span class="n">student_ops</span> <span class="o">=</span> <span class="p">{</span> <span class="n">s_display</span> <span class="p">};</span>
+
+<span class="n">HSTUDENT</span> <span class="nf">student_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;create student</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">student_t</span> <span class="o">*</span><span class="n">s</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">student_t</span><span class="p">));</span>
+     <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+     <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">ops</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">student_ops</span><span class="p">;</span>
+
+     <span class="n">strcpy</span><span class="p">(((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+     <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+     <span class="n">s</span><span class="o">-&gt;</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span><span class="p">;</span>
+     <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">student_delete</span><span class="p">(</span><span class="n">HSTUDENT</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;delete student</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">s</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+     <span class="n">free</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">display</span><span class="p">(</span><span class="n">HPERSON</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="p">((</span><span class="n">person_t</span> <span class="o">*</span><span class="p">)</span><span class="n">p</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">ops</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>main.c</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+     <span class="n">HSTUDENT</span> <span class="n">student</span> <span class="o">=</span> <span class="n">student_create</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
+     <span class="n">display</span><span class="p">(</span><span class="n">student</span><span class="p">);</span>
+     <span class="n">student_delete</span><span class="p">(</span><span class="n">student</span><span class="p">);</span>
+
+     <span class="n">HPERSON</span> <span class="n">person</span> <span class="o">=</span> <span class="n">person_create</span><span class="p">(</span><span class="s">&quot;XiaoHua&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
+     <span class="n">display</span><span class="p">(</span><span class="n">person</span><span class="p">);</span>
+     <span class="n">person_delete</span><span class="p">(</span><span class="n">person</span><span class="p">);</span>
+
+     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">person_t</span></code> has a pointer <code class="docutils literal"><span class="pre">ops</span></code> pointing to an <code class="docutils literal"><span class="pre">operations</span></code> structure. Since <code class="docutils literal"><span class="pre">person_t</span></code> is embedded in <code class="docutils literal"><span class="pre">student_t</span></code>, <code class="docutils literal"><span class="pre">student_t</span></code> also has the <code class="docutils literal"><span class="pre">ops</span></code> pointer. <code class="docutils literal"><span class="pre">person_ops</span></code> and <code class="docutils literal"><span class="pre">student_ops</span></code> are two <code class="docutils literal"><span class="pre">operations</span></code> structures, which consists of various function pointers. In this case only one function pointer <code class="docutils literal"><span class="pre">display</span></code> is contained. <code class="docutils literal"><span class="pre">person_ops</span></code>&#8216;s <code class="docutils literal"><span class="pre">display</span></code> pointer points to <code class="docutils literal"><span class="pre">p_display</span></code> function, while <code class="docutils literal"><span class="pre">student_ops</span></code>&#8216;s <code class="docutils literal"><span class="pre">display</span></code> pointer points to <code class="docutils literal"><span class="pre">s_display</span></code> function. A <code class="docutils literal"><span class="pre">student_t</span></code> object&#8217;s <code class="docutils literal"><span class="pre">ops</span></code> member will be initialized to <code class="docutils literal"><span class="pre">student_ops</span></code> while a <code class="docutils literal"><span class="pre">person_t</span></code> object&#8217;s <code class="docutils literal"><span class="pre">ops</span></code> member will be initialized to <code class="docutils literal"><span class="pre">person_ops</span></code>. That way a <code class="docutils literal"><span class="pre">person_t</span></code> object and a <code class="docutils literal"><span class="pre">student_t</span></code> object will invoke different functions through <code class="docutils literal"><span class="pre">ops-&gt;display</span></code> pointer.</p>
+<div class="figure">
+<img alt="../_images/cppoo.studentobject2.png" src="../_images/cppoo.studentobject2.png" />
+</div>
+<p>We have to access the corresponding <code class="docutils literal"><span class="pre">operations</span></code> structure through an <code class="docutils literal"><span class="pre">ops</span></code> pointer embedded in <code class="docutils literal"><span class="pre">persion_t</span></code>. Then why not embed the <code class="docutils literal"><span class="pre">operations</span></code> structure directly into <code class="docutils literal"><span class="pre">person_t</span></code>? Please think about it.</p>
+<p>Now let&#8217;s see how to achieve polymorphism in C++.</p>
+<p>student.h</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifndef STUDENT_H</span>
+<span class="cp">#define STUDENT_H</span>
+
+<span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+     <span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+     <span class="o">~</span><span class="n">Person</span><span class="p">();</span>
+     <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">display</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">protected</span><span class="o">:</span>
+     <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+     <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Student</span><span class="o">:</span> <span class="k">public</span> <span class="n">Person</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+     <span class="n">Student</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">);</span>
+     <span class="o">~</span><span class="n">Student</span><span class="p">();</span>
+     <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">display</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+     <span class="kt">int</span> <span class="n">score</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif </span><span class="c1">//STUDENT_H</span>
+</pre></div>
+</td></tr></table></div>
+<p>This header file differs from the previous version in only one place: The <code class="docutils literal"><span class="pre">display</span></code> function is declared <code class="docutils literal"><span class="pre">virtual</span></code>. A class with virtual functions has a hidden pointer member <code class="docutils literal"><span class="pre">vptr</span></code>, which points to a virtual function table. <code class="docutils literal"><span class="pre">vptr</span></code> is similar to the <code class="docutils literal"><span class="pre">ops</span></code> pointer and virtual function table is similar to the <code class="docutils literal"><span class="pre">operations</span></code> structure in the above C code. When constructing a <code class="docutils literal"><span class="pre">Person</span></code> object, <code class="docutils literal"><span class="pre">vptr</span></code> is initialized to a virtual function table similar to <code class="docutils literal"><span class="pre">person_ops</span></code> in the above C code. When construct a <code class="docutils literal"><span class="pre">Student</span></code> object, <code class="docutils literal"><span class="pre">vptr</span></code> is initialized to a virtual function table similar to <code class="docutils literal"><span class="pre">student_ops</span></code> in the above C code.</p>
+<p>Once a member function is declared <code class="docutils literal"><span class="pre">virtual</span></code> in a base class, all derived classes also inherit this function as <code class="docutils literal"><span class="pre">virtual</span></code>, even if we do not explicitly write <code class="docutils literal"><span class="pre">virtual</span></code> when declaring this function in derived classes. Keeping <code class="docutils literal"><span class="pre">virtual</span></code> in derived class function declarations will make the code more explicit. If a derived class doesn&#8217;t provide an implementation for a virtual function, the base class version is inherited. If a derived class does provide an implementation for a virtual function, this function&#8217;s prototype must comply with the base class version. This is different from the case of overriding. If a derived class overrides a base class function, this new function&#8217;s prototype need not comply with the inherited version.</p>
+<p><code class="docutils literal"><span class="pre">student.cpp</span></code> is exactly the same as in the last section. So we&#8217;ll omit it. Here is the user code:</p>
+<p>main.cpp</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;student.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Student</span> <span class="o">*</span><span class="n">student</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Student</span><span class="p">(</span><span class="s">&quot;XiaoMing&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
+  <span class="n">student</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">();</span>
+  <span class="n">Person</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">student</span><span class="p">;</span>
+  <span class="n">p</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">();</span>
+  <span class="k">delete</span> <span class="n">student</span><span class="p">;</span>
+
+  <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="p">(</span><span class="s">&quot;XiaoHua&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
+  <span class="n">p</span><span class="o">-&gt;</span><span class="n">display</span><span class="p">();</span>
+  <span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note the same <code class="docutils literal"><span class="pre">p-&gt;display()</span></code> appears twice in the code and results in two different functions being called. When <code class="docutils literal"><span class="pre">p</span></code> points to a <code class="docutils literal"><span class="pre">Student</span></code> object, <code class="docutils literal"><span class="pre">p-&gt;display()</span></code> is invoking <code class="docutils literal"><span class="pre">Student::display()</span></code>. When <code class="docutils literal"><span class="pre">p</span></code> points to a <code class="docutils literal"><span class="pre">Person</span></code> object, <code class="docutils literal"><span class="pre">p-&gt;display()</span></code> is invoking <code class="docutils literal"><span class="pre">Person::display()</span></code>. How can the same code be compiled to different binary instructions? In fact the binary instructions make no difference, but the invocation is through a function pointer which points to different functions in these two cases. That is, which function to call is not determined by the code itself, but by the actual object involved. In another word, it&#8217;s determined at runtime rather than compile time. This is called <strong>dynamic binding</strong>.</p>
+<p>Here is another example:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Animal</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="k">virtual</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">saywhat</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Cow</span><span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="k">virtual</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">saywhat</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;Moo&quot;</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Dog</span><span class="o">:</span> <span class="k">public</span> <span class="n">Animal</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+        <span class="k">virtual</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">saywhat</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;Bark&quot;</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">whosay</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">who</span><span class="p">,</span> <span class="n">Animal</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">who</span><span class="o">&lt;&lt;</span><span class="s">&quot; says &#39;&quot;</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="o">-&gt;</span><span class="n">saywhat</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="s">&quot;&#39;&quot;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">Cow</span> <span class="n">debby</span><span class="p">;</span>
+        <span class="n">Dog</span> <span class="n">puppy</span><span class="p">;</span>
+        <span class="n">whosay</span><span class="p">(</span><span class="s">&quot;Debby&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">debby</span><span class="p">);</span>
+        <span class="n">whosay</span><span class="p">(</span><span class="s">&quot;Puppy&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">puppy</span><span class="p">);</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;sizeof(Cow)=&quot;</span><span class="o">&lt;&lt;</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Cow</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note this declaration:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">virtual</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">saywhat</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>If a <code class="docutils literal"><span class="pre">virtual</span></code> function declaration is appended with <code class="docutils literal"><span class="pre">=0</span></code>, it is called <strong>pure virtual function</strong>. And the corresponding class is called <strong>abstract class</strong>. An abstract class cannot be instantiated, that is, we can&#8217;t create an object of an abstract class. The sole purpose for defining an abstract class is to derive from it. The function <code class="docutils literal"><span class="pre">whosay</span></code> is quite versatile. It takes a paramter of type <code class="docutils literal"><span class="pre">Animal</span> <span class="pre">*</span></code>, which can point to either a <code class="docutils literal"><span class="pre">Cow</span></code> object or a <code class="docutils literal"><span class="pre">Dog</span></code> object and call the corresponding <code class="docutils literal"><span class="pre">saywhat</span></code> function. Although the abstract class <code class="docutils literal"><span class="pre">Animal</span></code> cannot be instantiated, defining a pointer to <code class="docutils literal"><span class="pre">Animal</span></code> is perfectly legal. The abstract class defines a set of interfaces (<code class="docutils literal"><span class="pre">saywhat</span></code> in this case) that derived classes must implement. Besides, the abstract class itself often appears in function parameters. For these reasons, the abstract class is often called an <strong>interface</strong>. Deriving from an abstract class is often called <strong>implementing an interface</strong>.</p>
+<p>If a class has no data members, the object of this class should have zero byte. However, C++ requires one byte be allocated for such an object. This can avoid two or more objects occupying the same address. The example above outputs <code class="docutils literal"><span class="pre">sizeof(Cow)</span></code>. Is it one? Try and think about it.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2. Class and Object-oriented Methodology</a><ul>
+<li><a class="reference internal" href="#encapsulation">2.1. Encapsulation</a></li>
+<li><a class="reference internal" href="#const-members">2.2. const Members</a></li>
+<li><a class="reference internal" href="#static-members">2.3. static Members</a></li>
+<li><a class="reference internal" href="#overloaded-member-operators">2.4. Overloaded Member Operators</a></li>
+<li><a class="reference internal" href="#the-big-three">2.5. The Big Three</a></li>
+<li><a class="reference internal" href="#inheritance">2.6. Inheritance</a></li>
+<li><a class="reference internal" href="#polymorphism">2.7. Polymorphism</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cppbasics.html"
+                        title="previous chapter">1. Basics</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cppgp.html"
+                        title="next chapter">3. Template and Generic Programming</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/en/cppoo.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><table border=0 cellspacing=0 style="color: white;">
+<script type="text/javascript">
+  //<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34437927-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  //]]>
+</script>
+<tr><td>
+   请输入您的email订阅<a href="http://groups.google.com/group/learning-linux-c-cpp">本书的邮件列表</a><br/>
+   (Please enter your email to subscribe to <a href="http://groups.google.com/group/learning-linux-c-cpp">this book's mailing list</a>)<br/>
+   <form action="http://groups.google.com/group/learning-linux-c-cpp/boxsubscribe"><input type=text name=email><input type=submit name="sub" value="订阅(Subscribe)"></form>
+</td></tr>
+
+<tr><td><br/>关注<a href="http://weibo.com/sansoong">我的微博</a></td></tr>
+
+<tr><td><br/>Checkout the source from github: <a href="https://github.com/learning-linux-c-cpp/akabook">https://github.com/learning-linux-c-cpp/akabook</a></td></tr>
+
+<tr><td>
+   <br/>感谢您的慷慨捐赠！<br/>
+   Thanks for your generous donation!<br/>
+   <a href="http://me.alipay.com/songjinshan" target="_blank"><img src="/akabook/_static/me.alipay.png" alt="捐赠"></a>
+</td></tr>
+</table>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cppgp.html" title="3. Template and Generic Programming"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cppbasics.html" title="1. Basics"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >English Version: Learning Linux C/C++ Programming from Scratch</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Sean Soong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>10. gdb &mdash; akabook 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="akabook 3.0 documentation" href="../index.html" />
+    <link rel="up" title="中文版：Linux C/C++编程一站式学习" href="index.html" />
+    <link rel="next" title="11. 排序与查找" href="sortsearch.html" />
+    <link rel="prev" title="9. 编码风格" href="codingstyle.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sortsearch.html" title="11. 排序与查找"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="codingstyle.html" title="9. 编码风格"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">中文版：Linux C/C++编程一站式学习</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="gdb">
+<h1>10. gdb<a class="headerlink" href="#gdb" title="Permalink to this headline">¶</a></h1>
+<p>程序中除了一目了然的Bug之外都需要一定的调试手段来分析到底错在哪。到目前为止我们的调试手段只有一种：根据程序执行时的出错现象假设错误原因，然后在代码中适当的位置插入 <code class="docutils literal"><span class="pre">printf</span></code> ，执行程序并分析打印结果，如果结果和预期的一样，就基本上证明了自己假设的错误原因，就可以动手修Bug了，如果结果和预期的不一样，就根据结果做进一步的假设和分析。</p>
+<p>本章我们介绍一种很强大的调试工具 <strong class="command">gdb</strong> ，可以完全操控程序的运行，使得程序就像你手里的玩具一样，叫它走就走，叫它停就停，并且随时可以查看程序中所有的内部状态，比如各变量的值、传给函数的参数、当前执行的代码行等。掌握了 <strong class="command">gdb</strong> 的用法之后，调试手段就更加丰富了。但要注意，即使调试手段丰富了，调试的基本思想仍然是“分析现象→假设错误原因→产生新的现象去验证假设”这样一个循环，根据现象如何假设错误原因，以及如何设计新的现象去验证假设，这都需要非常严密的分析和思考，如果因为手里有了强大的工具就滥用而忽略了分析过程，往往会治标不治本地修正Bug，导致一个错误现象消失了但Bug仍然存在，甚至是把程序越改越错。本章通过初学者易犯的几个错误实例来讲解如何使用 <strong class="command">gdb</strong> 调试程序，在每个实例后面总结一部分常用的 <strong class="command">gdb</strong> 命令。</p>
+<div class="section" id="id1">
+<h2>10.1. 单步执行和跟踪函数调用<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>看下面的程序：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">add_range</span><span class="p">(</span><span class="kt">int</span> <span class="n">low</span><span class="p">,</span> <span class="kt">int</span> <span class="n">high</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">sum</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">low</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">result</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+        <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+        <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;result[0]=%d</span><span class="se">\n</span><span class="s">result[1]=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">add_range</span></code> 函数从 <code class="docutils literal"><span class="pre">low</span></code> 加到 <code class="docutils literal"><span class="pre">high</span></code> ，在 <code class="docutils literal"><span class="pre">main</span></code> 函数中首先从1加到10，把结果保存下来，然后从1加到100，再把结果保存下来，最后打印的两个结果是:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">55</span>
+<span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">5105</span>
+</pre></div>
+</div>
+<p>第一个结果正确，第二个结果显然不正确 <a class="footnote-reference" href="#id3" id="id2">[1]</a> ，在小学我们就听说过高斯小时候的故事，从1加到100应该是5050。一段代码，第一次运行结果是对的，第二次运行却不对，这是很常见的一类错误现象，这种情况一方面要怀疑代码，另一方面更要怀疑数据：第一次和第二次运行的都是同一段代码，如果代码是错的，那第一次的结果为什么能对呢？所以很可能是第二次运行时相关的状态和数据错了，错误的数据导致了错误的结果。在动手调试之前，读者先试试只看代码能不能看出错误原因，只要前面几章学得扎实就应该能看出来。</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>如果你编译运行这个程序的环境和我的环境（Ubuntu 12.04 LTS 32位x86）不同，也许在你的机器上跑不出这个结果，那也没关系，重要的是学会本章介绍的思想方法。另外你也可以尝试修改程序，总有办法得到类似的结果，上例中故意定义了一个很大的数组 <code class="docutils literal"><span class="pre">result[1000]</span></code> ，修改数组的大小就会改变各局部变量的存储空间的位置，运行结果就可能会不同。</td></tr>
+</tbody>
+</table>
+<p>在编译时要加上 <code class="xref std std-option docutils literal"><span class="pre">-g</span></code> 选项，生成的可执行文件才能用 <strong class="command">gdb</strong> 进行源码级调试:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gcc -g main.c -o main
+$ gdb main
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;
+and &quot;show warranty&quot; for details.
+This GDB was configured as &quot;i686-linux-gnu&quot;.
+For bug reporting instructions, please see:
+&lt;http://bugs.launchpad.net/gdb-linaro/&gt;...
+Reading symbols from /home/akaedu/main...done.
+(gdb)
+</pre></div>
+</div>
+<p><code class="xref std std-option docutils literal"><span class="pre">-g</span></code> 选项的作用是在可执行文件中加入源文件的信息，即可执行文件 <code class="file docutils literal"><span class="pre">main</span></code> 中的第几条机器指令对应源文件 <code class="file docutils literal"><span class="pre">main.c</span></code> 的第几行，但并不是把整个源文件嵌入到可执行文件中，所以在调试时必须保证 <strong class="command">gdb</strong> 能找到源文件 <code class="file docutils literal"><span class="pre">main.c</span></code> 。 <strong class="command">gdb</strong> 提供一个类似Shell的命令行环境，上面的 <code class="docutils literal"><span class="pre">(gdb)</span></code> 就是提示符，在这个提示符下输入 <code class="docutils literal"><span class="pre">help</span></code> 可以查看命令的类别:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) help
+List of classes of commands:
+
+aliases -- Aliases of other commands
+breakpoints -- Making program stop at certain points
+data -- Examining data
+files -- Specifying and examining files
+internals -- Maintenance commands
+obscure -- Obscure features
+running -- Running the program
+stack -- Examining the stack
+status -- Status inquiries
+support -- Support facilities
+tracepoints -- Tracing of program execution without stopping the program
+user-defined -- User-defined commands
+
+Type &quot;help&quot; followed by a class name for a list of commands in that class.
+Type &quot;help all&quot; for the list of all commands.
+Type &quot;help&quot; followed by command name for full documentation.
+Type &quot;apropos word&quot; to search for commands related to &quot;word&quot;.
+Command name abbreviations are allowed if unambiguous.
+</pre></div>
+</div>
+<p>也可以进一步查看某一类别中有哪些命令，例如查看 <code class="docutils literal"><span class="pre">files</span></code> 类别下有哪些命令可用:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) help files
+Specifying and examining files.
+
+List of commands:
+
+add-symbol-file -- Load symbols from FILE
+add-symbol-file-from-memory -- Load the symbols out of memory from a dynamically loaded object file
+cd -- Set working directory to DIR for debugger and program being debugged
+core-file -- Use FILE as core dump for examining memory and registers
+directory -- Add directory DIR to beginning of search path for source files
+edit -- Edit specified file or function
+exec-file -- Use FILE as program for getting contents of pure memory
+file -- Use FILE as program to be debugged
+forward-search -- Search for regular expression (see regex(3)) from last line listed
+generate-core-file -- Save a core file with the current state of the debugged process
+list -- List specified function or line
+...
+</pre></div>
+</div>
+<p>现在试试用 <code class="docutils literal"><span class="pre">list</span></code> 命令从第一行开始列出源代码:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) list 1
+1    #include &lt;stdio.h&gt;
+2
+3    int add_range(int low, int high)
+4    {
+5            int i, sum;
+6            for (i = low; i &lt;= high; i++)
+7                    sum = sum + i;
+8            return sum;
+9    }
+10
+</pre></div>
+</div>
+<p>一次只列10行，如果要从第11行开始继续列源代码可以再输入一次:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) list
+</pre></div>
+</div>
+<p>也可以什么都不输直接敲回车， <strong class="command">gdb</strong> 提供了一个很方便的功能，在提示符下直接敲回车表示重复上一条命令:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) （直接回车）
+11   int main(void)
+12   {
+13           int result[1000];
+14           result[0] = add_range(1, 10);
+15           result[1] = add_range(1, 100);
+16           printf(&quot;result[0]=%d\nresult[1]=%d\n&quot;, result[0], result[1]);
+17           return 0;
+18   }
+</pre></div>
+</div>
+<p><strong class="command">gdb</strong> 的很多常用命令有简写形式，例如 <code class="docutils literal"><span class="pre">list</span></code> 命令可以写成 <code class="docutils literal"><span class="pre">l</span></code> ，要列一个函数的源代码也可以用函数名做参数:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) l add_range
+1    #include &lt;stdio.h&gt;
+2
+3    int add_range(int low, int high)
+4    {
+5            int i, sum;
+6            for (i = low; i &lt;= high; i++)
+7                    sum = sum + i;
+8            return sum;
+9    }
+10
+</pre></div>
+</div>
+<p>现在退出 <strong class="command">gdb</strong> 的环境:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) quit
+</pre></div>
+</div>
+<p>我们做一个实验，把源代码改名或移到别处再用 <strong class="command">gdb</strong> 调试，这样就列不出源代码了:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ mv main.c mian.c
+$ gdb main
+...
+(gdb) l
+5    main.c: No such file or directory.
+</pre></div>
+</div>
+<p>可见 <strong class="command">gcc</strong> 的 <code class="xref std std-option docutils literal"><span class="pre">-g</span></code> 选项并不是把源代码嵌入到可执行文件中，在调试时也需要源文件。现在把源代码恢复原样，我们继续调试。首先用 <code class="docutils literal"><span class="pre">start</span></code> 命令开始执行程序:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gdb main
+...
+(gdb) start
+Temporary breakpoint 1 at 0x8048415: file main.c, line 14.
+Starting program: /home/akaedu/main
+
+Temporary breakpoint 1, main () at main.c:14
+14           result[0] = add_range(1, 10);
+(gdb)
+</pre></div>
+</div>
+<p><strong class="command">gdb</strong> 停在 <code class="docutils literal"><span class="pre">main</span></code> 函数中变量定义之后的第一条语句处等待我们发命令（ <strong class="command">gdb</strong> 在提示符之前最后列出的语句总是“即将执行的下一条语句”）。我们可以用 <code class="docutils literal"><span class="pre">next</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">n</span></code> ）控制这些语句一条一条地执行:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) n
+15           result[1] = add_range(1, 100);
+(gdb) （直接回车）
+16           printf(&quot;result[0]=%d\nresult[1]=%d\n&quot;, result[0], result[1]);
+(gdb) （直接回车）
+result[0]=55
+result[1]=5105
+17           return 0;
+</pre></div>
+</div>
+<p>用 <code class="docutils literal"><span class="pre">n</span></code> 命令依次执行两行赋值语句和一行打印语句，在执行打印语句时结果立刻打出来了，然后停在 <code class="docutils literal"><span class="pre">return</span></code> 语句之前等待我们发命令。虽然我们完全控制了程序的执行，但仍然看不出哪里错了，因为错误不在 <code class="docutils literal"><span class="pre">main</span></code> 函数中而在 <code class="docutils literal"><span class="pre">add_range</span></code> 函数中，现在用 <code class="docutils literal"><span class="pre">start</span></code> 命令重新来过，这次用 <code class="docutils literal"><span class="pre">step</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">s</span></code> ）钻进 <code class="docutils literal"><span class="pre">add_range</span></code> 函数中去跟踪执行:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) start
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Temporary breakpoint 2 at 0x8048415: file main.c, line 14.
+Starting program: /home/akaedu/main
+
+Temporary breakpoint 2, main () at main.c:14
+14           result[0] = add_range(1, 10);
+(gdb) s
+add_range (low=1, high=10) at main.c:6
+6            for (i = low; i &lt;= high; i++)
+</pre></div>
+</div>
+<p>这次停在了 <code class="docutils literal"><span class="pre">add_range</span></code> 函数中变量定义之后的第一条语句处。在函数中有几种查看状态的办法， <code class="docutils literal"><span class="pre">backtrace</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">bt</span></code> ）可以查看函数调用的栈帧：</p>
+<p>(gdb) bt
+#0  add_range (low=1, high=10) at main.c:6
+#1  0x08048429 in main () at main.c:14</p>
+<p>可见当前的 <code class="docutils literal"><span class="pre">add_range</span></code> 函数是被 <code class="docutils literal"><span class="pre">main</span></code> 函数调用的， <code class="docutils literal"><span class="pre">main</span></code> 传进来的参数是 <code class="docutils literal"><span class="pre">low=1,</span> <span class="pre">high=10</span></code> 。 <code class="docutils literal"><span class="pre">main</span></code> 函数的栈帧编号为1， <code class="docutils literal"><span class="pre">add_range</span></code> 的栈帧编号为0。现在可以用 <code class="docutils literal"><span class="pre">info</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">i</span></code> ）查看 <code class="docutils literal"><span class="pre">add_range</span></code> 函数局部变量的值:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) i locals
+i = 0
+sum = 0
+</pre></div>
+</div>
+<p>如果想查看 <code class="docutils literal"><span class="pre">main</span></code> 函数当前局部变量的值也可以做到，先用 <code class="docutils literal"><span class="pre">frame</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">f</span></code> ）选择1号栈帧然后再查看局部变量:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) f 1
+#1  0x08048429 in main () at main.c:14
+14           result[0] = add_range(1, 10);
+(gdb) i locals
+result = {0 &lt;repeats 471 times&gt;, 1184572, 0 &lt;repeats 11 times&gt;, -1207961512, -1073746088, 1249268, -1073745624, 1142336,
+...
+</pre></div>
+</div>
+<p>注意到 <code class="docutils literal"><span class="pre">result</span></code> 数组中很多元素的值是杂乱无章的，我们知道未经初始化的局部变量具有不确定的值，到目前为止一切正常。用 <code class="docutils literal"><span class="pre">s</span></code> 或 <code class="docutils literal"><span class="pre">n</span></code> 往下走几步，然后用 <code class="docutils literal"><span class="pre">print</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">p</span></code> ）打印出变量 <code class="docutils literal"><span class="pre">sum</span></code> 的值:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) s
+7                    sum = sum + i;
+(gdb) （直接回车）
+6            for (i = low; i &lt;= high; i++)
+(gdb) （直接回车）
+7                    sum = sum + i;
+(gdb) （直接回车）
+6            for (i = low; i &lt;= high; i++)
+(gdb) p sum
+$1 = 3
+</pre></div>
+</div>
+<p>第一次循环 <code class="docutils literal"><span class="pre">i</span></code> 是1，第二次循环 <code class="docutils literal"><span class="pre">i</span></code> 是2，加起来是3，没错。这里的 <code class="docutils literal"><span class="pre">$1</span></code> 表示 <strong class="command">gdb</strong> 保存着这些中间结果，$后面的编号会自动增长，在命令中可以用 <code class="docutils literal"><span class="pre">$1</span></code> 、 <code class="docutils literal"><span class="pre">$2</span></code> 、 <code class="docutils literal"><span class="pre">$3</span></code> 等编号代替相应的值。由于我们本来就知道第一次调用的结果是正确的，再往下跟也没意义了，可以用 <code class="docutils literal"><span class="pre">finish</span></code> 命令让程序一直运行到从当前函数返回为止:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) finish
+Run till exit from #0  add_range (low=1, high=10) at main.c:6
+0x08048429 in main () at main.c:14
+14           result[0] = add_range(1, 10);
+Value returned is $2 = 55
+</pre></div>
+</div>
+<p>返回值是55，当前正准备执行赋值操作，用 <code class="docutils literal"><span class="pre">n</span></code> 命令执行赋值操作后查看 <code class="docutils literal"><span class="pre">result</span></code> 数组:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) n
+15           result[1] = add_range(1, 100);
+(gdb) p result
+$3 = {55, 0 &lt;repeats 470 times&gt;, 1184572, 0 &lt;repeats 11 times&gt;, -1207961512, -1073746088, 1249268, -1073745624, 1142336,
+...
+</pre></div>
+</div>
+<p>第一个值55确实赋给了 <code class="docutils literal"><span class="pre">result</span></code> 数组的第0个元素。下面用 <code class="docutils literal"><span class="pre">s</span></code> 命令进入第二次 <code class="docutils literal"><span class="pre">add_range</span></code> 调用，进入之后首先查看参数和局部变量:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) s
+add_range (low=1, high=100) at main.c:6
+6            for (i = low; i &lt;= high; i++)
+(gdb) bt
+#0  add_range (low=1, high=100) at main.c:6
+#1  0x08048441 in main () at main.c:15
+(gdb) i locals
+i = 11
+sum = 55
+</pre></div>
+</div>
+<p>由于局部变量 <code class="docutils literal"><span class="pre">i</span></code> 和 <code class="docutils literal"><span class="pre">sum</span></code> 没初始化，所以具有不确定的值，又由于两次调用是挨着的， <code class="docutils literal"><span class="pre">i</span></code> 和 <code class="docutils literal"><span class="pre">sum</span></code> 正好取了上次调用时的值，回顾一下我们讲过的 <a class="reference internal" href="func.html#func-verifylocals"><span>验证局部变量存储空间的分配和释放</span></a> 那个例子，其实和现在这个例子是一样的道理，只不过我这次举的例子设法让局部变量 <code class="docutils literal"><span class="pre">sum</span></code> 在第一次调用时初值为0而第二次调用时初值不为0。 <code class="docutils literal"><span class="pre">i</span></code> 的初值不确定倒没关系，在 <code class="docutils literal"><span class="pre">for</span></code> 循环中首先会把 <code class="docutils literal"><span class="pre">i</span></code> 赋值为 <code class="docutils literal"><span class="pre">low</span></code> ，但 <code class="docutils literal"><span class="pre">sum</span></code> 如果初值不是0，累加得到的结果就错了。好了，我们已经找到错误原因，可以退出 <strong class="command">gdb</strong> 修改源代码了。如果我们不想浪费这次调试机会，可以在 <strong class="command">gdb</strong> 中马上把 <code class="docutils literal"><span class="pre">sum</span></code> 的初值改为0继续运行，看看这一处改了之后还有没有别的Bug:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) set var sum=0
+(gdb) finish
+Run till exit from #0  add_range (low=1, high=100) at main.c:6
+0x08048441 in main () at main.c:15
+15           result[1] = add_range(1, 100);
+Value returned is $4 = 5050
+(gdb) n
+16           printf(&quot;result[0]=%d\nresult[1]=%d\n&quot;, result[0], result[1]);
+(gdb) （直接回车）
+result[0]=55
+result[1]=5050
+17           return 0;
+</pre></div>
+</div>
+<p>这样结果就对了。修改变量的值除了用 <code class="docutils literal"><span class="pre">set</span></code> 命令之外也可以用 <code class="docutils literal"><span class="pre">print</span></code> 命令，因为 <code class="docutils literal"><span class="pre">print</span></code> 命令后面跟的是表达式，而我们知道赋值和函数调用也都是表达式，所以也可以用 <code class="docutils literal"><span class="pre">print</span></code> 命令修改变量的值或者调用函数:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) p result[2]=33
+$5 = 33
+(gdb) p printf(&quot;result[2]=%d\n&quot;, result[2])
+result[2]=33
+$6 = 13
+</pre></div>
+</div>
+<p>我们讲过， <code class="docutils literal"><span class="pre">printf</span></code> 的返回值表示实际打印的字符数，所以 <code class="docutils literal"><span class="pre">$6</span></code> 的结果是13。最后总结一下本节用到的 <strong class="command">gdb</strong> 命令：</p>
+<table border="1" class="docutils" id="id9">
+<caption><span class="caption-text">gdb基本命令1</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">命令</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>backtrace（或bt）</td>
+<td>查看各级函数调用及参数</td>
+</tr>
+<tr class="row-odd"><td>finish</td>
+<td>连续运行到当前函数返回为止，然后停下来等待命令</td>
+</tr>
+<tr class="row-even"><td>frame（或f） 帧编号</td>
+<td>选择栈帧</td>
+</tr>
+<tr class="row-odd"><td>info（或i） locals</td>
+<td>查看当前栈帧局部变量的值</td>
+</tr>
+<tr class="row-even"><td>list（或l）</td>
+<td>列出源代码，接着上次的位置往下列，每次列10行</td>
+</tr>
+<tr class="row-odd"><td>list 行号</td>
+<td>列出从第几行开始的源代码</td>
+</tr>
+<tr class="row-even"><td>list 函数名</td>
+<td>列出某个函数的源代码</td>
+</tr>
+<tr class="row-odd"><td>next（或n）</td>
+<td>执行下一行语句</td>
+</tr>
+<tr class="row-even"><td>print（或p）</td>
+<td>打印表达式的值，通过表达式可以修改变量的值或者调用函数</td>
+</tr>
+<tr class="row-odd"><td>quit（或q）</td>
+<td>退出 <strong class="command">gdb</strong> 调试环境</td>
+</tr>
+<tr class="row-even"><td>set var</td>
+<td>修改变量的值</td>
+</tr>
+<tr class="row-odd"><td>start</td>
+<td>开始执行程序，停在 <code class="docutils literal"><span class="pre">main</span></code> 函数第一行语句前面等待命令</td>
+</tr>
+<tr class="row-even"><td>step（或s）</td>
+<td>执行下一行语句，如果有函数调用则进入到函数中</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">习题</p>
+<ol class="arabic simple">
+<li>用 <strong class="command">gdb</strong> 一步一步跟踪 <a class="reference internal" href="func2.html#func2-recurse"><span>递归</span></a> 讲的 <code class="docutils literal"><span class="pre">factorial</span></code> 函数，对照着 <a class="reference internal" href="func2.html#func2-factorial"><span>factorial(3)的调用过程</span></a> 查看各层栈帧的变化情况，练习本节所学的各种 <strong class="command">gdb</strong> 命令。</li>
+</ol>
+</div>
+<div class="section" id="gdb-breakpoint">
+<span id="id4"></span><h2>10.2. 断点<a class="headerlink" href="#gdb-breakpoint" title="Permalink to this headline">¶</a></h2>
+<p>看以下程序：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kt">char</span> <span class="n">input</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="n">input</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                        <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;input=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>这个程序的作用是：首先从键盘读入一串数字存到字符数组 <code class="docutils literal"><span class="pre">input</span></code> 中，然后转换成整型存到 <code class="docutils literal"><span class="pre">sum</span></code> 中，然后打印出来，一直这样循环下去。 <code class="docutils literal"><span class="pre">scanf(&quot;%s&quot;,</span> <span class="pre">input);</span></code> 这个调用的功能是等待用户输入一个字符串并回车， <code class="docutils literal"><span class="pre">scanf</span></code> 把其中第一段非空白（非空格、Tab、换行）的字符串保存到 <code class="docutils literal"><span class="pre">input</span></code> 数组中，并自动在末尾添加 <code class="docutils literal"><span class="pre">'\0'</span></code> 。接下来的循环从左到右扫描字符串并把每个数字累加到结果中，例如输入是 <code class="docutils literal"><span class="pre">&quot;2345&quot;</span></code> ，则循环累加的过程是(((0×10+2)×10+3)×10+4)×10+5=2345。注意字符型的 <code class="docutils literal"><span class="pre">'2'</span></code> 要减去 <code class="docutils literal"><span class="pre">'0'</span></code> 的ASCII码才能转换成整数值2。下面编译运行程序看看有什么问题:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gcc main.c -g -o main
+$ ./main
+123
+input=123
+234
+input=123234
+^C（按Ctrl-C退出程序）
+$
+</pre></div>
+</div>
+<p>又是这种现象，第一次是对的，第二次就不对。可是这个程序我们并没有忘了赋初值，不仅 <code class="docutils literal"><span class="pre">sum</span></code> 赋了初值，连不必赋初值的 <code class="docutils literal"><span class="pre">i</span></code> 都赋了初值。读者先试试只看代码能不能看出错误原因。下面来调试:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gdb main
+...
+(gdb) start
+Temporary breakpoint 1 at 0x804843d: file main.c, line 4.
+Starting program: /home/akaedu/main
+
+Temporary breakpoint 1, main () at main.c:4
+4    {
+(gdb) n
+5            int sum = 0, i = 0;
+</pre></div>
+</div>
+<p>有了上一次的经验， <code class="docutils literal"><span class="pre">sum</span></code> 被列为重点怀疑对象，我们可以用 <code class="docutils literal"><span class="pre">display</span></code> 命令使得每次停下来的时候都显示当前 <code class="docutils literal"><span class="pre">sum</span></code> 的值，然后继续往下走:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) display sum
+1: sum = 1466933
+(gdb) n
+9                    scanf(&quot;%s&quot;, input);
+1: sum = 0
+(gdb)
+123
+10                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+1: sum = 0
+</pre></div>
+</div>
+<p id="index-0"><code class="docutils literal"><span class="pre">undisplay</span></code> 命令可以取消跟踪显示，变量 <code class="docutils literal"><span class="pre">sum</span></code> 的编号是1，可以用 <code class="docutils literal"><span class="pre">undisplay</span> <span class="pre">1</span></code> 命令取消它的跟踪显示。这个循环应该没有问题，因为上面第一次输入时打印的结果是正确的。如果不想一步一步走这个循环，可以用 <code class="docutils literal"><span class="pre">break</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">b</span></code> ）在第9行设一个断点（Breakpoint）:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) l
+5            int sum = 0, i = 0;
+6            char input[5];
+7
+8            while (1) {
+9                    scanf(&quot;%s&quot;, input);
+10                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+11                           sum = sum*10 + input[i] - &#39;0&#39;;
+12                   printf(&quot;input=%d\n&quot;, sum);
+13           }
+14           return 0;
+(gdb) b 9
+Breakpoint 2 at 0x8048459: file main.c, line 9.
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">break</span></code> 命令的参数也可以是函数名，表示在某个函数开头设断点。现在用 <code class="docutils literal"><span class="pre">continue</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">c</span></code> ）连续运行而非单步运行，程序到达断点会自动停下来，这样就可以停在下一次循环的开头:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) c
+Continuing.
+input=123
+
+Breakpoint 2, main () at main.c:9
+9                    scanf(&quot;%s&quot;, input);
+1: sum = 123
+</pre></div>
+</div>
+<p>然后输入新的字符串准备转换:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) n
+234
+10                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+1: sum = 123
+</pre></div>
+</div>
+<p>问题暴露出来了，新的转换应该再次从0开始累加，而 <code class="docutils literal"><span class="pre">sum</span></code> 现在已经是123了，原因在于新的循环没有把 <code class="docutils literal"><span class="pre">sum</span></code> 归零。可见断点有助于快速跳过没有问题的代码，然后在有问题的代码上慢慢走慢慢分析，“断点加单步”是使用调试器的基本方法。至于应该在哪里设置断点，怎么知道哪些代码可以跳过而哪些代码要慢慢走，也要通过对错误现象的分析和假设来确定，以前我们用 <code class="docutils literal"><span class="pre">printf</span></code> 打印中间结果时也要分析应该在哪里插入 <code class="docutils literal"><span class="pre">printf</span></code> ，打印哪些中间结果，调试的基本思路是一样的。一次调试可以设置多个断点，用 <code class="docutils literal"><span class="pre">info</span></code> 命令可以查看已经设置的断点:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) b 12
+Breakpoint 3 at 0x80484b2: file main.c, line 12.
+(gdb) i breakpoints
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x08048459 in main at main.c:9
+        breakpoint already hit 1 time
+3       breakpoint     keep y   0x080484b2 in main at main.c:12
+</pre></div>
+</div>
+<p>每个断点都有一个编号，可以用编号指定删除某个断点:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) delete breakpoints 2
+(gdb) i breakpoints
+Num     Type           Disp Enb Address    What
+3       breakpoint     keep y   0x080484b2 in main at main.c:12
+</pre></div>
+</div>
+<p>有时候一个断点暂时不用可以禁用掉而不必删除，这样以后想用的时候可以直接启用，而不必重新从代码里找应该在哪一行设断点:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) disable breakpoints 3
+(gdb) i breakpoints
+Num     Type           Disp Enb Address    What
+3       breakpoint     keep n   0x080484b2 in main at main.c:12
+(gdb) enable 3
+(gdb) i breakpoints
+Num     Type           Disp Enb Address    What
+3       breakpoint     keep y   0x080484b2 in main at main.c:12
+(gdb) delete  breakpoints
+Delete all breakpoints? (y or n) y
+(gdb) i breakpoints
+No breakpoints or watchpoints.
+</pre></div>
+</div>
+<p><strong class="command">gdb</strong> 的断点功能非常灵活，还可以设置断点在满足某个条件时才激活，例如我们仍然在循环开头设置断点，但是仅当 <code class="docutils literal"><span class="pre">sum</span></code> 不等于0时才中断，然后用 <code class="docutils literal"><span class="pre">run</span></code> 命令（简写为 <code class="docutils literal"><span class="pre">r</span></code> ）重新从程序开头连续运行:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) break 9 if sum != 0
+Breakpoint 4 at 0x8048459: file main.c, line 9.
+(gdb) i breakpoints
+Num     Type           Disp Enb Address    What
+4       breakpoint     keep y   0x08048459 in main at main.c:9
+        stop only if sum != 0
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/akaedu/main
+123
+input=123
+
+Breakpoint 4, main () at main.c:9
+9                    scanf(&quot;%s&quot;, input);
+1: sum = 123
+</pre></div>
+</div>
+<p>结果是第一次执行 <code class="docutils literal"><span class="pre">scanf</span></code> 之前没有中断，第二次却中断了。总结一下本节用到的 <strong class="command">gdb</strong> 命令：</p>
+<table border="1" class="docutils" id="id10">
+<caption><span class="caption-text">gdb基本命令2</span><a class="headerlink" href="#id10" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">命令</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>break（或b） 行号</td>
+<td>在某一行设置断点</td>
+</tr>
+<tr class="row-odd"><td>break 函数名</td>
+<td>在某个函数开头设置断点</td>
+</tr>
+<tr class="row-even"><td>break ... if ...</td>
+<td>设置条件断点</td>
+</tr>
+<tr class="row-odd"><td>continue（或c）</td>
+<td>从当前位置开始连续运行程序</td>
+</tr>
+<tr class="row-even"><td>delete breakpoints 断点号</td>
+<td>删除断点</td>
+</tr>
+<tr class="row-odd"><td>display 变量名</td>
+<td>跟踪查看某个变量，每次停下来都显示它的值</td>
+</tr>
+<tr class="row-even"><td>disable breakpoints 断点号</td>
+<td>禁用断点</td>
+</tr>
+<tr class="row-odd"><td>enable 断点号</td>
+<td>启用断点</td>
+</tr>
+<tr class="row-even"><td>info（或i） breakpoints</td>
+<td>查看当前设置了哪些断点</td>
+</tr>
+<tr class="row-odd"><td>run（或r）</td>
+<td>从头开始连续运行程序</td>
+</tr>
+<tr class="row-even"><td>undisplay 跟踪显示号</td>
+<td>取消跟踪显示</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">习题</p>
+<ol class="arabic">
+<li><p class="first">看下面的程序：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+        <span class="kt">char</span> <span class="n">str</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;hello&quot;</span><span class="p">;</span>
+        <span class="kt">char</span> <span class="n">reverse_str</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">reverse_str</span><span class="p">[</span><span class="mi">5</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">str</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">reverse_str</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>首先用字符串 <code class="docutils literal"><span class="pre">&quot;hello&quot;</span></code> 初始化一个字符数组 <code class="docutils literal"><span class="pre">str</span></code> （算上 <code class="docutils literal"><span class="pre">'\0'</span></code> 共6个字符）。然后用空字符串 <code class="docutils literal"><span class="pre">&quot;&quot;</span></code> 初始化一个同样长的字符数组 <code class="docutils literal"><span class="pre">reverse_str</span></code> ，相当于所有元素用 <code class="docutils literal"><span class="pre">'\0'</span></code> 初始化。然后打印 <code class="docutils literal"><span class="pre">str</span></code> ，把 <code class="docutils literal"><span class="pre">str</span></code> 倒序存入 <code class="docutils literal"><span class="pre">reverse_str</span></code> ，再打印 <code class="docutils literal"><span class="pre">reverse_str</span></code> 。然而结果并不正确:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./main
+hello
+</pre></div>
+</div>
+<p>我们本来希望 <code class="docutils literal"><span class="pre">reverse_str</span></code> 打印出来是 <code class="docutils literal"><span class="pre">olleh</span></code> ，结果打出来一个空行。重点怀疑对象肯定是循环，那么简单验算一下， <code class="docutils literal"><span class="pre">i=0</span></code> 时， <code class="docutils literal"><span class="pre">reverse_str[5]=str[0]</span></code> ，也就是 <code class="docutils literal"><span class="pre">'h'</span></code> ， <code class="docutils literal"><span class="pre">i=1</span></code> 时， <code class="docutils literal"><span class="pre">reverse_str[4]=str[1]</span></code> ，也就是 <code class="docutils literal"><span class="pre">'e'</span></code> ，依此类推，i=0,1,2,3,4，共5次循环，正好把h,e,l,l,o五个字母给倒过来了，哪里不对了？请用 <strong class="command">gdb</strong> 跟踪循环，找出错误原因并改正。</p>
+</li>
+</ol>
+</div>
+<div class="section" id="id5">
+<h2>10.3. 观察点<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>继续修改上一节的程序。经过调试我们得出结论，对于这个程序来说， <code class="docutils literal"><span class="pre">sum</span></code> 赋不赋初值不重要，重要的是在 <code class="docutils literal"><span class="pre">while</span> <span class="pre">(1)</span></code> 循环体的开头加上 <code class="docutils literal"><span class="pre">sum</span> <span class="pre">=</span> <span class="pre">0;</span></code> ，这才能保证每次循环从0开始累加。我们把程序改成这样：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+<span class="kt">char</span> <span class="n">input</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="n">input</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                        <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;input=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>在这里我故意把 <code class="docutils literal"><span class="pre">sum</span></code> 、 <code class="docutils literal"><span class="pre">i</span></code> 、 <code class="docutils literal"><span class="pre">input</span></code> 定义成全局变量， <code class="docutils literal"><span class="pre">sum</span></code> 赋初值而 <code class="docutils literal"><span class="pre">i</span></code> 和 <code class="docutils literal"><span class="pre">input</span></code> 不赋初值，这是为了比较容易产生本节要讲的错误现象。还是那句话，如果你的运行环境和我不同，在你机器上可能跑不出书上说的结果。你可以先看书，在理解了基本原理之后自己改改程序看能不能跑出类似的结果：变量定义在全局还是局部作用域，在定义时是否初赋了初值，这些都会影响变量所占的存储空间的位置，从而影响本程序的运行结果。</p>
+<p>使用 <code class="docutils literal"><span class="pre">scanf</span></code> 函数是非常凶险的，即使修正了上一节的Bug也还存在很多问题。如果输入的字符串超长了会怎么样？我们知道数组访问越界是不会被检查的，所以 <code class="docutils literal"><span class="pre">scanf</span></code> 会把 <code class="docutils literal"><span class="pre">input</span></code> 数组写越界。现象是这样的:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./main
+1234
+input=1234
+1234567
+input=1234567
+12345678
+input=123456740
+</pre></div>
+</div>
+<p>输入1234567其实已经访问越界了，但程序还能给出正确结果。而输入12345678时程序给出一个非常诡异的结果，下面我们用调试器看看这个诡异的结果是怎么出来的:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gdb main
+...
+(gdb) start
+Temporary breakpoint 1 at 0x804843d: file main.c, line 9.
+Starting program: /home/akaedu/main
+
+Temporary breakpoint 1, main () at main.c:9
+9                    sum = 0;
+(gdb) n
+10                   scanf(&quot;%s&quot;, input);
+(gdb) （直接回车）
+12345678
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+(gdb) p input
+$1 = &quot;12345&quot;
+</pre></div>
+</div>
+<p>在这里 <strong class="command">gdb</strong> 知道 <code class="docutils literal"><span class="pre">input</span></code> 数组的长度是5，所以用 <code class="docutils literal"><span class="pre">p</span></code> 命令查看时只显示5个字符。我们换一种办法查看就可以看到其实已经写越界了:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) p printf(&quot;%x %x %x %x %x %x %x %x %x\n&quot;, input[0], input[1], input[2], input[3], input[4], input[5], input[6], input[7], input[8])
+31 32 33 34 35 36 37 38 0
+$2 = 26
+</pre></div>
+</div>
+<p>这条命令从 <code class="docutils literal"><span class="pre">input</span></code> 数组的第一个字节开始连续打印9个字节，打印的正是 <code class="docutils literal"><span class="pre">'1'</span></code> 到 <code class="docutils literal"><span class="pre">'8'</span></code> 的十六进制ASCII码，还有一个 <code class="docutils literal"><span class="pre">'\0'</span></code> ，所以 <code class="docutils literal"><span class="pre">scanf</span></code> 实际上写越界了四个字符：<code class="docutils literal"><span class="pre">'6'</span></code> 、 <code class="docutils literal"><span class="pre">'7'</span></code> 、 <code class="docutils literal"><span class="pre">'8'</span></code> 、 <code class="docutils literal"><span class="pre">'\0'</span></code> 。 <code class="docutils literal"><span class="pre">printf</span></code> 的转换说明 <code class="docutils literal"><span class="pre">%x</span></code> 表示按16进制打印。</p>
+<p>根据运行结果“123456740”，用户输入的前7个字符转成数字都没错，第8个错了，也就是 <code class="docutils literal"><span class="pre">i</span></code> 从0到6的循环都没错，我们设一个条件断点从 <code class="docutils literal"><span class="pre">i</span></code> 等于7开始单步调试:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) l
+6    int main(void)
+7    {
+8            while (1) {
+9                    sum = 0;
+10                   scanf(&quot;%s&quot;, input);
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+12                           sum = sum*10 + input[i] - &#39;0&#39;;
+13                   printf(&quot;input=%d\n&quot;, sum);
+14           }
+15           return 0;
+(gdb) b 12 if i == 7
+Breakpoint 2 at 0x8048468: file main.c, line 12.
+(gdb) c
+Continuing.
+
+Breakpoint 2, main () at main.c:12
+12                           sum = sum*10 + input[i] - &#39;0&#39;;
+(gdb) p sum
+$3 = 1234567
+</pre></div>
+</div>
+<p>现在 <code class="docutils literal"><span class="pre">sum</span></code> 是1234567没错，我们推测即将进行的下一步计算肯定要出错，调试的结果出乎意料，下一步计算并没有出错:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) p input[i]
+$4 = 56 &#39;8&#39;
+(gdb) n
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+(gdb) p sum
+$5 = 12345678
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">input[i]</span></code> 是 <code class="docutils literal"><span class="pre">'8'</span></code> ，减去 <code class="docutils literal"><span class="pre">'0'</span></code> 等于8，把 <code class="docutils literal"><span class="pre">sum</span></code> 的当前值1234567乘以10再加上8，确实得到了12345678。那为什么打印的结果却不是这一步算出的12345678呢？只有一个解释：这一步计算之后并没有跳出循环去执行 <code class="docutils literal"><span class="pre">printf</span></code> ，而是继续下一轮循环:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) n
+12                           sum = sum*10 + input[i] - &#39;0&#39;;
+(gdb) p i
+$6 = 8
+(gdb) p input[i]
+$7 = 8 &#39;\b&#39;
+(gdb) n
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+(gdb) p sum
+$8 = 123456740
+(gdb) n
+13                   printf(&quot;input=%d\n&quot;, sum);
+(gdb) p i
+$9 = 9
+(gdb) p input[9]
+$10 = 0 &#39;\000&#39;
+</pre></div>
+</div>
+<p>先前我们明明打印出 <code class="docutils literal"><span class="pre">input[8]</span></code> 是 <code class="docutils literal"><span class="pre">'\0'</span></code> ，什么时候变成 <code class="docutils literal"><span class="pre">'\b'</span></code> 的呢？这一变，循环的控制条件 <code class="docutils literal"><span class="pre">input[8]</span> <span class="pre">!=</span> <span class="pre">'\0'</span></code> 又得到满足了，原本应该跳出循环的，现在又进循环了，把sum累加成了12345678*10 + &#8216;b&#8217; - &#8216;0&#8217; = 123456740 （ <code class="docutils literal"><span class="pre">'\b'</span></code> 的ASCII码是8， <code class="docutils literal"><span class="pre">'0'</span></code> 的ASCII码是48）。然后 <code class="docutils literal"><span class="pre">input[9]</span></code> 确实是0，跳出循环，打印，终于得出了那个诡异的结果！</p>
+<p>现在我们要弄清楚 <code class="docutils literal"><span class="pre">input[8]</span></code> 到底是什么时候变的，可以用观察点（Watchpoint）来跟踪。我们知道断点是当程序执行到某一代码行时中断，而观察点是当程序访问某个存储单元时中断。如果我们不知道某个存储单元是被哪一行代码改动的，观察点就非常有用了。下面删除原来设的断点，从头执行程序，重复上次的输入，用 <code class="docutils literal"><span class="pre">watch</span></code> 命令设置观察点，跟踪 <code class="docutils literal"><span class="pre">input[8]</span></code> 的存储单元:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) delete breakpoints
+Delete all breakpoints? (y or n) y
+(gdb) start
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Temporary breakpoint 3 at 0x804843d: file main.c, line 9.
+Starting program: /home/akaedu/main
+
+Temporary breakpoint 3, main () at main.c:9
+9                    sum = 0;
+(gdb) n
+10                   scanf(&quot;%s&quot;, input);
+(gdb) （直接回车）
+12345678
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+(gdb) watch input[8]
+Hardware watchpoint 4: input[8]
+(gdb) i watchpoints
+Num     Type           Disp Enb Address    What
+4       hw watchpoint  keep y              input[8]
+(gdb) c
+Continuing.
+Hardware watchpoint 4: input[8]
+
+Old value = 0 &#39;\000&#39;
+New value = 1 &#39;\001&#39;
+0x0804849f in main () at main.c:11
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+(gdb) c
+Continuing.
+Hardware watchpoint 4: input[8]
+
+Old value = 1 &#39;\001&#39;
+New value = 2 &#39;\002&#39;
+0x0804849f in main () at main.c:11
+11                   for (i = 0; input[i] != &#39;\0&#39;; i++)
+</pre></div>
+</div>
+<p>已经很明显了，每次都是回到 <code class="docutils literal"><span class="pre">for</span></code> 循环开头的时候改变了 <code class="docutils literal"><span class="pre">input[8]</span></code> 的值，而且是每次加1－－这不就是循环变量 <code class="docutils literal"><span class="pre">i</span></code> 么？原来循环变量 <code class="docutils literal"><span class="pre">i</span></code> 就位于 <code class="docutils literal"><span class="pre">input[8]</span></code> 的位置。 <code class="docutils literal"><span class="pre">input[5]</span></code> 、 <code class="docutils literal"><span class="pre">input[6]</span></code> 、 <code class="docutils literal"><span class="pre">input[7]</span></code> 虽然也是访问越界，但还不算严重，反正也没有别的变量占用这块存储空间，而 <code class="docutils literal"><span class="pre">input[8]</span></code> 这个访问越界就严重了，直接访问到变量 <code class="docutils literal"><span class="pre">i</span></code> 的头上了。其实用 <code class="docutils literal"><span class="pre">x</span></code> 命令可以清楚地看到这一点，只不过为了防止“剧透”我一开始没有这么做:</p>
+<div class="highlight-python"><div class="highlight"><pre>(gdb) x/12bx input
+0x804a024 &lt;input&gt;:   0x31    0x32    0x33    0x34    0x35    0x36    0x37    0x38
+0x804a02c &lt;i&gt;:       0x02    0x00    0x00    0x00
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">x</span></code> 命令打印指定的存储单元里保存的内容，后缀 <code class="docutils literal"><span class="pre">8bx</span></code> 是打印格式，12表示打印12组，b表示每个字节一组，x表示按十六进制格式打印 <a class="footnote-reference" href="#id7" id="id6">[2]</a> ，我们可以看到在 <code class="docutils literal"><span class="pre">input</span></code> 的存储单元的起始位置加8个字节处正是变量 <code class="docutils literal"><span class="pre">i</span></code> 的存储单元。</p>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[2]</a></td><td>打印结果最左边的一长串数字是内存地址，在 <a class="reference internal" href="arch.html#arch-memaddr"><span>内存与地址</span></a> 详细解释，目前可以无视。</td></tr>
+</tbody>
+</table>
+<p>修正这个Bug对初学者来说有一定难度。如果你发现了这个Bug却没想到数组访问越界这一点，也许一时想不出原因，就会先去处理另外一个更容易修正的Bug：如果输入的不是数字而是字母或别的符号也能算出结果来，这显然是不对的，可以在循环中加上判断条件检查非法字符。</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="n">input</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="sc">&#39;0&#39;</span> <span class="o">||</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="sc">&#39;9&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Invalid input!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+                        <span class="n">sum</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                        <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;input=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>然后你会惊喜地发现，不仅输入字母会报错，输入超长也会报错:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./main
+123a
+Invalid input!
+input=-1
+dead
+Invalid input!
+input=-1
+1234578
+Invalid input!
+input=-1
+1234567890abcdef
+Invalid input!
+input=-1
+23
+input=23
+</pre></div>
+</div>
+<p>似乎是两个Bug一起解决掉了，但这是治标不治本的解决方法。看起来输入超长的错误是不出现了，但只要没有找到根本原因就不可能真的解决掉，等到条件一变，它可能又冒出来了，在下一节你会看到它又以一种新的形式冒出来了。现在请思考一下为什么加上检查非法字符的代码之后输入超长也会报错。</p>
+<p>最后总结一下本节用到的 <strong class="command">gdb</strong> 命令：</p>
+<table border="1" class="docutils" id="id11">
+<caption><span class="caption-text">gdb基本命令3</span><a class="headerlink" href="#id11" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">命令</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>watch</td>
+<td>设置观察点</td>
+</tr>
+<tr class="row-odd"><td>info（或i） watchpoints</td>
+<td>查看当前设置了哪些观察点</td>
+</tr>
+<tr class="row-even"><td>x</td>
+<td>从某个位置开始打印存储单元的内容，全部当成字节来看，而不区分哪个字节属于哪个变量</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="gdb-segfault">
+<span id="id8"></span><h2>10.4. 程序崩溃<a class="headerlink" href="#gdb-segfault" title="Permalink to this headline">¶</a></h2>
+<p>如果程序运行时出现段错误，用 <strong class="command">gdb</strong> 可以很容易定位到究竟是哪一行引发的段错误，例如这个小程序：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">man</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="n">man</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>调试过程如下:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gdb main
+...
+
+(gdb) r
+Starting program: /home/akaedu/main
+123
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00180a93 in _IO_vfscanf () from /lib/i386-linux-gnu/libc.so.6
+(gdb) bt
+#0  0x00180a93 in _IO_vfscanf () from /lib/i386-linux-gnu/libc.so.6
+#1  0x0018747b in __isoc99_scanf () from /lib/i386-linux-gnu/libc.so.6
+#2  0x0804842a in main () at main.c:6
+</pre></div>
+</div>
+<p>在 <strong class="command">gdb</strong> 中运行，遇到段错误会自动停下来，这时可以用命令查看当前执行到哪一行代码了。 <strong class="command">gdb</strong> 显示段错误出现在 <code class="docutils literal"><span class="pre">_IO_vfscanf</span></code> 函数中，用 <code class="docutils literal"><span class="pre">bt</span></code> 命令可以看到这个函数是被 <code class="docutils literal"><span class="pre">main.c</span></code> 的第6行间接调用的，也就是 <code class="docutils literal"><span class="pre">scanf</span></code> 这行代码引发的段错误。仔细观察程序发现是 <code class="docutils literal"><span class="pre">man</span></code> 前面少了个&amp;。</p>
+<p>继续调试上一节的程序，上一节最后提出修正Bug的方法是在循环中加上判断条件，如果不是数字就报错退出，结果是不仅输入非法字符可以报错退出，输入超长的字符串也会报错退出。表面上看这个程序无论怎么运行都不出错了，但假如我们把 <code class="docutils literal"><span class="pre">while</span> <span class="pre">(1)</span></code> 循环去掉，每次执行程序只转换一个数：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kt">char</span> <span class="n">input</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+
+        <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="n">input</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="sc">&#39;0&#39;</span> <span class="o">||</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="sc">&#39;9&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Invalid input!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+                        <span class="n">sum</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                        <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;input=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sum</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>然后输入一个超长的字符串，看看会发生什么:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./main
+12345678
+input=12345678
+*** stack smashing detected ***: ./main terminated
+======= Backtrace: =========
+/lib/i386-linux-gnu/libc.so.6(__fortify_fail+0x45)[0xf4cdd5]
+/lib/i386-linux-gnu/libc.so.6(+0xffd8a)[0xf4cd8a]
+./main[0x8048592]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3)[0xe664d3]
+./main[0x8048421]
+======= Memory map: ========
+00138000-00158000 r-xp 00000000 08:01 394133     /lib/i386-linux-gnu/ld-2.15.so
+00158000-00159000 r--p 0001f000 08:01 394133     /lib/i386-linux-gnu/ld-2.15.so
+00159000-0015a000 rw-p 00020000 08:01 394133     /lib/i386-linux-gnu/ld-2.15.so
+00c97000-00c98000 r-xp 00000000 00:00 0          [vdso]
+00e0f000-00e2b000 r-xp 00000000 08:01 394174     /lib/i386-linux-gnu/libgcc_s.so.1
+00e2b000-00e2c000 r--p 0001b000 08:01 394174     /lib/i386-linux-gnu/libgcc_s.so.1
+00e2c000-00e2d000 rw-p 0001c000 08:01 394174     /lib/i386-linux-gnu/libgcc_s.so.1
+00e4d000-00fec000 r-xp 00000000 08:01 394153     /lib/i386-linux-gnu/libc-2.15.so
+00fec000-00fee000 r--p 0019f000 08:01 394153     /lib/i386-linux-gnu/libc-2.15.so
+00fee000-00fef000 rw-p 001a1000 08:01 394153     /lib/i386-linux-gnu/libc-2.15.so
+00fef000-00ff2000 rw-p 00000000 00:00 0
+08048000-08049000 r-xp 00000000 08:01 439349     /home/akaedu/main
+08049000-0804a000 r--p 00000000 08:01 439349     /home/akaedu/main
+0804a000-0804b000 rw-p 00001000 08:01 439349     /home/akaedu/main
+09c65000-09c86000 rw-p 00000000 00:00 0          [heap]
+b7780000-b7781000 rw-p 00000000 00:00 0
+b778e000-b7793000 rw-p 00000000 00:00 0
+bfb0c000-bfb2d000 rw-p 00000000 00:00 0          [stack]
+Aborted (core dumped)
+</pre></div>
+</div>
+<p>我们输入12345678，计算结果12345678都打印完了，却在最后爆出整整一屏错误信息。准确地说这是另外一种形式的程序崩溃而不是段错误，不过我们可以按同样的方法用 <strong class="command">gdb</strong> 调试看看:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gdb main
+...
+(gdb) r
+Starting program: /home/akaedu/main
+12345678
+input=12345678
+*** stack smashing detected ***: /home/akaedu/main terminated
+======= Backtrace: =========
+/lib/i386-linux-gnu/libc.so.6(__fortify_fail+0x45)[0x232dd5]
+/lib/i386-linux-gnu/libc.so.6(+0xffd8a)[0x232d8a]
+/home/akaedu/main[0x8048592]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3)[0x14c4d3]
+/home/akaedu/main[0x8048421]
+======= Memory map: ========
+00110000-00130000 r-xp 00000000 08:01 394133     /lib/i386-linux-gnu/ld-2.15.so
+00130000-00131000 r--p 0001f000 08:01 394133     /lib/i386-linux-gnu/ld-2.15.so
+00131000-00132000 rw-p 00020000 08:01 394133     /lib/i386-linux-gnu/ld-2.15.so
+00132000-00133000 r-xp 00000000 00:00 0          [vdso]
+00133000-002d2000 r-xp 00000000 08:01 394153     /lib/i386-linux-gnu/libc-2.15.so
+002d2000-002d4000 r--p 0019f000 08:01 394153     /lib/i386-linux-gnu/libc-2.15.so
+002d4000-002d5000 rw-p 001a1000 08:01 394153     /lib/i386-linux-gnu/libc-2.15.so
+002d5000-002d8000 rw-p 00000000 00:00 0
+002d8000-002f4000 r-xp 00000000 08:01 394174     /lib/i386-linux-gnu/libgcc_s.so.1
+002f4000-002f5000 r--p 0001b000 08:01 394174     /lib/i386-linux-gnu/libgcc_s.so.1
+002f5000-002f6000 rw-p 0001c000 08:01 394174     /lib/i386-linux-gnu/libgcc_s.so.1
+08048000-08049000 r-xp 00000000 08:01 439349     /home/akaedu/main
+08049000-0804a000 r--p 00000000 08:01 439349     /home/akaedu/main
+0804a000-0804b000 rw-p 00001000 08:01 439349     /home/akaedu/main
+0804b000-0806c000 rw-p 00000000 00:00 0          [heap]
+b7fed000-b7fee000 rw-p 00000000 00:00 0
+b7ffb000-b8000000 rw-p 00000000 00:00 0
+bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]
+
+Program received signal SIGABRT, Aborted.
+0x00132416 in __kernel_vsyscall ()
+(gdb) bt
+#0  0x00132416 in __kernel_vsyscall ()
+#1  0x001611ef in raise () from /lib/i386-linux-gnu/libc.so.6
+#2  0x00164835 in abort () from /lib/i386-linux-gnu/libc.so.6
+#3  0x0019c2fa in ?? () from /lib/i386-linux-gnu/libc.so.6
+#4  0x00232dd5 in __fortify_fail () from /lib/i386-linux-gnu/libc.so.6
+#5  0x00232d8a in __stack_chk_fail () from /lib/i386-linux-gnu/libc.so.6
+#6  0x08048592 in main () at main.c:20
+</pre></div>
+</div>
+<p><strong class="command">gdb</strong> 指出，错误发生在第20行。可是这一行什么都没有啊，只有表示 <code class="docutils literal"><span class="pre">main</span></code> 函数结束的}括号。这可以算是一条规律， <strong>如果某个函数的局部变量发生访问越界，有可能并不立即产生段错误，而是在函数返回时产生段错误</strong> 。</p>
+<p>想要写出Bug-free的程序是非常不容易的，即使 <code class="docutils literal"><span class="pre">scanf</span></code> 读入字符串这么一个简单的函数调用都会隐藏着各种各样的错误。有些错误现象是我们暂时没法解释的，在后续章节中都会解释清楚。其实现在讲 <code class="docutils literal"><span class="pre">scanf</span></code> 这个函数为时过早，读者还不具备充足的基础知识，而且这个函数的用法也确实是相当复杂，要用得准确无误是挺难的，本书将在 <a class="reference internal" href="stdlib.html#stdlib-formattedio"><span>格式化I/O函数</span></a> 详细解释这个函数。现在早早地引入这个函数是为了让读者可以早早地开始写有用的程序，毕竟，一个只能输出（ <code class="docutils literal"><span class="pre">printf</span></code> ）而不能输入（ <code class="docutils literal"><span class="pre">scanf</span></code> ）的程序算不上什么有用的程序。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">10. gdb</a><ul>
+<li><a class="reference internal" href="#id1">10.1. 单步执行和跟踪函数调用</a></li>
+<li><a class="reference internal" href="#gdb-breakpoint">10.2. 断点</a></li>
+<li><a class="reference internal" href="#id5">10.3. 观察点</a></li>
+<li><a class="reference internal" href="#gdb-segfault">10.4. 程序崩溃</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="codingstyle.html"
+                        title="previous chapter">9. 编码风格</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sortsearch.html"
+                        title="next chapter">11. 排序与查找</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/zh/gdb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><table border=0 cellspacing=0 style="color: white;">
+<script type="text/javascript">
+  //<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34437927-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  //]]>
+</script>
+<tr><td>
+   请输入您的email订阅<a href="http://groups.google.com/group/learning-linux-c-cpp">本书的邮件列表</a><br/>
+   (Please enter your email to subscribe to <a href="http://groups.google.com/group/learning-linux-c-cpp">this book's mailing list</a>)<br/>
+   <form action="http://groups.google.com/group/learning-linux-c-cpp/boxsubscribe"><input type=text name=email><input type=submit name="sub" value="订阅(Subscribe)"></form>
+</td></tr>
+
+<tr><td><br/>关注<a href="http://weibo.com/sansoong">我的微博</a></td></tr>
+
+<tr><td><br/>Checkout the source from github: <a href="https://github.com/learning-linux-c-cpp/akabook">https://github.com/learning-linux-c-cpp/akabook</a></td></tr>
+
+<tr><td>
+   <br/>感谢您的慷慨捐赠！<br/>
+   Thanks for your generous donation!<br/>
+   <a href="http://me.alipay.com/songjinshan" target="_blank"><img src="/akabook/_static/me.alipay.png" alt="捐赠"></a>
+</td></tr>
+</table>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sortsearch.html" title="11. 排序与查找"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="codingstyle.html" title="9. 编码风格"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >中文版：Linux C/C++编程一站式学习</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Sean Soong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

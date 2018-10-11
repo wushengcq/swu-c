@@ -1,0 +1,737 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Basics &mdash; akabook 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="akabook 3.0 documentation" href="../index.html" />
+    <link rel="up" title="English Version: Learning Linux C/C++ Programming from Scratch" href="index.html" />
+    <link rel="next" title="2. Class and Object-oriented Methodology" href="cppoo.html" />
+    <link rel="prev" title="Preface" href="preface.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cppoo.html" title="2. Class and Object-oriented Methodology"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="preface.html" title="Preface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">English Version: Learning Linux C/C++ Programming from Scratch</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="basics">
+<h1>1. Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h1>
+<p>C++ evolves from C, incorporating software engineering practice and borrowing object-oriented methodology from other languages, while keeping fully compatible with the syntax of C. In other words, a C program can definitely be compiled by a C++ compiler, although it misses all the new features of C++. This tutorial assumes readers already have solid knowledge of Linux C programming. Then you can easily upgrade your skills to C++. This tutorial illustrates what new features are introduced to C, why they are invented, and how to use them the right way. Although it&#8217;s quick and short, it covers all the most frequently used features of C++.</p>
+<p>Not only does C++ share the same basic syntax with C, its underlying mechanisms, such as storage class, dynamic allocation, calling convention, object file format, linking convention etc, are also compatible with C. A library compiled from C code can be linked with C++ code, so that C++ code can invoke library functions written in C. In fact, some C++ compilers just translate C++ code to equivalent C code or C-like intermediate code, leaving all the rest work to a C compiler. This tutorial will address both syntactic perspective and underlying perspective of C++. In order to fully understand C++, you have to know what&#8217;s happening under the hood.</p>
+<div class="section" id="namespace">
+<h2>1.1. namespace<a class="headerlink" href="#namespace" title="Permalink to this headline">¶</a></h2>
+<p>C functions in the same subsystem often have names with a common prefix. For example, <code class="docutils literal"><span class="pre">sigaction</span></code>, <code class="docutils literal"><span class="pre">sigsuspend</span></code>, <code class="docutils literal"><span class="pre">sigprocmask</span></code>, <code class="docutils literal"><span class="pre">sigaddset</span></code>, <code class="docutils literal"><span class="pre">sigismember</span></code> etc all belong to the signal subsystem. <code class="docutils literal"><span class="pre">pthread_create</span></code>, <code class="docutils literal"><span class="pre">pthread_exit</span></code>, <code class="docutils literal"><span class="pre">pthread_join</span></code> etc all belong to the phread subsystem. The common prefix indicates a <strong>namespace</strong>. Besides, <code class="docutils literal"><span class="pre">pthread_</span></code> has sub-namespace: <code class="docutils literal"><span class="pre">pthread_mutex_init</span></code>, <code class="docutils literal"><span class="pre">pthread_mutex_lock</span></code> etc all belong to the <code class="docutils literal"><span class="pre">pthread_mutex_</span></code> sub-namespace. If those functions were inplemented in C++, they would have been called <code class="docutils literal"><span class="pre">pthread::create</span></code>, <code class="docutils literal"><span class="pre">pthread::exit</span></code>, <code class="docutils literal"><span class="pre">phtread::mutex::init</span></code>, <code class="docutils literal"><span class="pre">phtread::mutex::lock</span></code> etc. - double colon concatenation is the way to represent namespaces and sub-namespaces in C++. Not only functions can be named under a certain namespace, global variables and type names can also be prefixed.</p>
+<p>Here comes the C++ hello world:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello world!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>C++ source filename usually has a suffix of <code class="docutils literal"><span class="pre">.cpp</span></code>, <code class="docutils literal"><span class="pre">.cc</span></code>, or <code class="docutils literal"><span class="pre">.cxx</span></code>. On Linux you can compile a C++ program with <strong class="command">g++</strong> command. You probably need to install a package called <code class="docutils literal"><span class="pre">g++</span></code>. Its command line options are almost the same as <strong class="command">gcc</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ g++ main.cpp
+$ ./a.out
+Hello world!
+</pre></div>
+</div>
+<p>Note: don&#8217;t name a C++ source file with the suffix <code class="docutils literal"><span class="pre">.c</span></code>. That will confuse some older versions of <strong class="command">g++</strong> compiler.</p>
+<p>Now let&#8217;s go through the source code. <code class="docutils literal"><span class="pre">iostream</span></code> is a header file from C++ standard library.  <code class="docutils literal"><span class="pre">std::cout</span></code> and <code class="docutils literal"><span class="pre">std::endl</span></code> are declared in this header file. According to C++ convention, header filenames of C++ standard library do not have a suffix <code class="docutils literal"><span class="pre">.h</span></code>. C++ standard header files are usually found under <code class="docutils literal"><span class="pre">/usr/include/c++</span></code>. What this program does is equivalent to the following C code.</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello world!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now let me explain why the previous C++ program is equivalent to this C code:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">std::cout</span></code> is a variable representing standard output, while <code class="docutils literal"><span class="pre">std::endl</span></code> is a variable representing a new line character. We can conclude that identifiers from C++ standard library are under the <code class="docutils literal"><span class="pre">std::</span></code> namespace.</li>
+<li>We know operator <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> in C is the bitwise left shift operator. But in C++ almost all operators can be redefined to have a customized effect. Here it is redefined as an output operator. We can concatenate all the items we want to output to <code class="docutils literal"><span class="pre">std::cout</span></code> by <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> operator. This is called operator overloading and will be explained in later sections.</li>
+</ul>
+<p>Writing the <code class="docutils literal"><span class="pre">std::</span></code> prefix each time we refer to an identifier of C++ standard library could be very tedious. With the following syntax in C++ you can save some typing.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello world!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>After the declaration <code class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">std;</span></code>, names like <code class="docutils literal"><span class="pre">cout</span></code> and <code class="docutils literal"><span class="pre">endl</span></code> will automatically be searched under <code class="docutils literal"><span class="pre">std::</span></code>, provided these names can&#8217;t be found in local or global scope. Therefore, in this program <code class="docutils literal"><span class="pre">cout</span></code> is a shortened name for <code class="docutils literal"><span class="pre">std::cout</span></code>, it refers to the same variable. Obviously, when writing C code we don&#8217;t have this luxury. We must always type <code class="docutils literal"><span class="pre">pthread_join</span></code> instead of <code class="docutils literal"><span class="pre">join</span></code>.</p>
+<p>What if there is also a global or local variable also named <code class="docutils literal"><span class="pre">cout</span></code>? Will the compiler report a name ambiguity error, or will it decide which name takes precedence by default? Please try this out for yourself. Anyway, if you have a global identifier named <code class="docutils literal"><span class="pre">var</span></code>, you can write <code class="docutils literal"><span class="pre">::var</span></code> to explicitly refer to the <code class="docutils literal"><span class="pre">var</span></code> from global scope instead of some local identifier called <code class="docutils literal"><span class="pre">var</span></code> or some <code class="docutils literal"><span class="pre">var</span></code> under some namespace.</p>
+<p>Sometimes it&#8217;s a good idea to restrict the <code class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span></code> declaration within some block scope:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello world!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">{</span>
+        <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Bye world!&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// only here can we omit std:: prefix</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Remember:</p>
+<ul class="simple">
+<li>When in doubt, refer to an identifier in the explicit way.</li>
+<li>If <code class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span></code> declaration is worthwhile at all, you&#8217;d better declare it in an inner scope.</li>
+</ul>
+</div>
+<div class="section" id="bool-type">
+<h2>1.2. Bool Type<a class="headerlink" href="#bool-type" title="Permalink to this headline">¶</a></h2>
+<p>C89 standard doesn&#8217;t have a dedicated type to represent bool value. Programmers used to store bool value in an <code class="docutils literal"><span class="pre">int</span></code> variable. To be more explicit, C99 introduces a <code class="docutils literal"><span class="pre">_Bool</span></code> type. But before that, C++ also introduces a <code class="docutils literal"><span class="pre">bool</span></code> type. You can declare a variable of <code class="docutils literal"><span class="pre">bool</span></code> type, and you can use bool constant <code class="docutils literal"><span class="pre">true</span></code> or <code class="docutils literal"><span class="pre">false</span></code> as its value. Bool value is often used in the controlling expression of a branch or loop.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">cond</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cond</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;The condition is true.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>If bool value is used in an arithmetic expression, it will be coverted to value 1 or 0 of appropriate type.</p>
+<p><strong>TODO: THE SECTIONS BELOW NEED OVERHAUL</strong></p>
+<div class="figure">
+<img alt="../_images/road-works-sign.gif" src="../_images/road-works-sign.gif" />
+</div>
+</div>
+<div class="section" id="reference-type">
+<h2>1.3. Reference Type<a class="headerlink" href="#reference-type" title="Permalink to this headline">¶</a></h2>
+<p>C++ introduced the new reference type. The difference between C pointer and C++ reference has always been confusing to newbies. In the following code, <code class="docutils literal"><span class="pre">n</span></code> is a reference, while <code class="docutils literal"><span class="pre">m</span></code> is the referent referred to by <code class="docutils literal"><span class="pre">n</span></code>.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="n">m</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">&amp;</span><span class="n">n</span> <span class="o">=</span> <span class="n">m</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>From now on, <code class="docutils literal"><span class="pre">n</span></code> is an alias to <code class="docutils literal"><span class="pre">m</span></code>. <code class="docutils literal"><span class="pre">n</span></code> is neither a copy of nor a pointer to <code class="docutils literal"><span class="pre">m</span></code>. <code class="docutils literal"><span class="pre">n</span></code> is exactly <code class="docutils literal"><span class="pre">m</span></code> itself, with a different name. If you assign 3 to <code class="docutils literal"><span class="pre">n</span></code>, you actually assign that number to <code class="docutils literal"><span class="pre">m</span></code>. Therefore, reference type is subject to the following constraint.</p>
+<ul class="simple">
+<li>A reference must be initialized when it is defined. You cannot define a reference without initialization first and assign to it later.</li>
+<li>A pointer can be <code class="docutils literal"><span class="pre">NULL</span></code>, which points to nothing. However, a reference must refer to some object. There&#8217;s no <code class="docutils literal"><span class="pre">NULL</span></code> reference.</li>
+<li>A pointer can first point to <code class="docutils literal"><span class="pre">a</span></code> and then point to <code class="docutils literal"><span class="pre">b</span></code>. However, once a reference is defined and initialized, it cannot be assigned to another object. It is fixed to be the alias to a particular object through out its lifetime.</li>
+</ul>
+<p>Reference type facilitates function argument passing. For example, the following <code class="docutils literal"><span class="pre">myswap</span></code> function with parameters of reference type can easily swap its arguments.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">myswap</span><span class="p">(</span><span class="kt">int</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">temp</span><span class="p">;</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span>
+        <span class="n">myswap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;i=&quot;</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="s">&quot;j=&quot;</span><span class="o">&lt;&lt;</span><span class="n">j</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Think about how we achieve this in C. We declare <code class="docutils literal"><span class="pre">myswap</span></code> function to take two pointer parameters, which points to the arguments. Then we use pointer dereference to access and swap those arguments. With reference type, the code is simplified, but the concept behind is a little confusing. We know that function parameters should be allocated on the stack frame of that function. If <code class="docutils literal"><span class="pre">x</span></code> and <code class="docutils literal"><span class="pre">y</span></code> are aliases to <code class="docutils literal"><span class="pre">i</span></code> and <code class="docutils literal"><span class="pre">j</span></code> in <code class="docutils literal"><span class="pre">main</span></code> function, should <code class="docutils literal"><span class="pre">myswap</span></code> function refer to objects on <code class="docutils literal"><span class="pre">main</span></code> fuction&#8217;s stack frame? Well, definitely not. I said <code class="docutils literal"><span class="pre">x</span></code> is an alias to <code class="docutils literal"><span class="pre">i</span></code> just from the syntax perspective. From the underlying perspective, reference can be implemented as a const pointer, which points to a particular object and cannot be changed. The code above can be recognized by a C++ compiler as the following C code:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">myswap</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="k">const</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="k">const</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">temp</span><span class="p">;</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="o">*</span><span class="n">x</span><span class="p">;</span>
+        <span class="o">*</span><span class="n">x</span> <span class="o">=</span> <span class="o">*</span><span class="n">y</span><span class="p">;</span>
+        <span class="o">*</span><span class="n">y</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="n">myswap</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">j</span><span class="p">);</span>
+<span class="p">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>The rationale behind reference type is more than code simplicity. The main reason is security. Pointer is too versatile to be used safely. If I pass the address of my variable <code class="docutils literal"><span class="pre">a</span></code> to your pointer <code class="docutils literal"><span class="pre">p</span></code>, I want you to manipulate exactly that variable through <code class="docutils literal"><span class="pre">*p</span></code> or <code class="docutils literal"><span class="pre">p[0]</span></code>. I certainly don&#8217;t want you to access <code class="docutils literal"><span class="pre">*(p+1)</span></code> or <code class="docutils literal"><span class="pre">p[1]</span></code>. However, once I passed the address to you, it&#8217;s at your disposition. I have no way to keep you from touching <code class="docutils literal"><span class="pre">p[1]</span></code>, whether purposely or inadvertently. In this scenario, reference type comes into play. If you can just keep a reference to my variable, I will feel much safer.</p>
+</div>
+<div class="section" id="initialization">
+<h2>1.4. Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h2>
+<p>C++ introduced another form of initialization. For built-in types such as <code class="docutils literal"><span class="pre">int</span></code>, <code class="docutils literal"><span class="pre">char</span></code>, <code class="docutils literal"><span class="pre">float</span></code>, the following two forms are equivalent.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">i</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>The first form is the good old C style. The second function-like form is the new C++ style. For class instances, initializing by the function-like form means invoking its constructor, which can be passed more than one arguments. That will be further detailed in later sections.</p>
+</div>
+<div class="section" id="new-and-delete-operators">
+<h2>1.5. new and delete Operators<a class="headerlink" href="#new-and-delete-operators" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">new</span></code> and <code class="docutils literal"><span class="pre">delete</span></code> are two new operators for allocating and deallocating memory. While in C we use library functions <code class="docutils literal"><span class="pre">malloc</span></code> and <code class="docutils literal"><span class="pre">free</span></code>, in C++ we use these two operators.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="cm">/* int *arraysize=(int *)malloc(sizeof(int)); */</span>
+        <span class="kt">int</span> <span class="o">*</span><span class="n">arraysize</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
+
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="o">*</span><span class="n">arraysize</span><span class="p">;</span>
+
+        <span class="cm">/* int *array = (int *)malloc((*arraysize)*sizeof(int)); */</span>
+        <span class="kt">int</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="o">*</span><span class="n">arraysize</span><span class="p">];</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="o">*</span><span class="n">arraysize</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="o">*</span><span class="n">arraysize</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;,&quot;</span><span class="p">;</span>
+
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="cm">/* free(array); */</span>
+        <span class="k">delete</span><span class="p">[]</span> <span class="n">array</span><span class="p">;</span>
+        <span class="cm">/* free(arraysize); */</span>
+        <span class="k">delete</span> <span class="n">arraysize</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Here <code class="docutils literal"><span class="pre">cin</span> <span class="pre">&gt;&gt;</span></code> behaves like <code class="docutils literal"><span class="pre">scanf</span></code>, reading from standard input into variables. Codes in comments are alternative C codes for the same purpose. Note to deallocate an array of objects, we should use <code class="docutils literal"><span class="pre">delete[]</span></code>. If those objects are class instances, <code class="docutils literal"><span class="pre">[]</span></code> is required in <code class="docutils literal"><span class="pre">delete[]</span></code>. For built-in types, however, <code class="docutils literal"><span class="pre">[]</span></code> can be omitted. For consistency, we should always use <code class="docutils literal"><span class="pre">delete[]</span></code> in such cases.</p>
+<p>Think for a minute: what&#8217;s the difference between <code class="docutils literal"><span class="pre">int</span> <span class="pre">*a</span> <span class="pre">=</span> <span class="pre">new</span> <span class="pre">int[10];</span></code> and <code class="docutils literal"><span class="pre">int</span> <span class="pre">*a</span> <span class="pre">=</span> <span class="pre">new</span> <span class="pre">int(10);</span></code>?</p>
+<p>Note: never <code class="docutils literal"><span class="pre">delete</span></code> an area allocated by <code class="docutils literal"><span class="pre">malloc</span></code>, or <code class="docutils literal"><span class="pre">free</span></code> an area allocated by <code class="docutils literal"><span class="pre">new</span></code>. C++ operators and C library functions have different heap management mechanisms, so they cannot be intermixed.</p>
+</div>
+<div class="section" id="default-arguments-of-functions">
+<h2>1.6. default arguments of functions<a class="headerlink" href="#default-arguments-of-functions" title="Permalink to this headline">¶</a></h2>
+<p>When declaring a function in C++, we can give default values to some parameters. That way when we call this function later, we need not specify values for these parameters if the default behavior is just what we want. Function invocation can be more concise with these arguments omitted. Default parameters can be assigned in function prototypes or definitions, but we can assign only once. The best practice is to assign in prototypes. For example,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>If a function has more than one parameters with default values, we can take default values only from the rightmost parameter to the left. The above function can be invoked as:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">foo</span><span class="p">();</span> <span class="c1">//x=0, y=0</span>
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">//x=1, y=0</span>
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span> <span class="c1">//x=1, y=2</span>
+</pre></div>
+</td></tr></table></div>
+<p>If <code class="docutils literal"><span class="pre">foo</span></code> has two parameters and only one of them has a default value, it can be declared as</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>but cannot be declared as</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>because invocation like <code class="docutils literal"><span class="pre">foo(,2);</span></code> is illegal.</p>
+</div>
+<div class="section" id="overloaded-functions">
+<h2>1.7. overloaded functions<a class="headerlink" href="#overloaded-functions" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s begin with an example first.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">double</span> <span class="nf">add</span><span class="p">(</span><span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="o">&lt;&lt;</span><span class="n">add</span><span class="p">(</span><span class="mf">2.1</span><span class="p">,</span><span class="mf">3.14</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>In this code snippet we define two functions with the same name <code class="docutils literal"><span class="pre">add</span></code>. One does addition of type <code class="docutils literal"><span class="pre">int</span></code>, and the other does addition of type <code class="docutils literal"><span class="pre">double</span></code>. This is allowed in C++ and named overloaded funtion. With this rule, functions with similiar behavior and interface can share the same name. It also makes function invocation more concise and uniform. When an overloaded function is invoked, the compiler chooses the most conforming definition according to the types of arguments passed. Therefore, all overloaded function definitions must have different numbers or types of parameters.</p>
+<p>Think for a minute: if two function definitions are different only in return value types, can they be overloaded?</p>
+<p>Now take an exercise: in the example above, if we replace all <code class="docutils literal"><span class="pre">double</span></code> with <code class="docutils literal"><span class="pre">float</span></code>, does it still work? Why?</p>
+<p>From the syntax perspective, the compiler can differentiate overloaded functions by numbers and types of parameters. But from the underlying perspective, how can two functions with the same name be linked into one object file without ambiguity? We know the compiler cares about types, while the linker only cares about names. Definition and invocation of the same name will be linked together. Now we have two defintions, then which one will be linked to a particular invocation? The answer is: compiler won&#8217;t let linker see definitions with the same name. C++ compiler has a processing step called name mangling, renaming overloaded functions to different names, so that linker won&#8217;t be confused.</p>
+<p>If we compile the example above to an object file, and explore the symbol table with <code class="docutils literal"><span class="pre">nm</span></code> utility, we see the two <code class="docutils literal"><span class="pre">add</span></code> functions have different link names:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ g++ main.cpp
+$ nm a.out
+...
+08048670 T _Z3adddd
+08048664 T _Z3addii
+...
+</pre></div>
+</div>
+<p>These link names are fabricated with the magic number (<code class="docutils literal"><span class="pre">_Z3</span></code>), the function name (<code class="docutils literal"><span class="pre">add</span></code>) and the parameter type signature (<code class="docutils literal"><span class="pre">dd</span></code> and <code class="docutils literal"><span class="pre">ii</span></code>).</p>
+</div>
+<div class="section" id="overloaded-operators">
+<h2>1.8. overloaded operators<a class="headerlink" href="#overloaded-operators" title="Permalink to this headline">¶</a></h2>
+<p>Look at this example first:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">Complex</span> <span class="p">{</span>
+       <span class="kt">double</span> <span class="n">real</span><span class="p">,</span> <span class="n">img</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">Complex</span> <span class="nf">Add</span><span class="p">(</span><span class="k">const</span> <span class="n">Complex</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Complex</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">Complex</span> <span class="n">temp</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span><span class="p">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">real</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">img</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">img</span> <span class="p">};</span>
+        <span class="k">return</span> <span class="n">temp</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">Complex</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">2.2</span> <span class="p">};</span>
+        <span class="n">Complex</span> <span class="n">b</span> <span class="o">=</span> <span class="p">{</span> <span class="mf">3.3</span><span class="p">,</span> <span class="mf">4.4</span> <span class="p">};</span>
+        <span class="n">Complex</span> <span class="n">c</span> <span class="o">=</span> <span class="n">Add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">.</span><span class="n">real</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;+&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">.</span><span class="n">img</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;i&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note in C <code class="docutils literal"><span class="pre">struct</span> <span class="pre">Complex</span></code> can be used as a type name while in C++ the tag <code class="docutils literal"><span class="pre">Complex</span></code> itself is sufficient to be a type name. C++ also supports the C style for compatibility.</p>
+<p>In C++, functions can be named with an operator and the keyword <code class="docutils literal"><span class="pre">operator</span></code>. This is called overloaded operator. The <code class="docutils literal"><span class="pre">Add</span></code> function above can be rewritten as</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Complex</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">Complex</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Complex</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">Complex</span> <span class="n">temp</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span><span class="p">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">real</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">img</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">img</span> <span class="p">};</span>
+        <span class="k">return</span> <span class="n">temp</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Then the invocation can be written as</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Complex</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>It looks more consistent: we can add two operands with <code class="docutils literal"><span class="pre">+</span></code> operator, whether they are of built-in type or user-defined type. When a normal function is invoked, the function name precedes its arguments. But when an overloaded binary operator such as <code class="docutils literal"><span class="pre">+</span></code> is invoked, the operator appears between its two arguments, which is called infix form.</p>
+<p>Think for a minute: the <code class="docutils literal"><span class="pre">operator+</span></code> function takes two parameters of reference type, but its return type is not a reference, why?</p>
+<p>Since operator is a special form of function, overloaded operators are in essence overloaded functions. Note that overloading doesn&#8217;t change precedence and associativity of operators. An overloaded <code class="docutils literal"><span class="pre">*</span></code> still has higher precedence over an overloaded <code class="docutils literal"><span class="pre">+</span></code>. Like overloaded function, when the compiler encounters an expression, it makes the decision about which operator definition to choose based on the types of operands. However, we cannot redefine the behavior of an expression of built-in types. For example, we cannot overload <code class="docutils literal"><span class="pre">+</span></code> operator with two arguments of built-in type <code class="docutils literal"><span class="pre">int</span></code>.</p>
+<p>Now we see why <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> operator following <code class="docutils literal"><span class="pre">cout</span></code> is an output operator: because it is overloaded. We can overload it further to accommodate the new <code class="docutils literal"><span class="pre">Complex</span></code> type we has defined.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">ostream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">o</span><span class="p">,</span> <span class="k">const</span> <span class="n">Complex</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">o</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">real</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;+&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">.</span><span class="n">img</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;i&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">o</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Then we can output a <code class="docutils literal"><span class="pre">Complex</span></code> object directly to <code class="docutils literal"><span class="pre">cout</span></code>.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Complex</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">cout</span></code> is of type <code class="docutils literal"><span class="pre">std::ostream</span></code>. Here <code class="docutils literal"><span class="pre">cout</span></code> is the left operand of <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> and a <code class="docutils literal"><span class="pre">Complex</span></code> object is the right operand, so our overload operator matches. Note the overloaded operator returns a reference to an <code class="docutils literal"><span class="pre">ostream</span></code> object which is <code class="docutils literal"><span class="pre">cout</span></code> in fact. That means the value of expression <code class="docutils literal"><span class="pre">cout</span> <span class="pre">&lt;&lt;</span> <span class="pre">c</span></code> is just <code class="docutils literal"><span class="pre">cout</span></code>. That&#8217;s why we can concatenate all things we want to output one after another with several <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> operators. We can also do this:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;+&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;=&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>We can freely intermix and chain objects of built-in types and user-defined types between <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> operators. The compiler tries to find the right function to call.</p>
+</div>
+<div class="section" id="inline-functions">
+<h2>1.9. inline functions<a class="headerlink" href="#inline-functions" title="Permalink to this headline">¶</a></h2>
+<p>We know that macros in C can take parameters and look like functions. For example,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#define DIV(x,y) ((x)/(y))</span>
+</pre></div>
+</td></tr></table></div>
+<p>But these macros should be carefully used. If the parentheses above are omitted, the semantics may be different.</p>
+<p>C++ introduced a new macro definition syntax called inline function. In fact, C99, the latest C standard, borrows this syntax from C++. By prefixing a function definition with keyword <code class="docutils literal"><span class="pre">inline</span></code>, the compiler will treat an invocation as function-like macro and expand it when the optimization switch is on. Otherwise, the compiler will treat it like a plain function call. For example,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">DIV</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>This inline function definition behaves like the macro definition above when compiled with <code class="docutils literal"><span class="pre">g++</span></code> options like <code class="docutils literal"><span class="pre">-O</span></code> <code class="docutils literal"><span class="pre">-O1</span></code> <code class="docutils literal"><span class="pre">-O2</span></code> <code class="docutils literal"><span class="pre">-O3</span></code>. If compiled with no optimization, this function is just a normal function.</p>
+<p>Inline function makes the best of both worlds: it has the efficiency as macros and the safety as functions. The compiler will do type checking and conversion before expanding an inline function, assuring its safety. Besides, we need not worry about whether the body is correctly parenthesized.</p>
+<p>Note the keyword <code class="docutils literal"><span class="pre">inline</span></code> should be with function definition rather than declaration.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">);</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Like macro definition, inline function definition can be put directly into a header file, eliminating the need to write a declaration.</p>
+</div>
+<div class="section" id="calling-c-library-functions-from-c-code">
+<h2>1.10. calling C library functions from C++ code<a class="headerlink" href="#calling-c-library-functions-from-c-code" title="Permalink to this headline">¶</a></h2>
+<p>Object files generated by C compiler can be linked with C++ code, and C functions can be directly invoked from C++ code. But how can this work?</p>
+<p>We know that C++ has a mechanism called name mangling. All functions in C++ code have mangled link names after compilation. If we implement a function <code class="docutils literal"><span class="pre">int</span> <span class="pre">add(int,</span> <span class="pre">int)</span></code> in one C++ code and call that function in another C++ code:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// add.cpp</span>
+<span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// main.cpp</span>
+<span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Then object file <code class="docutils literal"><span class="pre">add.o</span></code> will have an implementation with link name <code class="docutils literal"><span class="pre">_Z3addii</span></code>, and object file <code class="docutils literal"><span class="pre">main.o</span></code> will have an invocation with link name <code class="docutils literal"><span class="pre">_Z3addii</span></code>. They can be linked together because they have the same mangled name.</p>
+<p>In the case when C++ code calls a C function, things become different.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// add.c</span>
+<span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The object file <code class="docutils literal"><span class="pre">add.o</span></code> will have an implementation with link name exactly <code class="docutils literal"><span class="pre">add</span></code>, which cannot be linked with C++ code <code class="docutils literal"><span class="pre">main.cpp</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gcc -c add.c
+$ g++ main.cpp add.o
+/tmp/cckyAIcG.o: In function `main&#39;:
+main.cpp:(.text+0x21): undefined reference to `add(int, int)&#39;
+collect2: ld returned 1 exit status
+</pre></div>
+</div>
+<p>We should wrap the declaration of function <code class="docutils literal"><span class="pre">add</span></code> with <code class="docutils literal"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span> <span class="pre">{...}</span></code> and then call it:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// main.cpp</span>
+<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="n">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>C++ compiler will know that <code class="docutils literal"><span class="pre">add</span></code> is a C function and generate code calling <code class="docutils literal"><span class="pre">add</span></code> instead of calling <code class="docutils literal"><span class="pre">_Z3addii</span></code>.</p>
+<p>In order to be used by C++ code, C library headers oftern have the following wrapper:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifdef __cplusplus</span>
+<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+<span class="cp">#endif</span>
+
+<span class="p">......</span>
+<span class="cp">#ifdef __cplusplus</span>
+<span class="p">}</span>
+<span class="cp">#endif</span>
+</pre></div>
+</td></tr></table></div>
+<p>If it&#8217;s included by another C code and compiled by C compiler, __cplusplus defines to nothing, therefore the <code class="docutils literal"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> wrapper is skipped. If it&#8217;s included by a C++ code and compiled by C++ compiler, however, the <code class="docutils literal"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> wrapper comes into play, informing C++ compiler not to mangle names within the wrapper.</p>
+<p>Besides, C++ standard library provides many header files that wrap the corresponding C header files. For example, <code class="docutils literal"><span class="pre">stdio.h</span></code> is wrapped in <code class="docutils literal"><span class="pre">cstdio</span></code>. When calling C standard library functions from C++ code, we should include the wrapped version.</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;ctime&gt;</span><span class="cp"></span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Basics</a><ul>
+<li><a class="reference internal" href="#namespace">1.1. namespace</a></li>
+<li><a class="reference internal" href="#bool-type">1.2. Bool Type</a></li>
+<li><a class="reference internal" href="#reference-type">1.3. Reference Type</a></li>
+<li><a class="reference internal" href="#initialization">1.4. Initialization</a></li>
+<li><a class="reference internal" href="#new-and-delete-operators">1.5. new and delete Operators</a></li>
+<li><a class="reference internal" href="#default-arguments-of-functions">1.6. default arguments of functions</a></li>
+<li><a class="reference internal" href="#overloaded-functions">1.7. overloaded functions</a></li>
+<li><a class="reference internal" href="#overloaded-operators">1.8. overloaded operators</a></li>
+<li><a class="reference internal" href="#inline-functions">1.9. inline functions</a></li>
+<li><a class="reference internal" href="#calling-c-library-functions-from-c-code">1.10. calling C library functions from C++ code</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="preface.html"
+                        title="previous chapter">Preface</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cppoo.html"
+                        title="next chapter">2. Class and Object-oriented Methodology</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/en/cppbasics.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><table border=0 cellspacing=0 style="color: white;">
+<script type="text/javascript">
+  //<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34437927-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  //]]>
+</script>
+<tr><td>
+   请输入您的email订阅<a href="http://groups.google.com/group/learning-linux-c-cpp">本书的邮件列表</a><br/>
+   (Please enter your email to subscribe to <a href="http://groups.google.com/group/learning-linux-c-cpp">this book's mailing list</a>)<br/>
+   <form action="http://groups.google.com/group/learning-linux-c-cpp/boxsubscribe"><input type=text name=email><input type=submit name="sub" value="订阅(Subscribe)"></form>
+</td></tr>
+
+<tr><td><br/>关注<a href="http://weibo.com/sansoong">我的微博</a></td></tr>
+
+<tr><td><br/>Checkout the source from github: <a href="https://github.com/learning-linux-c-cpp/akabook">https://github.com/learning-linux-c-cpp/akabook</a></td></tr>
+
+<tr><td>
+   <br/>感谢您的慷慨捐赠！<br/>
+   Thanks for your generous donation!<br/>
+   <a href="http://me.alipay.com/songjinshan" target="_blank"><img src="/akabook/_static/me.alipay.png" alt="捐赠"></a>
+</td></tr>
+</table>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cppoo.html" title="2. Class and Object-oriented Methodology"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="preface.html" title="Preface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >English Version: Learning Linux C/C++ Programming from Scratch</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Sean Soong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,886 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. 函数入门 &mdash; akabook 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="akabook 3.0 documentation" href="../index.html" />
+    <link rel="up" title="中文版：Linux C/C++编程一站式学习" href="index.html" />
+    <link rel="next" title="4. 分支语句" href="cond.html" />
+    <link rel="prev" title="2. 常量、变量和表达式" href="expr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cond.html" title="4. 分支语句"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="expr.html" title="2. 常量、变量和表达式"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">中文版：Linux C/C++编程一站式学习</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>3. 函数入门<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="func-mathfunc">
+<span id="id2"></span><h2>3.1. 数学函数<a class="headerlink" href="#func-mathfunc" title="Permalink to this headline">¶</a></h2>
+<p>在数学中我们用过sin和ln这样的函数，例如sin(π/2)=1，ln1=0等等，在C语言中也可以使用这些函数（数学函数sin在C标准库中就是 <code class="docutils literal"><span class="pre">sin</span></code> 函数，而数学函数ln在C标准库中对应的是 <code class="docutils literal"><span class="pre">log</span></code> 函数）：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">double</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.1416</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;sin(pi/2)=%f</span><span class="se">\n</span><span class="s">ln1=%f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">log</span><span class="p">(</span><span class="mf">1.0</span><span class="p">));</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>编译运行这个程序，结果如下:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gcc main.c -lm
+$ ./a.out
+sin(pi/2)=1.000000
+ln1=0.000000
+</pre></div>
+</div>
+<p id="index-0">在数学中写一个函数有时候可以省略括号，而C语言要求一定要加上括号，例如 <code class="docutils literal"><span class="pre">log(1.0)</span></code> 。在C语言的术语中， <code class="docutils literal"><span class="pre">1.0</span></code> 是参数， <code class="docutils literal"><span class="pre">log</span></code> 是函数（Function）， <code class="docutils literal"><span class="pre">log(1.0)</span></code> 是函数调用（Function Call）。 <code class="docutils literal"><span class="pre">sin(pi/2)</span></code> 和 <code class="docutils literal"><span class="pre">log(1.0)</span></code> 这两个函数调用在我们的 <code class="docutils literal"><span class="pre">printf</span></code> 语句中处于什么位置呢？在上一章讲过，这应该是写表达式的位置，因此函数调用也是一种表达式。 <code class="docutils literal"><span class="pre">log(1.0)</span></code> 这个表达式由操作数 <code class="docutils literal"><span class="pre">log</span></code> 、函数调用运算符()括号及其中的参数组成，函数调用运算符是一种后缀运算符（Postfix Operator），()括号及其中的参数是操作数 <code class="docutils literal"><span class="pre">log</span></code> 的后缀。操作数 <code class="docutils literal"><span class="pre">log</span></code> 是一个函数名（Function Designator），这个操作数的类型是一种函数类型（Function Type）。对1.0取自然对数运算的结果就是 <code class="docutils literal"><span class="pre">log(1.0)</span></code> 这个表达式的值，类型是 <code class="docutils literal"><span class="pre">double</span></code> 型，在C语言中函数调用表达式的值称为函数的返回值（Return Value）。</p>
+<p>总结一下我们新学的语法规则:</p>
+<div class="highlight-python"><div class="highlight"><pre>表达式 → 函数名
+表达式 → 表达式(参数列表)
+参数列表 → 表达式, 表达式, ...
+</pre></div>
+</div>
+<p>现在我们可以完全理解 <code class="docutils literal"><span class="pre">printf</span></code> 语句了：原来 <code class="docutils literal"><span class="pre">printf</span></code> 也是一个函数，上例中的 <code class="docutils literal"><span class="pre">printf(&quot;sin(pi/2)=%f\nln1=%f\n&quot;,</span> <span class="pre">sin(pi/2),</span> <span class="pre">log(1.0))</span></code> 是带三个参数的函数调用，而函数调用也是一种表达式，因此 <code class="docutils literal"><span class="pre">printf</span></code> 语句也是表达式语句的一种。</p>
+<p id="index-1">但是 <code class="docutils literal"><span class="pre">printf</span></code> 感觉不像一个数学函数，为什么呢？因为像 <code class="docutils literal"><span class="pre">log</span></code> 这种函数，我们传进去一个参数会得到一个返回值，我们调用 <code class="docutils literal"><span class="pre">log</span></code> 函数就是为了得到它的返回值，至于 <code class="docutils literal"><span class="pre">printf</span></code> ，通常我们并不关心它的返回值（事实上它也有返回值，表示实际打印的字符数），我们调用 <code class="docutils literal"><span class="pre">printf</span></code> 不是为了得到它的返回值，而是为了利用它所产生的副作用（Side Effect）－－打印。 <strong>C语言的函数可以有Side Effect，这一点是它和数学函数在概念上的根本区别。</strong></p>
+<p>Side Effect这个概念也适用于运算符组成的表达式。比如 <code class="docutils literal"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></code> 这个表达式也可以看成一个函数调用，把运算符+看作函数，它的两个参数是 <code class="docutils literal"><span class="pre">a</span></code> 和 <code class="docutils literal"><span class="pre">b</span></code> ，返回值是两个参数的和：传入两个参数，得到一个返回值，并没有产生任何Side Effect。再比如把 <code class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">b</span></code> 这个表达式看成函数调用，把赋值运算符看作函数，它的两个参数还是 <code class="docutils literal"><span class="pre">a</span></code> 和 <code class="docutils literal"><span class="pre">b</span></code> ，返回值就是所赋的值，既是 <code class="docutils literal"><span class="pre">b</span></code> 的值也是 <code class="docutils literal"><span class="pre">a</span></code> 被赋予的值，但除了计算出一个返回值之外还产生了Side Effect－－变量 <code class="docutils literal"><span class="pre">a</span></code> 被改变了，改变计算机存储单元里的数据或者做输入输出操作都算Side Effect。</p>
+<p id="index-2">回想一下我们的学习过程：一开始我们说赋值是一种语句，后来学了表达式，我们说赋值语句是表达式语句的一种；一开始我们说 <code class="docutils literal"><span class="pre">printf</span></code> 是一种语句，现在学了函数，我们又说 <code class="docutils literal"><span class="pre">printf</span></code> 也是表达式语句的一种。随着我们一步步的学习，把原来看似不同类型的语句统一成一种语句了。学习的过程总是这样，初学者一开始接触的很多概念从严格意义上说是错的，但是很容易理解，随着一步步学习，在理解原有概念的基础上不断纠正，不断泛化（Generalize）。就像一年级老师说小数不能减大数，其实这个概念是错的，后来引入了负数就可以减了，再后来引入了分数，原来的正数和负数的概念就泛化为整数，上初中学了无理数，原来的整数和分数的概念就泛化为有理数，再上高中学了复数，有理数和无理数的概念就泛化为实数。坦白说，到目前为止本书的很多说法都是不完全正确的，但这是学习理解的必经阶段，到后面的章节都会逐步纠正的。</p>
+<p id="index-3">现在可以解释一下为什么每个程序开头要写#号（Pound Sign，Number Sign或Hash Sign）和 <code class="docutils literal"><span class="pre">include</span></code> 了，这是一种预处理指示（Preprocessing Directive），表示包含一个头文件（Header File），后面&lt;&gt;括号（Angle Bracket）中就是文件名（这些头文件通常位于 <code class="file docutils literal"><span class="pre">/usr/include</span></code> 目录下）。头文件中声明了我们程序中使用的库函数，根据先声明后使用的原则，要使用 <code class="docutils literal"><span class="pre">printf</span></code> 函数必须先包含 <code class="docutils literal"><span class="pre">stdio.h</span></code> ，要使用数学函数必须先包含 <code class="docutils literal"><span class="pre">math.h</span></code> ，如果什么库函数都不使用就不必包含任何头文件，例如写一个程序 <code class="docutils literal"><span class="pre">int</span> <span class="pre">main(void){int</span> <span class="pre">a;a=2;return</span> <span class="pre">0;}</span></code> ，不需要包含头文件就可以编译通过，当然这个程序什么也做不了。</p>
+<p>使用 <code class="docutils literal"><span class="pre">math.h</span></code> 中声明的库函数还有一点特殊之处， <strong class="command">gcc</strong> 命令行必须加 <code class="xref std std-option docutils literal"><span class="pre">-lm</span></code> 选项，因为数学函数位于 <code class="file docutils literal"><span class="pre">libm.so</span></code> 库文件中（这些库文件通常位于 <code class="file docutils literal"><span class="pre">/lib</span></code> 目录下）， <code class="xref std std-option docutils literal"><span class="pre">-lm</span></code> 选项告诉编译器我们程序中用到的数学函数要到 <code class="file docutils literal"><span class="pre">libm.so</span></code> 这个库文件里找。注意库文件名是 <code class="docutils literal"><span class="pre">libm</span></code> ，但使用 <code class="xref std std-option docutils literal"><span class="pre">-l</span></code> 选项指定库文件时省略 <code class="docutils literal"><span class="pre">lib</span></code> ，只写成 <code class="xref std std-option docutils literal"><span class="pre">-lm</span></code> 。本书用到的大部分库函数（例如 <code class="docutils literal"><span class="pre">printf</span></code> ）位于 <code class="file docutils literal"><span class="pre">libc.so</span></code> 库文件中，使用 <code class="file docutils literal"><span class="pre">libc.so</span></code> 中的库函数在编译时不需要加 <code class="xref std std-option docutils literal"><span class="pre">-lc</span></code> 选项，因为这个选项是 <strong class="command">gcc</strong> 的默认选项（当然加了也不算错）。关于头文件和库函数目前理解这么多就可以了，到 <a class="reference internal" href="link.html"><em>链接详解</em></a> 再详细解释。</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>C标准库和glibc</p>
+<p>C标准主要由两部分组成，一部分描述C的语法，另一部分描述C标准库。C标准库定义了一组标准头文件，每个头文件中包含一些相关的函数、变量、类型声明和宏定义。要在一个平台上支持C语言，不仅要实现C编译器，还要实现C标准库，这样的实现才算符合C标准。不符合C标准的实现也是存在的，例如很多单片机的C语言开发工具中只有C编译器而没有完整的C标准库。</p>
+<p>在Linux平台上最广泛使用的C函数库是glibc，其中包括C标准库的实现，也包括很多Linux系统函数，几乎所有C程序都要调用glibc的库函数，所以glibc是Linux平台C程序运行的基础。glibc提供一组头文件和一组库文件，最基本、最常用的C标准库函数和系统函数在 <code class="file docutils literal"><span class="pre">libc.so</span></code> 库文件中，几乎所有C程序的运行都依赖于 <code class="file docutils literal"><span class="pre">libc.so</span></code> ，有些做数学计算的C程序除了依赖 <code class="file docutils literal"><span class="pre">libc.so</span></code> 之外还依赖 <code class="file docutils literal"><span class="pre">libm.so</span></code> ，还有很多C程序依赖glibc的其他库文件。以后我说libc时专指 <code class="file docutils literal"><span class="pre">libc.so</span></code> 这个库文件，而说glibc时指的是glibc提供的所有库文件。</p>
+<p class="last">glibc并不是Linux平台基础C函数库的唯一一种实现，比如有人开发了uClibc，实现了glibc的大部分函数接口，但实现方式很不同，更适合于需要节省存储空间的嵌入式系统。</p>
+</div>
+</div>
+<div class="section" id="func-deffunction">
+<span id="id3"></span><h2>3.2. 定义自己的函数<a class="headerlink" href="#func-deffunction" title="Permalink to this headline">¶</a></h2>
+<p>我们不仅可以调用C标准库提供的函数，也可以定义自己的函数，事实上我们已经这么做了：我们定义了 <code class="docutils literal"><span class="pre">main</span></code> 函数。例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">hour</span> <span class="o">=</span> <span class="mi">11</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">minute</span> <span class="o">=</span> <span class="mi">59</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d and %d hours</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">/</span> <span class="mi">60</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">main</span></code> 函数的特殊之处在于执行程序时它自动被操作系统调用，操作系统就认准了 <code class="docutils literal"><span class="pre">main</span></code> 这个名字，除了名字特殊之外， <code class="docutils literal"><span class="pre">main</span></code> 函数和别的函数没有区别。我们对照着 <code class="docutils literal"><span class="pre">main</span></code> 函数的定义来看语法规则:</p>
+<div class="highlight-python"><div class="highlight"><pre>函数定义 → 返回值类型 函数名(参数列表) 函数体
+函数体 → { 语句列表 }
+语句列表 → 语句列表项 语句列表项 ...
+语句列表项 → 语句
+语句列表项 → 变量声明、类型声明或非定义的函数声明
+非定义的函数声明 → 返回值类型 函数名(参数列表);
+</pre></div>
+</div>
+<p>关于“函数定义”和“非定义的函数声明”之间的区别可以回头看看 <a class="reference internal" href="expr.html#expr-declaration"><span>声明和定义</span></a> 。给函数命名也要遵循 <a class="reference internal" href="expr.html#expr-variable"><span>变量</span></a> 讲过的标识符命名规则。</p>
+<p id="index-4">由于我们定义的 <code class="docutils literal"><span class="pre">main</span></code> 函数不带任何参数，参数列表应写成 <code class="docutils literal"><span class="pre">void</span></code> 。函数体可以由若干条语句和声明组成，C89要求所有声明写在所有语句之前（本书的示例代码都遵循这一规定），而C99的新特性允许语句和声明按任意顺序排列，只要每个标识符都遵循先声明后使用的原则就行。 <code class="docutils literal"><span class="pre">main</span></code> 函数的返回值是 <code class="docutils literal"><span class="pre">int</span></code> 型的， <code class="docutils literal"><span class="pre">return</span> <span class="pre">0;</span></code> 这个语句表示返回值是0， <code class="docutils literal"><span class="pre">main</span></code> 函数的返回值是返回给操作系统看的，因为 <code class="docutils literal"><span class="pre">main</span></code> 函数是被操作系统调用的，通常程序执行成功就返回0，在执行过程中出错就返回一个非零值。比如我们将 <code class="docutils literal"><span class="pre">main</span></code> 函数中的 <code class="docutils literal"><span class="pre">return</span></code> 语句改为 <code class="docutils literal"><span class="pre">return</span> <span class="pre">4;</span></code> 再执行它，执行结束后可以在Shell中看到它的退出状态（Exit Status）:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./a.out
+11 and 0 hours
+$ echo $?
+4
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">$?</span></code> 是Shell中的一个特殊变量，表示上一条命令的退出状态。</p>
+<p>关于 <code class="docutils literal"><span class="pre">main</span></code> 函数需要注意两点：</p>
+<ol class="arabic simple">
+<li>[K&amp;R]_ 书上的 <code class="docutils literal"><span class="pre">main</span></code> 函数定义写成 <code class="docutils literal"><span class="pre">main(){...}</span></code> 的形式，不写返回值类型也不写参数列表，这是Old Style C的风格。Old Style C规定不写返回值类型就表示返回 <code class="docutils literal"><span class="pre">int</span></code> 型，不写参数列表就表示参数类型和个数没有明确指出。这种宽松的规定使编译器无法检查程序中可能存在的Bug，增加了调试难度，不幸的是现在的C标准为了兼容旧的代码仍然保留了这种语法，但读者绝不应该继续使用这种语法。</li>
+<li>其实操作系统在调用 <code class="docutils literal"><span class="pre">main</span></code> 函数时是传参数的， <code class="docutils literal"><span class="pre">main</span></code> 函数最标准的形式应该是 <code class="docutils literal"><span class="pre">int</span> <span class="pre">main(int</span> <span class="pre">argc,</span> <span class="pre">char</span> <span class="pre">*argv[])</span></code> ，在 <a class="reference internal" href="pointer.html#pointer-pointertopointer"><span>指向指针的指针与指针数组</span></a> 详细介绍。C标准也允许 <code class="docutils literal"><span class="pre">int</span> <span class="pre">main(void)</span></code> 这种写法，如果不使用系统传进来的两个参数也可以写成这种形式。但除了这两种形式之外，定义 <code class="docutils literal"><span class="pre">main</span></code> 函数的其他写法都是错误的或不可移植的。</li>
+</ol>
+<p>关于返回值和 <code class="docutils literal"><span class="pre">return</span></code> 语句我们将在 <a class="reference internal" href="func2.html#func2-return"><span>return语句</span></a> 详细讨论，我们先从既不带参数也没有返回值的函数开始学习定义和使用函数：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">newline</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;First Line.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Second Line.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>执行结果是:</p>
+<div class="highlight-python"><div class="highlight"><pre>First Line.
+
+Second Line.
+</pre></div>
+</div>
+<p>我们定义了一个 <code class="docutils literal"><span class="pre">newline</span></code> 函数给 <code class="docutils literal"><span class="pre">main</span></code> 函数调用，它的作用是打印一个换行，所以执行结果中间多了一个空行。 <code class="docutils literal"><span class="pre">newline</span></code> 函数不仅不带参数，也没有返回值（返回值类型为 <code class="docutils literal"><span class="pre">void</span></code> 表示没有返回值 <a class="footnote-reference" href="#id5" id="id4">[1]</a> ），这说明我们调用这个函数完全是为了利用它的Side Effect。如果我们想要多次插入空行就可以多次调用 <code class="docutils literal"><span class="pre">newline</span></code> 函数：</p>
+<span class="target" id="index-5"></span><table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[1]</a></td><td>敏锐的读者可能会发现一个矛盾：如果函数 <code class="docutils literal"><span class="pre">newline</span></code> 没有返回值，那么表达式 <code class="docutils literal"><span class="pre">newline()</span></code> 不就没有值了吗？然而上一章讲过任何表达式都有值和类型两个基本属性。其实这正是设计 <code class="docutils literal"><span class="pre">void</span></code> 这么一个关键字的原因：首先从语法上规定没有返回值的函数调用表达式是 <code class="docutils literal"><span class="pre">void</span></code> 类型的，有一个 <code class="docutils literal"><span class="pre">void</span></code> 类型的值，这样任何表达式都有值，不必考虑特殊情况，编译器的语法解析比较容易实现；然后从语义上规定 <code class="docutils literal"><span class="pre">void</span></code> 类型的表达式不能参与运算，因此 <code class="docutils literal"><span class="pre">newline()</span> <span class="pre">+</span> <span class="pre">1</span></code> 这样的表达式不能通过语义检查，从而兼顾了语法上的一致和语义上的不矛盾。在C语言中这个问题通过语义检查来解决，而在别的编程语言中又有不同的解决办法，比如Pascal语言从语法上区分有返回值和没有返回值的函数，有返回值的称为函数，没有返回值的称为过程（Procedure），在本书中函数和过程表示相同的含义。</td></tr>
+</tbody>
+</table>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;First Line.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Second Line.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>如果我们总需要三个三个地插入空行，我们可以再定义一个 <code class="docutils literal"><span class="pre">threelines</span></code> 函数每次插入三个空行：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">newline</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">threelines</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">newline</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Three lines:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">threelines</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Another three lines.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">threelines</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>通过这个简单的例子可以体会到：</p>
+<ol class="arabic simple">
+<li>同一个函数可以被多次调用。</li>
+<li>可以用一个函数调用另一个函数，后者再去调第三个函数。</li>
+<li>通过自定义函数可以给一组复杂的操作起一个简单的名字，例如 <code class="docutils literal"><span class="pre">threelines</span></code> 。对于 <code class="docutils literal"><span class="pre">main</span></code> 函数来说，只需要通过 <code class="docutils literal"><span class="pre">threelines</span></code> 这个简单的名字来调用就行了，不必知道打印三个空行具体怎么做，所有的复杂操作都被隐藏在 <code class="docutils literal"><span class="pre">threelines</span></code> 这个名字后面。</li>
+<li>使用自定义函数可以使代码更简洁， <code class="docutils literal"><span class="pre">main</span></code> 函数在任何地方想打印三个空行只需调用一个简单的 <code class="docutils literal"><span class="pre">threelines()</span></code> ，而不必每次都写三个 <code class="docutils literal"><span class="pre">printf(&quot;\n&quot;)</span></code> 。</li>
+</ol>
+<p>读代码和读文章不一样，按从上到下从左到右的顺序读代码未必是最好的。比如上面的例子，按源文件的顺序应该是先看 <code class="docutils literal"><span class="pre">newline</span></code> 再看 <code class="docutils literal"><span class="pre">threelines</span></code> 再看 <code class="docutils literal"><span class="pre">main</span></code> 。如果你换一个角度，按代码的执行顺序来读也许会更好：首先执行的是 <code class="docutils literal"><span class="pre">main</span></code> 函数中的语句，在一条 <code class="docutils literal"><span class="pre">printf</span></code> 之后调用了 <code class="docutils literal"><span class="pre">threelines</span></code> ，这时再去看 <code class="docutils literal"><span class="pre">threelines</span></code> 的定义，其中又调用了 <code class="docutils literal"><span class="pre">newline</span></code> ，这时再去看 <code class="docutils literal"><span class="pre">newline</span></code> 的定义， <code class="docutils literal"><span class="pre">newline</span></code> 里面有一条 <code class="docutils literal"><span class="pre">printf</span></code> ，执行完成后返回 <code class="docutils literal"><span class="pre">threelines</span></code> ，这里还剩下两次 <code class="docutils literal"><span class="pre">newline</span></code> 调用，效果也都一样，执行完之后返回 <code class="docutils literal"><span class="pre">main</span></code> ，接下来又是一条 <code class="docutils literal"><span class="pre">printf</span></code> 和一条 <code class="docutils literal"><span class="pre">threelines</span></code> 。如下图所示：</p>
+<div class="figure" id="id14">
+<img alt="../_images/func.funccall.png" src="../_images/func.funccall.png" />
+<p class="caption"><span class="caption-text">函数调用的执行顺序</span></p>
+</div>
+<p>读代码的过程就是模仿计算机执行程序的过程，我们不仅要记住当前读到了哪一行代码，还要记住现在读的代码是被哪个函数调用的，这段代码返回后应该从上一个函数的什么地方接着往下读。</p>
+<p id="index-6">现在澄清一下函数声明、函数定义、函数原型（Prototype）这几个概念。比如 <code class="docutils literal"><span class="pre">void</span> <span class="pre">threelines(void)</span></code> 这一行，其中包含了函数的名字、参数类型和个数、返回值类型，这三要素齐全就可以叫做函数原型。在代码中可以单独写一个函数原型，后面加;号结束，而不写函数体，例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">threelines</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>我们知道，这种写法只能叫函数声明而不能叫函数定义，只有带函数体的声明才叫定义。那么这种函数声明有什么用呢？它为编译器提供了有用的信息，编译器见到函数原型（不管带不带函数体）就明确了这个函数的名字、参数类型和个数、返回值类型，之后编译器碰到函数调用代码就知道该生成什么样的指令来实现函数调用了，所以函数原型必须出现在函数调用之前，这也是遵循“先声明后使用”的原则。</p>
+<p>在上面的例子中， <code class="docutils literal"><span class="pre">main</span></code> 调用 <code class="docutils literal"><span class="pre">threelines</span></code> ， <code class="docutils literal"><span class="pre">threelines</span></code> 再调用 <code class="docutils literal"><span class="pre">newline</span></code> ，要保证每个函数的原型出现在调用之前，就只能按先 <code class="docutils literal"><span class="pre">newline</span></code> 再 <code class="docutils literal"><span class="pre">threelines</span></code> 再 <code class="docutils literal"><span class="pre">main</span></code> 的顺序定义了。如果使用不带函数体的声明，则可以这样写：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">newline</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">threelines</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="p">...</span>
+        <span class="n">threelines</span><span class="p">();</span>
+        <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">threelines</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="p">...</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">newline</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>由于 <code class="docutils literal"><span class="pre">newline</span></code> 和 <code class="docutils literal"><span class="pre">threelines</span></code> 的原型都在程序开头声明了，它们的定义按什么顺序写都无所谓了，都不会违背“先声明后使用”的原则。</p>
+<p>由于有Old Style C语法的存在，并非所有函数声明都包含完整的函数原型，例如 <code class="docutils literal"><span class="pre">void</span> <span class="pre">threelines();</span></code> 这个声明并没有明确指出参数类型和个数，所以不算函数原型，这个声明提供给编译器的信息只有函数名和返回值类型。如果在这样的声明之后调用函数，编译器不知道参数的类型和个数，就不会做语法检查，所以很容易引入Bug。读者需要了解这个知识点以便维护别人用Old Style C风格写的代码，但绝不应该按这种风格写新的代码。</p>
+<p>如果在调用函数之前没有声明会怎么样呢？有的读者也许碰到过这种情况，我可以解释一下，但绝不推荐这种写法。比如按上面的顺序定义这三个函数，但是把开头的两行声明去掉：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Three lines:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">threelines</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Another three lines.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">threelines</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">threelines</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">newline</span><span class="p">();</span>
+        <span class="n">newline</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">newline</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>编译时会报警告:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gcc main.c
+main.c:12:6: warning: conflicting types for ‘threelines’ [enabled by default]
+main.c:6:9: note: previous implicit declaration of ‘threelines’ was here
+main.c:19:6: warning: conflicting types for ‘newline’ [enabled by default]
+main.c:14:9: note: previous implicit declaration of ‘newline’ was here
+</pre></div>
+</div>
+<p id="index-7">但仍然能编译通过，运行结果也对。这里涉及到的规则称为函数的隐式声明（Implicit Declaration）：</p>
+<ol class="arabic simple">
+<li>由于在 <code class="docutils literal"><span class="pre">main</span></code> 函数中调用 <code class="docutils literal"><span class="pre">threelines()</span></code> 之前并没有声明它，编译器只能根据函数调用来猜测它的原型，比如根据调用 <code class="docutils literal"><span class="pre">foo(2.1,</span> <span class="pre">3.3)</span></code> 可以猜测 <code class="docutils literal"><span class="pre">foo</span></code> 函数有两个 <code class="docutils literal"><span class="pre">double</span></code> 型的参数，而我们调用 <code class="docutils literal"><span class="pre">threelines()</span></code> 没有传任何参数，所以编译器认为 <code class="docutils literal"><span class="pre">threelines</span></code> 函数的参数类型是 <code class="docutils literal"><span class="pre">void</span></code> ，另外，编译器认为所有隐式声明的返回值类型都是 <code class="docutils literal"><span class="pre">int</span></code> ，所以 <code class="docutils literal"><span class="pre">threelines</span></code> 函数的隐式声明是 <code class="docutils literal"><span class="pre">int</span> <span class="pre">threelines(void);</span></code> ，这样参数和返回值类型都确定下来了，编译器可以根据这些信息为 <code class="docutils literal"><span class="pre">threelines()</span></code> 调用生成相应的指令。</li>
+<li>然后编译器接着往下看，看到 <code class="docutils literal"><span class="pre">threelines</span></code> 函数的原型是 <code class="docutils literal"><span class="pre">void</span> <span class="pre">threelines(void)</span></code> ，与先前建立的隐式声明不一致（返回值类型不同），所以报警告。好在我们也没用到这个函数的返回值，执行结果仍然正确。假如我们在 <code class="docutils literal"><span class="pre">main</span></code> 函数中写 <code class="docutils literal"><span class="pre">int</span> <span class="pre">i</span> <span class="pre">=</span> <span class="pre">threelines();</span></code> 就要出错了，虽然编译也能通过（给出同样的警告信息），在运行时变量 <code class="docutils literal"><span class="pre">i</span></code> 也确实会被一个值初始化，但这个值并不真的是 <code class="docutils literal"><span class="pre">threelines()</span></code> 调用的返回值，而是由于编译器生成了错误的指令而得到的一个无意义的值。</li>
+<li>同理我们也能理解编译器关于 <code class="docutils literal"><span class="pre">newline</span></code> 函数的警告信息。</li>
+</ol>
+<p>注意区分这两个概念：</p>
+<ul class="simple">
+<li>如果调用函数时参数列表为空，并且缺少函数原型，则编译器根据隐式声明规则认为参数类型是 <code class="docutils literal"><span class="pre">void</span></code> 。</li>
+<li>如果声明函数时参数列表为空，则这个声明属于Old Style C语法，不算函数原型，编译器认为参数类型和个数没有明确指出。</li>
+</ul>
+</div>
+<div class="section" id="func-parameter">
+<span id="id6"></span><h2>3.3. 形参和实参<a class="headerlink" href="#func-parameter" title="Permalink to this headline">¶</a></h2>
+<p>下面我们定义一个带参数的函数，我们需要在函数定义中指明参数的个数和每个参数的类型，定义参数就像定义变量一样，需要为每个参数指明类型，参数的命名也要遵循标识符命名规则。例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">print_time</span><span class="p">(</span><span class="kt">int</span> <span class="n">hour</span><span class="p">,</span> <span class="kt">int</span> <span class="n">minute</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">print_time</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>如果写一个非定义的函数声明，可以只写参数类型而不写参数名，例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">print_time</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>这样的声明仍然包含了函数名、参数类型和个数、返回值类型这三要素，所以也算函数原型。注意，定义变量时可以把相同类型的变量列在一起，而定义参数却不可以，例如下面这样的定义是错的：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">print_time</span><span class="p">(</span><span class="kt">int</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-8">在学编程语言的时候大家肯定都乐意看到这句话：“变量是这样定义的，参数也是这样定义的，一模一样”，这意味着不用专门去记住参数应该怎么定义了。谁也不愿意看到这句话：“定义变量可以这样写，而定义参数却不可以”。C语言的设计者也不希望自己设计的语法规则里到处都是例外，一个容易被用户接受的设计应该遵循最少例外原则（Rule of Least Surprise）。</p>
+<p>其实这条规定也不算十分例外，也是可以理解的，我们看参数列表的语法规则:</p>
+<div class="highlight-python"><div class="highlight"><pre>参数列表 → 列表项, 列表项, ...
+列表项 → 类型 标识符
+</pre></div>
+</div>
+<p id="index-9">参数列表中的逗号（Comma）是列表项之间的分隔符，如果允许写 <code class="docutils literal"><span class="pre">void</span> <span class="pre">foo(int</span> <span class="pre">hour,</span> <span class="pre">minute,</span> <span class="pre">char</span> <span class="pre">c)</span></code> 这样的声明，那就是允许一部分列表项有类型一部分列表项没有类型，还要规定没有类型的列表项和前一列表项的类型相同，那编译器实现起来就复杂了。</p>
+<p>另外一个问题是，如果仿照变量声明把参数列表的语法规则改成下面这样不是很好吗？</p>
+<div class="highlight-python"><div class="highlight"><pre>参数列表 → 列表项; 列表项; ...
+列表项 → 类型 标识符, 标识符, ...
+</pre></div>
+</div>
+<p>按照这样的语法规则，函数声明就可以写成 <code class="docutils literal"><span class="pre">void</span> <span class="pre">foo(int</span> <span class="pre">hour,</span> <span class="pre">minute;</span> <span class="pre">char</span> <span class="pre">c)</span></code> ，但为什么C语言没有这样规定呢？这也是从Old Style C继承下来的，Old Style C是这样声明参数的：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+<span class="kt">char</span> <span class="n">z</span><span class="p">;</span>
+<span class="p">{</span>
+        <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>现在的C编译器仍然支持这种语法（按Old Style C的语法，上例中未声明类型的参数 <code class="docutils literal"><span class="pre">y</span></code> 默认是 <code class="docutils literal"><span class="pre">int</span></code> 型）。</p>
+<p id="index-10">学习编程语言不要死记各种语法规定，如果能够想清楚设计者这么规定的原因（Rationale），不仅有助于记忆，而且会有更多收获。本书在必要的地方会解释一些Rationale，或者启发读者自己去思考，例如上一节在脚注中解释了 <code class="docutils literal"><span class="pre">void</span></code> 关键字的Rationale。 <a class="reference internal" href="bibli.html#c99rationale" id="id7">[C99Rationale]</a> 是随C99标准一起发布的，值得参考。</p>
+<p>总的来说，C语言的设计是非常优美的，只要理解了少数基本概念和基本原则就可以根据组合规则写出任意复杂的程序，很少有例外的规定说这样组合是不允许的，或者那样类推是错误的。相反，C++的设计就非常复杂，充满了例外，全世界没几个人能把C++的所有规则都牢记于心，因而C++的设计一直饱受争议，这个观点在 <a class="reference internal" href="bibli.html#unix" id="id8">[UNIX编程艺术]</a> 中有详细阐述。</p>
+<p>在本书中，凡是提醒读者注意的地方都是多少有些Surprise的地方，初学者如果按常理来想很可能要想错，所以需要特别提醒一下。而初学者容易犯的另外一些错误，完全是因为没有掌握好基本概念和基本原理，或者根本无视组合规则而全凭自己主观臆断所致，对这一类问题本书不会做特别的提醒。假设有个初学者看完 <a class="reference internal" href="expr.html"><em>常量、变量和表达式</em></a> 之后想这样打印π的值：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">double</span> <span class="n">pi</span><span class="o">=</span><span class="mf">3.1416</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;pi</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>之所以会犯这种错误，一是不理解Literal的含义，二是自己想当然地把变量名组合到字符串里去，而事实上根本没有这条语法规则。一段代码正确的写法往往只有一种，错误的写法却有无数种可能，书上有限的篇幅无法覆盖每一种错误的可能性，就好比要提醒小孩吃饭一定要吃到嘴里，不要吃到鼻子里，更不要吃到耳朵里，也不要吃到手里……根本不可能覆盖所有犯错的可能性。</p>
+<p id="index-11">回到正题。当我们调用 <code class="docutils literal"><span class="pre">print_time(23,</span> <span class="pre">59)</span></code> 时，函数 <code class="docutils literal"><span class="pre">print_time</span></code> 中参数 <code class="docutils literal"><span class="pre">hour</span></code> 的值就是 <code class="docutils literal"><span class="pre">23</span></code> ，参数 <code class="docutils literal"><span class="pre">minute</span></code> 的值就是 <code class="docutils literal"><span class="pre">59</span></code> 。确切地说，当我们讨论函数中的 <code class="docutils literal"><span class="pre">hour</span></code> 这个参数时，我们所说的“参数”是指形参（Parameter），当我们讨论传一个参数 <code class="docutils literal"><span class="pre">23</span></code> 给函数时，我们所说的“参数”是指实参（Argument），但我习惯都叫参数而不习惯总把形参、实参这两个文绉绉的词挂在嘴边（事实上大多数人都不习惯），读者可以根据上下文判断我说的到底是形参还是实参。记住这条基本原理： <strong>形参相当于函数中定义的变量，调用函数传递参数的过程相当于定义形参变量并且用实参的值来初始化。</strong> 例如这样调用：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">print_time</span><span class="p">(</span><span class="kt">int</span> <span class="n">hour</span><span class="p">,</span> <span class="kt">int</span> <span class="n">minute</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">59</span><span class="p">;</span>
+        <span class="n">print_time</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>相当于在函数 <code class="docutils literal"><span class="pre">print_time</span></code> 中执行了这样一些语句：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="n">hour</span> <span class="o">=</span> <span class="n">h</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">m</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-12">在调用 <code class="docutils literal"><span class="pre">print_time</span></code> 函数时， <code class="docutils literal"><span class="pre">main</span></code> 函数的变量 <code class="docutils literal"><span class="pre">h</span></code> 和 <code class="docutils literal"><span class="pre">print_time</span></code> 函数的参数 <code class="docutils literal"><span class="pre">hour</span></code> 是两个不同的变量，但变量 <code class="docutils literal"><span class="pre">h</span></code> 的值传给了参数 <code class="docutils literal"><span class="pre">hour</span></code> ，因此这两个变量的存储空间中都保存了相同的值23。同理，变量 <code class="docutils literal"><span class="pre">m</span></code> 的值传给了参数 <code class="docutils literal"><span class="pre">minute</span></code> 。C语言的这种传递参数的方式称为Call by Value。</p>
+<p>在调用函数时，每个参数都需要得到一个值，函数定义中有几个形参，在调用时就要传几个实参，不能多也不能少，每个参数的类型也必须对应上。肯定有读者注意到了，为什么我们调用 <code class="docutils literal"><span class="pre">printf</span></code> 时传的实参个数经常会不一样呢？因为C语言规定了一种特殊的参数列表格式，用命令 <strong class="command">man 3 printf</strong> 可以查看到 <code class="docutils literal"><span class="pre">printf</span></code> 函数的原型：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">printf</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">format</span><span class="p">,</span> <span class="p">...);</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-13">第一个参数是 <code class="docutils literal"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code> 类型的，后面的 <code class="docutils literal"><span class="pre">...</span></code> 可以代表0个或任意多个参数，而且这些参数的类型也是不确定的，这种参数称为可变参数（Variable Argument），我们将在 <a class="reference internal" href="interface.html#interface-va"><span>可变参数</span></a> 详细讨论带可变参数的函数。总之，每个函数的原型都明确规定了返回值类型以及参数的类型和个数，即使像 <code class="docutils literal"><span class="pre">printf</span></code> 这样规定为“不确定”也是一种明确的规定，调用函数时要严格遵守这些规定，有时候我们把函数叫做接口（Interface），调用函数就是使用这个接口，使用接口的前提是必须和接口保持一致。</p>
+<div class="admonition note" id="index-14">
+<p class="first admonition-title">Note</p>
+<p>Man Page</p>
+<p>Man Page是Linux开发最常用的参考手册，由很多页面组成，每个页面描述一个主题，这些页面被组织成若干个Section。FHS（Filesystem Hierarchy Standard）标准规定了Man Page各Section的含义如下：</p>
+<table border="1" class="docutils" id="id15">
+<caption><span class="caption-text">Man Page的Section</span><a class="headerlink" href="#id15" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Section</th>
+<th class="head">描述</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>用户命令，例如 <em class="manpage">ls(1)</em></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>系统调用，例如 <em class="manpage">_exit(2)</em></td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>库函数，例如 <em class="manpage">printf(3)</em></td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>特殊文件，例如 <em class="manpage">null(4)</em> 描述了设备文件 <code class="file docutils literal"><span class="pre">/dev/null</span></code> 和 <code class="file docutils literal"><span class="pre">/dev/zero</span></code> 的作用，这个页面也叫 <em class="manpage">zero(4)</em></td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>系统配置文件的格式，例如 <em class="manpage">passwd(5)</em> 描述了系统配置文件 <code class="file docutils literal"><span class="pre">/etc/passwd</span></code> 的格式</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>游戏</td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>其他杂项，例如 <em class="manpage">bash-builtins(7)</em> 描述了 <strong class="command">bash</strong> 的各种内建命令</td>
+</tr>
+<tr class="row-odd"><td>8</td>
+<td>系统管理命令，例如 <em class="manpage">ifconfig(8)</em></td>
+</tr>
+</tbody>
+</table>
+<p>注意区分用户命令和系统管理命令，用户命令通常位于 <code class="file docutils literal"><span class="pre">/bin</span></code> 和 <code class="file docutils literal"><span class="pre">/usr/bin</span></code> 目录，系统管理命令通常位于 <code class="file docutils literal"><span class="pre">/sbin</span></code> 和 <code class="file docutils literal"><span class="pre">/usr/sbin</span></code> 目录，一般用户可以执行用户命令，而执行系统管理命令经常需要 <code class="docutils literal"><span class="pre">root</span></code> 权限。系统调用和库函数的区别将在 <a class="reference internal" href="asmc.html#asmc-main"><span>main函数、启动例程和退出状态</span></a> 说明。</p>
+<p class="last">Man Page中有些页面有重名，比如敲 <strong class="command">man printf</strong> 命令看到的并不是C函数 <code class="docutils literal"><span class="pre">printf</span></code> ，而是位于第1个Section的命令 <code class="docutils literal"><span class="pre">printf</span></code> ，要查看位于第3个Section的 <code class="docutils literal"><span class="pre">printf</span></code> 函数应该敲 <strong class="command">man 3 printf</strong> ，也可以敲 <strong class="command">man -k printf</strong> 命令搜索哪些页面的主题包含 <code class="docutils literal"><span class="pre">printf</span></code> 关键字。本书会经常出现类似 <em class="manpage">printf(3)</em> 这样的写法，括号中的3表示Man Page的第3个Section，或者表示“我这里想说的是 <code class="docutils literal"><span class="pre">printf</span></code> 库函数而不是 <code class="docutils literal"><span class="pre">printf</span></code> 命令”。</p>
+</div>
+<p>习题</p>
+<ol class="arabic">
+<li><p class="first">定义一个函数 <code class="docutils literal"><span class="pre">increment</span></code> ，它的作用是把传进来的参数加1。例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">increment</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="n">increment</span><span class="p">(</span><span class="n">i</span><span class="p">);</span> <span class="cm">/* i now becomes 2 */</span>
+        <span class="n">increment</span><span class="p">(</span><span class="n">j</span><span class="p">);</span> <span class="cm">/* j now becomes 3 */</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>我们在 <code class="docutils literal"><span class="pre">main</span></code> 函数中调用 <code class="docutils literal"><span class="pre">increment</span></code> 增加变量 <code class="docutils literal"><span class="pre">i</span></code> 和 <code class="docutils literal"><span class="pre">j</span></code> 的值，这样能奏效吗？为什么？</p>
+</li>
+<li><p class="first">如果在一个程序中调用了 <code class="docutils literal"><span class="pre">printf</span></code> 函数却不包含头文件，例如 <code class="docutils literal"><span class="pre">int</span> <span class="pre">main(void)</span> <span class="pre">{</span> <span class="pre">printf(&quot;\n&quot;);</span> <span class="pre">}</span></code> ，编译时会报警告： <code class="docutils literal"><span class="pre">warning:</span> <span class="pre">incompatible</span> <span class="pre">implicit</span> <span class="pre">declaration</span> <span class="pre">of</span> <span class="pre">built-in</span> <span class="pre">function</span> <span class="pre">‘printf’</span></code> ，这个警告信息说明了什么？</p>
+</li>
+<li><p class="first">说出以下代码哪些属于函数声明，哪些属于函数定义，哪些属于函数原型。</p>
+<ul class="simple">
+<li>main() {}</li>
+<li>int foo();</li>
+<li>int bar(void) {}</li>
+<li>void baz(int i, int);</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="id9">
+<h2>3.4. 全局变量、局部变量和作用域<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p id="index-15">我们把函数中定义的变量称为局部变量（Local Variable），由于形参相当于函数中定义的变量，所以形参也是一种局部变量。在这里“局部”有两层含义：</p>
+<ol class="arabic">
+<li><p class="first">一个函数中定义的变量不能被另一个函数使用。例如 <code class="docutils literal"><span class="pre">print_time</span></code> 中的 <code class="docutils literal"><span class="pre">hour</span></code> 和 <code class="docutils literal"><span class="pre">minute</span></code> 在 <code class="docutils literal"><span class="pre">main</span></code> 函数中没有定义，不能使用，同样 <code class="docutils literal"><span class="pre">main</span></code> 函数中的局部变量也不能被 <code class="docutils literal"><span class="pre">print_time</span></code> 函数使用。如果把上一节的代码改成这样：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">print_time</span><span class="p">(</span><span class="kt">int</span> <span class="n">hour</span><span class="p">,</span> <span class="kt">int</span> <span class="n">minute</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">hour</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="mi">59</span><span class="p">;</span>
+        <span class="n">print_time</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>在 <code class="docutils literal"><span class="pre">main</span></code> 函数中定义了局部变量 <code class="docutils literal"><span class="pre">hour</span></code> ， <code class="docutils literal"><span class="pre">print_time</span></code> 函数中也有参数 <code class="docutils literal"><span class="pre">hour</span></code> ，虽然它们名称相同，但仍然是两个不同的变量，代表不同的存储单元。 <code class="docutils literal"><span class="pre">main</span></code> 函数的局部变量 <code class="docutils literal"><span class="pre">minute</span></code> 和 <code class="docutils literal"><span class="pre">print_time</span></code> 函数的参数 <code class="docutils literal"><span class="pre">minute</span></code> 也是如此。</p>
+</li>
+<li><p class="first">每次调用函数时局部变量都表示不同的存储空间。局部变量在每次函数调用时分配存储空间，在每次函数返回时释放存储空间，例如调用 <code class="docutils literal"><span class="pre">print_time(23,</span> <span class="pre">59)</span></code> 时分配 <code class="docutils literal"><span class="pre">hour</span></code> 和 <code class="docutils literal"><span class="pre">minute</span></code> 两个变量的存储空间，在里面分别存上 <code class="docutils literal"><span class="pre">23</span></code> 和 <code class="docutils literal"><span class="pre">59</span></code> ，函数返回时释放它们的存储空间，下次再调用 <code class="docutils literal"><span class="pre">print_time(12,</span> <span class="pre">20)</span></code> 时又分配 <code class="docutils literal"><span class="pre">hour</span></code> 和 <code class="docutils literal"><span class="pre">minute</span></code> 的存储空间，在里面分别存上 <code class="docutils literal"><span class="pre">12</span></code> 和 <code class="docutils literal"><span class="pre">20</span></code> 。</p>
+</li>
+</ol>
+<p id="index-16">与局部变量的概念相对的是全局变量（Global Variable），全局变量定义在所有的函数体之外，它们在程序开始运行时分配存储空间，在程序结束时释放存储空间，在任何函数中都可以访问全局变量，例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="n">hour</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="mi">59</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">print_time</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d in print_time</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">print_time</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d:%d in main</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>正因为全局变量在任何函数中都可以访问，所以在程序运行过程中全局变量被读写的顺序从源代码中是看不出来的，源代码的书写顺序并不能反映函数的调用顺序，程序出现了Bug往往就是因为在某个不起眼的地方对全局变量的读写顺序不正确，如果代码规模很大，这种错误是很难找到的。而对局部变量的访问不仅局限在一个函数内部，而且局限在一次函数调用之中，从函数的源代码很容易看出访问的先后顺序是怎样的，所以比较容易找到Bug。因此， <strong>虽然全局变量用起来很方便，但一定要慎用，能用函数传参代替的就不要用全局变量</strong> 。</p>
+<p>如果全局变量和局部变量重名了会怎么样呢？如果上面的例子改为：</p>
+<div class="figure" id="id16">
+<span id="func-scope"></span><img alt="../_images/func.scope.png" src="../_images/func.scope.png" />
+<p class="caption"><span class="caption-text">作用域</span></p>
+</div>
+<p>则第一次调用 <code class="docutils literal"><span class="pre">print_time</span></code> 打印的是全局变量的值，第二次直接调用 <code class="docutils literal"><span class="pre">printf</span></code> 打印的则是 <code class="docutils literal"><span class="pre">main</span></code> 函数局部变量的值。在C语言中每个标识符都有特定的作用域，全局变量是定义在所有函数体之外的标识符，它的作用域从定义的位置开始直到源文件结束，而 <code class="docutils literal"><span class="pre">main</span></code> 函数局部变量的作用域仅限于 <code class="docutils literal"><span class="pre">main</span></code> 函数之中。如上图所示，设想整个源文件是一张大纸（即全局变量的作用域），而 <code class="docutils literal"><span class="pre">main</span></code> 函数是盖在这张大纸上的一张小纸（即 <code class="docutils literal"><span class="pre">main</span></code> 函数局部变量的作用域）。在小纸上用到标识符 <code class="docutils literal"><span class="pre">hour</span></code> 和 <code class="docutils literal"><span class="pre">minute</span></code> 时应该参考小纸上的定义，因为大纸（全局变量的作用域）被盖住了，如果在小纸上用到某个标识符却没有找到它的定义（例如上图中的变量 <code class="docutils literal"><span class="pre">x</span></code> ），那么再去看下面的大纸上有没有它的定义。</p>
+<p id="index-17">到目前为止我们在初始化变量时都是用一个常量或变量做Initializer，其实也可以用组合而成的表达式做Initializer，但要注意一点： <strong>局部变量可以用类型相符的任意表达式来初始化，而全局变量只能用常量表达式（Constant Expression）来初始化。</strong> 例如，全局变量 <code class="docutils literal"><span class="pre">pi</span></code> 这样初始化是合法的：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">double</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.14</span> <span class="o">+</span> <span class="mf">0.0016</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>但这样初始化是不合法的：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">double</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>然而局部变量这样初始化却是合法的。</p>
+<p>为什么要这样规定呢？因为在程序运行一开始（在还没有执行 <code class="docutils literal"><span class="pre">main</span></code> 函数中的任何语句之前）就要用初始值来初始化全局变量，这样 <code class="docutils literal"><span class="pre">main</span></code> 函数的第一条语句就可以取到全局变量的初始值来做计算。要做到这一点，全局变量的初始值必须保存在编译生成的可执行文件中，因此要求初始值必须在 <strong>编译时</strong> 就能计算出来。上面第一种Initializer（ <code class="docutils literal"><span class="pre">3.14</span> <span class="pre">+</span> <span class="pre">0.0016</span></code> ）的值可以由编译器直接计算出来并保存在可执行文件中，而上面第二种Initializer（ <code class="docutils literal"><span class="pre">acos(-1.0)</span></code> ）的值编译器是计算不了的，必须在程序 <strong>运行时</strong> 调用 <code class="docutils literal"><span class="pre">acos</span></code> 函数才能计算出来，所以不能用来初始化全局变量。请注意区分编译时和运行时这两个概念。</p>
+<p>再看下面这个例子定义并初始化 <code class="docutils literal"><span class="pre">minute</span></code> 和 <code class="docutils literal"><span class="pre">hour</span></code> 两个全局变量：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="n">minute</span> <span class="o">=</span> <span class="mi">360</span> <span class="o">-</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">hour</span> <span class="o">=</span> <span class="n">minute</span> <span class="o">/</span> <span class="mi">60</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<ol class="arabic simple">
+<li>把 <code class="docutils literal"><span class="pre">minute</span></code> 初始化成 <code class="docutils literal"><span class="pre">360</span> <span class="pre">-</span> <span class="pre">10</span></code> 是合法的。编译器可以算出 <code class="docutils literal"><span class="pre">360</span> <span class="pre">-</span> <span class="pre">10</span></code> 的计算结果是350，并把350保存到可执行文件中，程序运行一开始，可执行文件中的350这个数据就被加载到变量 <code class="docutils literal"><span class="pre">minute</span></code> 的存储空间。</li>
+<li>把 <code class="docutils literal"><span class="pre">hour</span></code> 初始化成 <code class="docutils literal"><span class="pre">minute</span> <span class="pre">/</span> <span class="pre">60</span></code> 是不合法的。虽然在编译时计算出 <code class="docutils literal"><span class="pre">hour</span></code> 的初始值理论上是可行的（先算出 <code class="docutils literal"><span class="pre">minute</span></code> 的初始值再据此算出 <code class="docutils literal"><span class="pre">hour</span></code> 的初始值），但为了简化编译器的实现，C语言从语法上规定全局变量只能用常量表达式来初始化， <code class="docutils literal"><span class="pre">minute</span> <span class="pre">/</span> <span class="pre">60</span></code> 不是常量表达式，不符合语法规定，编译器直接报错退出而不去算这个初始值。</li>
+</ol>
+<p>如果全局变量在定义时不初始化则初始值是0，如果局部变量在定义时不初始化则初始值是不确定的。所以， <strong>局部变量在使用之前一定要先赋值</strong> ，如果基于一个不确定的值做后续计算肯定会引入Bug。</p>
+<p>如何证明“局部变量的存储空间在每次函数调用时分配，在函数返回时释放”？当我们想要确认某些语法规则时，可以查教材，也可以查C99，但最快捷的办法就是编个小程序验证一下：</p>
+<div class="highlight-c" id="func-verifylocals"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">777</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">foo</span><span class="p">();</span>
+        <span class="n">foo</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>第一次调用 <code class="docutils literal"><span class="pre">foo</span></code> 函数，分配变量 <code class="docutils literal"><span class="pre">i</span></code> 的存储空间，然后打印 <code class="docutils literal"><span class="pre">i</span></code> 的值，由于 <code class="docutils literal"><span class="pre">i</span></code> 未初始化，打印的应该是一个不确定的值，然后把 <code class="docutils literal"><span class="pre">i</span></code> 赋值为 <code class="docutils literal"><span class="pre">777</span></code> ，函数返回，释放 <code class="docutils literal"><span class="pre">i</span></code> 的存储空间。第二次调用 <code class="docutils literal"><span class="pre">foo</span></code> 函数，分配变量 <code class="docutils literal"><span class="pre">i</span></code> 的存储空间，然后打印 <code class="docutils literal"><span class="pre">i</span></code> 的值，由于 <code class="docutils literal"><span class="pre">i</span></code> 未初始化，打印的应该又是一个不确定的值，如果确实如此，就证明了“局部变量的存储空间在每次函数调用时分配，在函数返回时释放”。分析完了，我们运行程序看看是不是像我们分析的这样:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./a.out
+7991861
+777
+$ ./a.out
+3641909
+777
+</pre></div>
+</div>
+<p>结果出乎意料，第一次调用打印的 <code class="docutils literal"><span class="pre">i</span></code> 值确实是个不确定值，第二次调用打印的 <code class="docutils literal"><span class="pre">i</span></code> 值正是第一次调用末尾赋给 <code class="docutils literal"><span class="pre">i</span></code> 的值 <code class="docutils literal"><span class="pre">777</span></code> 。</p>
+<p>如何分析这个结果呢？有一种初学者是这样，原本就没有把这条语法规则记牢，或者对自己的记忆力没信心，看到这个结果就会想：哦那肯定是我记错了，改过来记吧，应该是“函数中的局部变量具有一直存在的固定的存储空间，每次函数调用时使用它，返回时也不释放，再次调用函数时它应该还能保持上次的值”。还有一种初学者是怀疑论者或不可知论者，看到这个结果就会想：教材上明明说“局部变量的存储空间在每次函数调用时分配，在函数返回时释放”，那一定是教材写错了，教材也是人写的，是人写的就难免出错，哦，连C99也这么写的啊，C99也是人写的，也难免出错，或者C99也许没错，但是反正运行结果就是错了，计算机这东西真靠不住，太容易受电磁干扰和宇宙射线影响了，我的程序写得再正确也有可能被干扰得不能正确运行。</p>
+<p>这是初学者最常见的两种心态。不从客观事实和逻辑推理出发分析问题的真正原因，而仅凭主观臆断胡乱给问题定性，“说你有罪你就有罪”。先不要胡乱怀疑，我们再做一次实验，在两次 <code class="docutils literal"><span class="pre">foo</span></code> 函数调用之间插一个别的函数调用，结果就大不相同了 <a class="footnote-reference" href="#id11" id="id10">[2]</a> ：</p>
+<table class="docutils footnote" frame="void" id="id11" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[2]</a></td><td>如果你编译运行这个程序的环境和我的环境（Ubuntu 12.04 LTS 32位x86）不同，也许在你的机器上跑不出这个结果，你只要理解这个例子要说明的基本原理就行了。</td></tr>
+</tbody>
+</table>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">foo</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">foo</span><span class="p">();</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>结果是:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./a.out
+134513793
+hello
+16699380
+$ ./a.out
+134513793
+hello
+13459444
+</pre></div>
+</div>
+<p>这一回，两次调用 <code class="docutils literal"><span class="pre">foo</span></code> 打印的 <code class="docutils literal"><span class="pre">i</span></code> 值看起来都挺乱，但似乎第一次调用打印的 <code class="docutils literal"><span class="pre">i</span></code> 值总是不变，那它到底是个确定值还是不确定值呢？</p>
+<p>关键的一点：我说“未初始化的局部变量的初值是不确定值”，并没有说每次运行程序时这个不确定值不能相同，也没有说这个不确定值不能是上次调用函数时赋给该局部变量的值。在这里“不确定”的准确含义是： <strong>每次调用这个函数时该局部变量的初值可能不一样，运行环境不同，函数的调用次序不同，都会影响到局部变量的初值。</strong></p>
+<p id="index-18">在运用逻辑推理时一定要注意， <strong>不要把必要条件（Necessary Condition）当充分条件（Sufficient Condition）</strong> ，这一点在调试时尤其重要，看到错误现象不要轻易断定原因是什么，一定要考虑再三，找出它的真正原因。例如，不要看到第二次调用打印777就下结论“函数中的局部变量具有一直存在的固定的存储空间，每次函数调用时使用它，返回时也不释放，再次调用函数时它应该还能保持上次的值”，这个结论倒是能推出777这个结果，但反过来由777这个结果却不能推出这样的结论。所以说777这个结果是该结论的必要条件，但不是充分条件。至于为什么这个不确定值有时刚好是777，有时又不是，等学到 <a class="reference internal" href="asmc.html#asmc-funccall"><span>函数调用</span></a> 就能解释这些现象了。</p>
+<p>从 <a class="reference internal" href="#func-deffunction"><span>定义自己的函数</span></a> 介绍的语法规则可以看出，非定义的函数声明也可以写在局部作用域中，例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">void</span> <span class="n">print_time</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+        <span class="n">print_time</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">59</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>这样声明的标识符 <code class="docutils literal"><span class="pre">print_time</span></code> 具有局部作用域，只在 <code class="docutils literal"><span class="pre">main</span></code> 函数中是有效的函数名，出了 <code class="docutils literal"><span class="pre">main</span></code> 函数就不存在 <code class="docutils literal"><span class="pre">print_time</span></code> 这个标识符了。注意，虽然在一个函数体中可以声明另一个函数，但不能定义另一个函数，C语言不允许嵌套定义函数 <a class="footnote-reference" href="#id13" id="id12">[3]</a> 。</p>
+<table class="docutils footnote" frame="void" id="id13" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[3]</a></td><td>但 <strong class="command">gcc</strong> 的扩展特性允许嵌套定义函数，本书不做详细讨论。</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. 函数入门</a><ul>
+<li><a class="reference internal" href="#func-mathfunc">3.1. 数学函数</a></li>
+<li><a class="reference internal" href="#func-deffunction">3.2. 定义自己的函数</a></li>
+<li><a class="reference internal" href="#func-parameter">3.3. 形参和实参</a></li>
+<li><a class="reference internal" href="#id9">3.4. 全局变量、局部变量和作用域</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="expr.html"
+                        title="previous chapter">2. 常量、变量和表达式</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cond.html"
+                        title="next chapter">4. 分支语句</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/zh/func.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><table border=0 cellspacing=0 style="color: white;">
+<script type="text/javascript">
+  //<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34437927-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  //]]>
+</script>
+<tr><td>
+   请输入您的email订阅<a href="http://groups.google.com/group/learning-linux-c-cpp">本书的邮件列表</a><br/>
+   (Please enter your email to subscribe to <a href="http://groups.google.com/group/learning-linux-c-cpp">this book's mailing list</a>)<br/>
+   <form action="http://groups.google.com/group/learning-linux-c-cpp/boxsubscribe"><input type=text name=email><input type=submit name="sub" value="订阅(Subscribe)"></form>
+</td></tr>
+
+<tr><td><br/>关注<a href="http://weibo.com/sansoong">我的微博</a></td></tr>
+
+<tr><td><br/>Checkout the source from github: <a href="https://github.com/learning-linux-c-cpp/akabook">https://github.com/learning-linux-c-cpp/akabook</a></td></tr>
+
+<tr><td>
+   <br/>感谢您的慷慨捐赠！<br/>
+   Thanks for your generous donation!<br/>
+   <a href="http://me.alipay.com/songjinshan" target="_blank"><img src="/akabook/_static/me.alipay.png" alt="捐赠"></a>
+</td></tr>
+</table>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cond.html" title="4. 分支语句"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="expr.html" title="2. 常量、变量和表达式"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >中文版：Linux C/C++编程一站式学习</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Sean Soong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

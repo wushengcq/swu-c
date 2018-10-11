@@ -1,0 +1,438 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Template and Generic Programming &mdash; akabook 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="akabook 3.0 documentation" href="../index.html" />
+    <link rel="up" title="English Version: Learning Linux C/C++ Programming from Scratch" href="index.html" />
+    <link rel="prev" title="2. Class and Object-oriented Methodology" href="cppoo.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cppoo.html" title="2. Class and Object-oriented Methodology"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">English Version: Learning Linux C/C++ Programming from Scratch</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="template-and-generic-programming">
+<h1>3. Template and Generic Programming<a class="headerlink" href="#template-and-generic-programming" title="Permalink to this headline">¶</a></h1>
+<p><strong>TODO: THIS WHOLE CHAPTER NEEDS OVERHAUL AND BROADENING</strong></p>
+<div class="figure">
+<img alt="../_images/road-works-sign.gif" src="../_images/road-works-sign.gif" />
+</div>
+<div class="section" id="template">
+<h2>3.1. Template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
+<p>C++ has many different data types:</p>
+<ul class="simple">
+<li>primitive type: <code class="docutils literal"><span class="pre">int</span></code>, <code class="docutils literal"><span class="pre">char</span></code>, <code class="docutils literal"><span class="pre">float</span></code>, <code class="docutils literal"><span class="pre">double</span></code> and so on</li>
+<li>pointer</li>
+<li>class and struct</li>
+<li>array</li>
+</ul>
+<p>These data types are quite different but have some similar operations. However, so far we cannot write a general function to apply to all these types. For example, we can&#8217;t write a single function <code class="docutils literal"><span class="pre">power(x,</span> <span class="pre">exp)</span></code> applying to all these types: <code class="docutils literal"><span class="pre">int</span></code>, <code class="docutils literal"><span class="pre">float</span></code>, <code class="docutils literal"><span class="pre">class</span> <span class="pre">Complex</span></code> and so on. C++ provides templates to implement general functions like this. We can define template classes or template functions with the <code class="docutils literal"><span class="pre">template</span></code> keyword. This is called <strong>generic programming</strong>. For example,</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="kt">int</span> <span class="n">max</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">Buffer</span>
+<span class="p">{</span>
+        <span class="n">T</span> <span class="n">v</span><span class="p">[</span><span class="n">max</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="n">Buffer</span> <span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="mi">10</span><span class="o">&gt;</span> <span class="n">intBuf10</span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">power</span><span class="p">(</span><span class="n">T</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">exp</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">T</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="n">exp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ans</span> <span class="o">*=</span> <span class="n">a</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">ans</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The parameters in <code class="docutils literal"><span class="pre">&lt;&gt;</span></code> are template parameters. Through template parameters we can pass not only values but also types, in which case we should declare the type parameter with keyword <code class="docutils literal"><span class="pre">class</span></code> or <code class="docutils literal"><span class="pre">typename</span></code>. Even declared with <code class="docutils literal"><span class="pre">class</span></code>, the type parameter can be built-in type as well as class type. You can consider template as a kind of macro. For example, if we use <code class="docutils literal"><span class="pre">Buffer</span> <span class="pre">&lt;int,</span> <span class="pre">10&gt;</span></code> as a type, the following type definition will be generated:</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">struct</span> <span class="n">Buffer</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">v</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+<span class="p">};</span>
+</pre></div>
+</td></tr></table></div>
+<p>If we invoke <code class="docutils literal"><span class="pre">power(c,</span> <span class="pre">5)</span></code> and <code class="docutils literal"><span class="pre">c</span></code> is a <code class="docutils literal"><span class="pre">Complex</span></code> object, the following function definition will be generated;</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">Complex</span> <span class="nf">power</span><span class="p">(</span><span class="n">Complex</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">exp</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Complex</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="n">exp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ans</span> <span class="o">*=</span> <span class="n">a</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">ans</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>If we invoke <code class="docutils literal"><span class="pre">power(2.13,</span> <span class="pre">4)</span></code>, another function definition will be generated. This processing is similar to macro expansion. It&#8217;s called <strong>template instantiation</strong>. Template definitions are usually placed in header files.</p>
+<p>Inheritance is invented for code reuse, so is template. Then what makes reusable code? Suppose you wrote a function <code class="docutils literal"><span class="pre">func1</span></code> yesterday, and today you write code that calls <code class="docutils literal"><span class="pre">func1</span></code>. That&#8217;s the basic form of code reuse. Now Suppose you wrote a template function <code class="docutils literal"><span class="pre">power</span></code> yesterday to handle power calculation of built-in types, and today you implement a <code class="docutils literal"><span class="pre">Complex</span></code> class. It&#8217;s interesting to note that the function you wrote yesterday can also apply to the type you implement today. The template function <code class="docutils literal"><span class="pre">power</span></code> works with any new type as long as that type implements the overloaded operator <code class="docutils literal"><span class="pre">*=</span></code>. This case is similar to what we saw in the last section. Suppose you wrote the <code class="docutils literal"><span class="pre">Animal</span></code> class and the <code class="docutils literal"><span class="pre">whosay</span></code> function yesterday, and add a new class <code class="docutils literal"><span class="pre">Dog</span></code> today which inherits from the <code class="docutils literal"><span class="pre">Animal</span></code> class. Then the function <code class="docutils literal"><span class="pre">whosay</span></code> you wrote yesterday can also apply to the new derived class <code class="docutils literal"><span class="pre">Dog</span></code>, because it implements the <code class="docutils literal"><span class="pre">saywhat</span></code> interface required by <code class="docutils literal"><span class="pre">Animal</span></code> class.</p>
+<p>Now try it yourself: write a template function <code class="docutils literal"><span class="pre">myswap</span></code> to swap two objects of any type. Test your code with different kinds of objects. Note the template cannot be named <code class="docutils literal"><span class="pre">swap</span></code> because there is one in C++ standard library.</p>
+</div>
+<div class="section" id="template-class">
+<h2>3.2. Template Class<a class="headerlink" href="#template-class" title="Permalink to this headline">¶</a></h2>
+<p>Now we implement a template class. It behaves as a stack (supports push and pop) and can hold objects of any type.</p>
+<p>stack.h</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Node</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+    <span class="n">Node</span><span class="p">(</span><span class="n">T</span> <span class="n">invalue</span><span class="p">)</span><span class="o">:</span> <span class="n">m_Value</span><span class="p">(</span><span class="n">invalue</span><span class="p">),</span> <span class="n">m_Next</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="o">~</span><span class="n">Node</span><span class="p">()</span> <span class="p">;</span>
+
+    <span class="n">T</span> <span class="nf">getValue</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span><span class="k">return</span> <span class="n">m_Value</span><span class="p">;}</span>
+    <span class="kt">void</span> <span class="nf">setValue</span><span class="p">(</span><span class="n">T</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span><span class="n">m_Value</span> <span class="o">=</span> <span class="n">value</span><span class="p">;}</span>
+    <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">getNext</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span><span class="k">return</span> <span class="n">m_Next</span><span class="p">;}</span>
+    <span class="kt">void</span> <span class="n">setNext</span><span class="p">(</span><span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">next</span><span class="p">)</span> <span class="p">{</span><span class="n">m_Next</span> <span class="o">=</span> <span class="n">next</span><span class="p">;}</span>
+ <span class="k">private</span><span class="o">:</span>
+    <span class="n">T</span> <span class="n">m_Value</span><span class="p">;</span>
+    <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">m_Next</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::~</span><span class="n">Node</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">m_Value</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; deleted &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">m_Next</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">delete</span> <span class="n">m_Next</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">class</span> <span class="nc">Stack</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+    <span class="n">Stack</span><span class="p">()</span><span class="o">:</span> <span class="n">m_Head</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">m_Count</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="o">~</span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">{</span><span class="k">delete</span> <span class="n">m_Head</span><span class="p">;}</span>
+    <span class="kt">void</span> <span class="n">push</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">t</span><span class="p">);</span>
+    <span class="n">T</span> <span class="nf">pop</span><span class="p">();</span>
+    <span class="n">T</span> <span class="nf">top</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="nf">count</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+ <span class="k">private</span><span class="o">:</span>
+    <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">m_Head</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">m_Count</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">Stack</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">push</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">newNode</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">newNode</span><span class="o">-&gt;</span><span class="n">setNext</span><span class="p">(</span><span class="n">m_Head</span><span class="p">);</span>
+    <span class="n">m_Head</span> <span class="o">=</span> <span class="n">newNode</span><span class="p">;</span>
+    <span class="o">++</span><span class="n">m_Count</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>  <span class="n">T</span> <span class="n">Stack</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">pop</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">popped</span> <span class="o">=</span> <span class="n">m_Head</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">m_Head</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="n">m_Head</span> <span class="o">=</span> <span class="n">m_Head</span><span class="o">-&gt;</span><span class="n">getNext</span><span class="p">();</span>
+        <span class="n">T</span> <span class="n">retval</span> <span class="o">=</span> <span class="n">popped</span><span class="o">-&gt;</span><span class="n">getValue</span><span class="p">();</span>
+        <span class="n">popped</span><span class="o">-&gt;</span><span class="n">setNext</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">delete</span> <span class="n">popped</span><span class="p">;</span>
+        <span class="o">--</span><span class="n">m_Count</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="kr">inline</span> <span class="n">T</span> <span class="n">Stack</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">top</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">m_Head</span><span class="o">-&gt;</span><span class="n">getValue</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="n">Stack</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">count</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">m_Count</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Since template class definition can be placed in a header file, there&#8217;s no <code class="docutils literal"><span class="pre">stack.cpp</span></code>.</p>
+<p>main.cpp</p>
+<div class="highlight-c++"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;stack.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">intstack1</span><span class="p">,</span> <span class="n">intstack2</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">val</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="o">++</span><span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">intstack1</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+        <span class="n">intstack2</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">val</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">intstack1</span><span class="p">.</span><span class="n">count</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">intstack1</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">val</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">Stack</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="n">stringstack</span><span class="p">;</span>
+    <span class="n">stringstack</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">);</span>
+    <span class="n">stringstack</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">&#39;B&#39;</span><span class="p">);</span>
+    <span class="n">stringstack</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">&#39;C&#39;</span><span class="p">);</span>
+    <span class="kt">char</span> <span class="n">val2</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">stringstack</span><span class="p">.</span><span class="n">count</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="n">stringstack</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">val2</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Now intstack2 will be destructed.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Here is the result:</p>
+<div class="highlight-python"><div class="highlight"><pre>3 deleted
+3
+2 deleted
+2
+1 deleted
+1
+0 deleted
+0
+C deleted
+C
+B deleted
+B
+A deleted
+A
+Now intstack2 will be destructed.
+6 deleted
+4 deleted
+2 deleted
+0 deleted
+</pre></div>
+</div>
+<p>At the end of <code class="docutils literal"><span class="pre">main</span></code> function, <code class="docutils literal"><span class="pre">intstack2</span></code> is automatically destructed because it&#8217;s allocated on the stack and runs out of duration. But the elements contained in <code class="docutils literal"><span class="pre">intstack2</span></code> are allocated by the <code class="docutils literal"><span class="pre">new</span></code> operator, how can they be destructed one after another? Please find the answer from the code.</p>
+<p>Template classes like this are called <strong>containers</strong>. They can hold elements of any type and can automatically manage the allocation and deallocation of these elements. C++ standard library has many different containers, each providing different interfaces for storing and accessing elements.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Template and Generic Programming</a><ul>
+<li><a class="reference internal" href="#template">3.1. Template</a></li>
+<li><a class="reference internal" href="#template-class">3.2. Template Class</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cppoo.html"
+                        title="previous chapter">2. Class and Object-oriented Methodology</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/en/cppgp.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><table border=0 cellspacing=0 style="color: white;">
+<script type="text/javascript">
+  //<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34437927-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  //]]>
+</script>
+<tr><td>
+   请输入您的email订阅<a href="http://groups.google.com/group/learning-linux-c-cpp">本书的邮件列表</a><br/>
+   (Please enter your email to subscribe to <a href="http://groups.google.com/group/learning-linux-c-cpp">this book's mailing list</a>)<br/>
+   <form action="http://groups.google.com/group/learning-linux-c-cpp/boxsubscribe"><input type=text name=email><input type=submit name="sub" value="订阅(Subscribe)"></form>
+</td></tr>
+
+<tr><td><br/>关注<a href="http://weibo.com/sansoong">我的微博</a></td></tr>
+
+<tr><td><br/>Checkout the source from github: <a href="https://github.com/learning-linux-c-cpp/akabook">https://github.com/learning-linux-c-cpp/akabook</a></td></tr>
+
+<tr><td>
+   <br/>感谢您的慷慨捐赠！<br/>
+   Thanks for your generous donation!<br/>
+   <a href="http://me.alipay.com/songjinshan" target="_blank"><img src="/akabook/_static/me.alipay.png" alt="捐赠"></a>
+</td></tr>
+</table>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cppoo.html" title="2. Class and Object-oriented Methodology"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >English Version: Learning Linux C/C++ Programming from Scratch</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Sean Soong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

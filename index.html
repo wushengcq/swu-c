@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Introduction to Computation and Programming Using C</title>
+
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="style/bootstrap.min.css">
+  <link rel="stylesheet" href="style/bootstrap-theme.min.css">
+
+  <!-- Google fonts -->
+  <link href='style/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+</head>
+
+<body>
+
+<div id="header">
+  <a href="index.html">
+	<h1><b>编 程 导 论<p/><span style="font-size:0.7em">Introduction to Computation and Programming Using C</span></b></h1>
+  </a>
+  <div style="clear:both;"></div>
+</div>
+
+<div class="sechighlight">
+	<div class="container sec">
+		<h2>* 课程基本信息</h2>
+		<br>
+		<p><b>课程名称：</b> 编程导论</p>
+		<p><b>课程学年：</b> 2018 - 2019</b> 学年第一学期.</p>
+		<p><b>上课班级：</b> 18级网络工程.</p>
+		<p><b>上课时间：</b> 6-18周，每周四上午1~3节，北区25-0702教室</p>
+		<p><b>实验时间：</b> 6-18周，单周五上午4~5节，北区25-0702教室</p>
+	</div>
+</div>
+
+<div class="sechighlight">
+	<div class="container sec">
+		<h2>* 实验报告</h2>
+		<br>
+		<p>1. 实验报告按时完成后，提交到学院指定的ftp服务器中。登录用户名 wusheng, 登录密码 wusheng </p>
+		<p>2. 实验报告上传目录 <b>/2018-2019-1/编程导论/18网工/实验序号(如:实验1) </b></p>
+		<p>3. 服务器地址 ftp://172.18.5.102 </b></p>
+		<p>4. 实验报告文件命名格式 学号-姓名-实验名称.doc</p>
+		<p>5. <a href='./download/report-template.doc' target='_blank'>下载实验报告书模板</a>（请不要改动模板的格式和内容设置）。</p>
+	</div>
+</div>
+
+<div class="sechighlight">
+	<div class="container sec">
+		<h2>* 辅助编程环境</h2>
+		<br>
+		<p>1. <a href="/download/chrome_setup.exe" target="_blank">浏览器：Google Chrome Web Browser </a></p>
+		<p>2. <a href="/download/putty.exe" target="_blank">服务器连接工具： putty </a></p>
+		<p>3. <a href="/download/pscp.exe" target="_blank">文件传输工具： pscp.exe </a></p>
+		<p>4. <a href="https://172.18.5.74:4200" target="_blank">远程登录 Linux 编程实验平台</a>: <p/>
+			<ul>
+				<li>使用Chrome浏览器； 
+				<li>同意非安全链接； 
+				<li>用户名（s+学号后4位）,  密码（学号后四位）
+			</ul>
+
+	</div>
+</div>
+
+<div class="sechighlight">
+	<div class="container sec">
+		<h2>* 教学资源</h2>
+		<br>
+		<p>1. <a href="https://www.icourse163.org/course/PKU-1002529002" target="_blank">计算概论与程序设计基础</a></p>
+		<p>2. <a href="./book/zh/index.html" target="_blank">Linux C 编程</a></p>
+		<p>3. <a href="https://www.programiz.com/c-programming" target="_blank">Learn C Programming </a></p>
+		<p>3. <a href="./download/ctext.pdf" target="_blank">An Introduction to the C Programming Language </a></p>
+		<p>4. <a href="https://www.le.ac.uk/users/rjm1/cotter/page_01.htm" target="_blank">Introduction to C Programming </a></p>
+	</div>
+</div>
+
+
+<div class="sechighlight">
+	<div class="container sec">
+		<h2>* 课程大纲与时间安排</h2>
+	</div>
+<!--
+<div class="container sec">
+<table class="table">
+  <tr class="active">
+    <th></th><th>时 间</th><th>内 容 列 表</th><th>课 程 资 料</th>
+  </tr>
+  <tr>
+    <td>第一讲</td>
+    <td>2018年10月11日</td>
+    <td>
+      <b></b> <br>
+	  1. <a target='_blank' href='https://blogs.oracle.com/scoter/networking-in-virtualbox-v2'>
+        VirtualBox: Networking options and how-to manage them</a><br>
+      2. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys'>
+		SSH Essentials: Working with SSH Servers, Clients, and Keys</a><br>
+	  3. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-ubuntu-1604'>
+		How To Set Up SSH Keys on Ubuntu 16.04 </a><br>
+	  4. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process'>
+		Understanding the SSH Encryption and Connection Process</a><br>
+	  5. <a target='_blank' href='https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/create-with-putty/'>
+		How to Create SSH Keys with PuTTY on Windows</a><br>
+    </td>
+    <td>
+		<a target='_blank' href='https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html'>1. putty 下载</a><br>
+    </td>
+  </tr>
+  <tr>
+    <td>第二讲</td>
+    <td>2018年9月28日</td>
+    <td>
+      <b>Web Server</b> <br>
+	  1. <a target='_blank' href='https://nginx.org/en/docs/install.html'>
+        Nginx Offical Installnation Document</a><br>
+      2. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04-quickstart'>
+		How To Install Nginx on Ubuntu 18.04 [Quickstart]</a><br>
+	  3. <a target='_blank' href='http://nginx.org/en/docs/beginners_guide.html'>
+		Beginner’s Guide </a><br>
+	  4. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-compile-nginx-from-source-on-a-centos-6-4-x64-vps'>
+		How To Compile Nginx from Source</a><br>
+	  5. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04'>
+		How To Create an SSL Certificate on Nginx for Ubuntu 14.04 </a><br>
+	  5. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04'>
+		How To Set Up Nginx Server Blocks (Virtual Hosts) on Ubuntu 16.04 </a><br>
+    </td>
+    <td>
+		<a target='_blank' href='https://nginx.org/en/download.html'></a><br>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>实验报告-1</td>
+    <td>
+      <b>Nginx Web 服务器安装配置</b><br><br><p>
+	  截至时间：2019-10-9<p>
+	  实验要求：<p>
+	  1. 掌握Linux下通过源代码安装软件的基本模式。<br>
+	  2. 掌握Nginx服务器的基本配置（端口，主目录，错误页面等）。<br>
+	  3. 掌握Nginx服务器多端口服务的工作方式(一个端口一个服务)。<br>
+	  4. 掌握Nginx服务器二级目录的映射配置方法（多个二级应用挂接到同一服务下）<br>
+	  5. 掌握Nginx的代理访问配置方法。<br>
+	  6. 掌握Nginx通过域名过滤提供多个虚拟主机网站的配置方法（相同IP和端口，不同域名访问）。<br>
+	  7. 实验报告模板和上传方法，请详见本页顶部的实验相关说明。
+    </td>
+    <td>
+    </td>
+  </tr>
+</table>
+</div>
+-->
+</div>
+<br><br><br><br><br>
+<b><br><br><br><br>
+<!-- jQuery and Boostrap -->
+<script src="./js/jquery.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+</body>
+
+</html>
+

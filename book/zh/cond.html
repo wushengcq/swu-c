@@ -1,0 +1,696 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. 分支语句 &mdash; akabook 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="akabook 3.0 documentation" href="../index.html" />
+    <link rel="up" title="中文版：Linux C/C++编程一站式学习" href="index.html" />
+    <link rel="next" title="5. 深入理解函数" href="func2.html" />
+    <link rel="prev" title="3. 函数入门" href="func.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="func2.html" title="5. 深入理解函数"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="func.html" title="3. 函数入门"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">中文版：Linux C/C++编程一站式学习</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>4. 分支语句<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="if">
+<span id="cond-if"></span><h2>4.1. if语句<a class="headerlink" href="#if" title="Permalink to this headline">¶</a></h2>
+<p>目前我们写的简单函数中可以有多条语句，但这些语句总是从前到后顺序执行的。除了顺序执行之外，有时候我们需要检查一个条件，然后根据检查的结果执行不同的后续代码，在C语言中可以用分支语句实现，比如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is nonzero.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-0">其中 <code class="docutils literal"><span class="pre">x</span> <span class="pre">!=</span> <span class="pre">0</span></code> 表示“x不等于0”的条件，这个表达式称为控制表达式（Controlling Expression），如果条件成立，则{}中的语句被执行，否则{}中的语句不执行，直接跳到}后面。 <code class="docutils literal"><span class="pre">if</span></code> 和控制表达式改变了程序的控制流程（Control Flow），不再是从前到后顺序执行，而是根据不同的条件执行不同的语句，这种控制流程称为分支（Branch）。上例中的 <code class="docutils literal"><span class="pre">!=</span></code> 运算符表示“不等于”，像这样的运算符有：</p>
+<table border="1" class="docutils" id="id6">
+<caption><span class="caption-text">关系运算符和相等性运算符</span><a class="headerlink" href="#id6" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">运算符</th>
+<th class="head">含义</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>==</td>
+<td>等于</td>
+</tr>
+<tr class="row-odd"><td>!=</td>
+<td>不等于</td>
+</tr>
+<tr class="row-even"><td>&gt;</td>
+<td>大于</td>
+</tr>
+<tr class="row-odd"><td>&lt;</td>
+<td>小于</td>
+</tr>
+<tr class="row-even"><td>&gt;=</td>
+<td>大于或等于</td>
+</tr>
+<tr class="row-odd"><td>&lt;=</td>
+<td>小于或等于</td>
+</tr>
+</tbody>
+</table>
+<p>注意以下几点：</p>
+<ol class="arabic simple" id="index-1">
+<li>这里的 <code class="docutils literal"><span class="pre">==</span></code> 表示数学中的相等关系，相当于数学中的=号，初学者常犯的错误是在控制表达式中把 <code class="docutils literal"><span class="pre">==</span></code> 写成 <code class="docutils literal"><span class="pre">=</span></code> ，在C语言中=号是赋值运算符，两者的含义完全不同。</li>
+<li>如果表达式所表示的比较关系成立则值为真（True），否则为假（False），在C语言中分别用 <code class="docutils literal"><span class="pre">int</span></code> 型的1和0表示。如果变量 <code class="docutils literal"><span class="pre">x</span></code> 的值是-1，那么 <code class="docutils literal"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> 这个表达式的值为0， <code class="docutils literal"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">-2</span></code> 这个表达式的值为1。</li>
+<li>在数学中a&lt;b&lt;c表示b既大于a又小于c，但作为C语言表达式却不是这样。以上几种运算符都是左结合的，请读者想一下这个表达式在C语言中的求值步骤是怎样的。</li>
+<li>这些运算符的两个操作数应该是相同类型的，两边都是整型或者都是浮点型可以做比较，但两个字符串不能做比较，在 <a class="reference internal" href="stdlib.html#stdlib-comparestring"><span>比较字符串</span></a> 我们会介绍比较字符串的方法。</li>
+<li><code class="docutils literal"><span class="pre">==</span></code> 和 <code class="docutils literal"><span class="pre">!=</span></code> 称为相等性运算符（Equality Operator），其余四个称为关系运算符（Relational Operator），相等性运算符的优先级低于关系运算符。</li>
+</ol>
+<p>总结一下， <code class="docutils literal"><span class="pre">if</span> <span class="pre">(x</span> <span class="pre">!=</span> <span class="pre">0)</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> 这个语句的计算顺序是：首先求 <code class="docutils literal"><span class="pre">x</span> <span class="pre">!=</span> <span class="pre">0</span></code> 这个表达式的值，如果值为0，就跳过{}中的语句直接执行后面的语句，如果值为1，就先执行{}中的语句，然后再执行后面的语句。事实上控制表达式取任何非0值都表示真值，因此 <code class="docutils literal"><span class="pre">if</span> <span class="pre">(x)</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> 和 <code class="docutils literal"><span class="pre">if</span> <span class="pre">(x</span> <span class="pre">!=</span> <span class="pre">0)</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> 是等价的：假设 <code class="docutils literal"><span class="pre">x</span></code> 的值是2，则 <code class="docutils literal"><span class="pre">x</span> <span class="pre">!=</span> <span class="pre">0</span></code> 的值是1，但对于 <code class="docutils literal"><span class="pre">if</span></code> 来说不管控制表达式的值是2还是1都表示真值。</p>
+<p>和if语句相关的语法规则如下:</p>
+<div class="highlight-python"><div class="highlight"><pre>语句 → if (控制表达式) 语句
+语句 → { 语句列表 }
+语句 → ;
+</pre></div>
+</div>
+<p id="index-2">在C语言中，任何允许出现语句的地方既可以是由;号结尾的一条语句，也可以是由{}括起来的若干条语句或声明组成的语句块（Statement Block），语句块和上一章介绍的函数体的语法相同。注意语句块的}后面不需要加;号。如果}后面加了;号，则这个;号本身又是一条新的语句了，在C语言中一个单独的;号表示一条空语句（Null Statement）。上例的语句块中只有一条语句，其实没必要写成语句块，可以简单地写成：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is nonzero.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">if</span></code> 语句不一定要包含语句块，而语句块也不一定非得用在 <code class="docutils literal"><span class="pre">if</span></code> 语句中。语句块可以用在任何允许出现语句的地方，单独使用语句块通常是为了定义一些比函数的局部变量更“局部”的变量。例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;i=%d, j=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;i=%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span> <span class="cm">/* cannot access j here */</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>和函数的局部变量同样道理，每次进入语句块时为变量 <code class="docutils literal"><span class="pre">j</span></code> 分配存储空间，每次退出语句块时释放变量 <code class="docutils literal"><span class="pre">j</span></code> 的存储空间。语句块也构成一个作用域，类似 <a class="reference internal" href="func.html#func-scope"><span>作用域</span></a> 分析一下可以得到如下结论：</p>
+<ol class="arabic simple">
+<li>如果整个源文件是一张大纸， <code class="docutils literal"><span class="pre">foo</span></code> 函数是盖在上面的一张小纸，则函数中的语句块是盖在小纸上面的一张更小的纸。</li>
+<li>语句块中的变量 <code class="docutils literal"><span class="pre">i</span></code> 和函数的局部变量 <code class="docutils literal"><span class="pre">i</span></code> 是两个不同的变量，因此两次打印的 <code class="docutils literal"><span class="pre">i</span></code> 值是不同的。</li>
+<li>语句块中的变量 <code class="docutils literal"><span class="pre">j</span></code> 在退出语句块之后就没有了，因此最后一行的 <code class="docutils literal"><span class="pre">printf</span></code> 不能打印变量 <code class="docutils literal"><span class="pre">j</span></code> ，否则编译器会报错。</li>
+</ol>
+<p class="rubric">习题</p>
+<ol class="arabic">
+<li><p class="first">以下程序段编译能通过，执行也不出错，但是执行结果不正确（根据 <a class="reference internal" href="intro.html#intro-debug"><span>程序的调试</span></a> 的定义，这是一个语义错误），请分析一下哪里错了。还有，既然错了为什么编译能通过呢？</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is positive</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+</li>
+</ol>
+</div>
+<div class="section" id="if-else">
+<span id="cond-ifelse"></span><h2>4.2. if/else语句<a class="headerlink" href="#if-else" title="Permalink to this headline">¶</a></h2>
+<p id="index-3"><code class="docutils literal"><span class="pre">if</span></code> 语句还可以带一个 <code class="docutils literal"><span class="pre">else</span></code> 子句（Clause），例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is even</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;x is odd</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-4">这里的%是取模（Modulo）运算符， <code class="docutils literal"><span class="pre">x%2</span></code> 表示 <code class="docutils literal"><span class="pre">x</span></code> 除以2所得的余数（Remainder），C语言规定%运算符的两个操作数必须是整型的。两个正数相除取余数很好理解，如果操作数中有负数，结果应该是正是负呢？C99规定：如果 <code class="docutils literal"><span class="pre">a</span></code> 和 <code class="docutils literal"><span class="pre">b</span></code> 是整型， <code class="docutils literal"><span class="pre">b</span></code> 不等于0，则表达式 <code class="docutils literal"><span class="pre">(a/b)*b+a%b</span></code> 的值总是等于 <code class="docutils literal"><span class="pre">a</span></code> 。再结合 <a class="reference internal" href="expr.html#expr-expression"><span>表达式</span></a> 讲过的整数除法运算要Truncate towards Zero，可以得到一个结论： <strong>%运算符的结果总是与被除数同号</strong> （读者可以自己推导一下）。其他编程语言对取模运算的规定各不相同，也有规定结果和除数同号的，也有不做明确规定的。</p>
+<p>取模运算在程序非常有用，例如上面的例子判断 <code class="docutils literal"><span class="pre">x</span></code> 的奇偶性，看 <code class="docutils literal"><span class="pre">x</span></code> 除以2的余数是不是0，如果是0则打印 <code class="docutils literal"><span class="pre">x</span> <span class="pre">is</span> <span class="pre">even</span></code> ，如果不是0则打印 <code class="docutils literal"><span class="pre">x</span> <span class="pre">is</span> <span class="pre">odd</span></code> 。读者应该能看出 <code class="docutils literal"><span class="pre">else</span></code> 在这里的作用了：假如从上面的例子中去掉 <code class="docutils literal"><span class="pre">else</span></code> ，则不管 <code class="docutils literal"><span class="pre">x</span></code> 是奇是偶， <code class="docutils literal"><span class="pre">printf(&quot;x</span> <span class="pre">is</span> <span class="pre">odd\n&quot;);</span></code> 这条语句总是被执行。</p>
+<p>为了让这个判断和打印操作更有用，可以把它封装成一个函数：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">print_even_or_odd</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is even</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">else</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is odd</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p><strong>把语句封装成函数的基本步骤是：把语句放到函数体中，把变量改成函数的参数。</strong> 这样，以后要检查一个数的奇偶性只需调一下函数即可，不必重复写这个 <code class="docutils literal"><span class="pre">if/else</span></code> 语句了，例如：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">print_even_or_odd</span><span class="p">(</span><span class="mi">17</span><span class="p">);</span>
+<span class="n">print_even_or_odd</span><span class="p">(</span><span class="mi">18</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p><code class="docutils literal"><span class="pre">if/else</span></code> 语句的语法规则如下:</p>
+<div class="highlight-python"><div class="highlight"><pre>语句 → if (控制表达式) 语句 else 语句
+</pre></div>
+</div>
+<p>右边的“语句”既可以是一条语句，也可以是由{}括起来的语句块。一条 <code class="docutils literal"><span class="pre">if</span></code> 语句中包含一条子语句，一条 <code class="docutils literal"><span class="pre">if/else</span></code> 语句中包含两条子语句，子语句可以是任何语句或语句块，当然也可以是另外一条 <code class="docutils literal"><span class="pre">if</span></code> 或 <code class="docutils literal"><span class="pre">if/else</span></code> 语句。根据组合规则， <code class="docutils literal"><span class="pre">if</span></code> 或 <code class="docutils literal"><span class="pre">if/else</span></code> 可以嵌套使用。例如可以这样：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is positive</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is negative</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">else</span>
+                <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;x is zero</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>等价于下面这种不用语句块的写法：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is positive</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is negative</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;x is zero</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>现在问题来了：如果不用语句块，那么类似 <code class="docutils literal"><span class="pre">if</span> <span class="pre">(A)</span> <span class="pre">if</span> <span class="pre">(B)</span> <span class="pre">C;</span> <span class="pre">else</span> <span class="pre">D;</span></code> 形式的语句该怎么理解呢？可以理解成</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">B</span><span class="p">)</span>
+                <span class="n">C</span><span class="p">;</span>
+<span class="k">else</span>
+        <span class="n">D</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>也可以理解成</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">B</span><span class="p">)</span>
+                <span class="n">C</span><span class="p">;</span>
+        <span class="k">else</span>
+                <span class="n">D</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-5">在 <a class="reference internal" href="expr.html#expr-helloworld"><span>继续Hello World</span></a> 讲过，C代码的缩进只是为了程序员看起来方便，实际上对编译器不起任何作用，你的代码不管写成上面哪一种缩进格式，在编译器看起来都是一样的。那么编译器到底按哪种方式理解呢？换句话说，编译器认为 <code class="docutils literal"><span class="pre">else</span></code> 到底是和 <code class="docutils literal"><span class="pre">if</span> <span class="pre">(A)</span></code> 配对还是和 <code class="docutils literal"><span class="pre">if</span> <span class="pre">(B)</span></code> 配对？很多编程语言的语法都有这个问题，称为Dangling-else问题。C语言规定， <strong>else总是和它前面最近的一个if配对</strong> ，因此应该理解成 <code class="docutils literal"><span class="pre">else</span></code> 和 <code class="docutils literal"><span class="pre">if</span> <span class="pre">(B)</span></code> 配对，也就是按第二种方式理解。如果你写成上面第一种缩进的格式就很危险了：你看到的是这样，而编译器理解的却是那样。如果你希望编译器按第一种方式理解，应该明确加上{}：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">B</span><span class="p">)</span>
+                <span class="n">C</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span>
+        <span class="n">D</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p class="rubric">习题</p>
+<ol class="arabic simple">
+<li>写两个表达式，分别取整型变量 <code class="docutils literal"><span class="pre">x</span></code> 的个位和十位。</li>
+<li>写一个函数，参数是整型变量 <code class="docutils literal"><span class="pre">x</span></code> ，功能是打印 <code class="docutils literal"><span class="pre">x</span></code> 的个位和十位。</li>
+</ol>
+</div>
+<div class="section" id="cond-bool">
+<span id="id2"></span><h2>4.3. 布尔代数<a class="headerlink" href="#cond-bool" title="Permalink to this headline">¶</a></h2>
+<p>在 <a class="reference internal" href="#cond-if"><span>if语句</span></a> 讲过，在数学上a&lt;b&lt;c表示b既大于a又小于c，但在C语言中不能这么写，那如果想表示这个含义该怎么写呢？可以这样：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;b is between a and c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p id="index-6">我们也可以用逻辑与（Logical AND）运算符来表示“两个条件同时成立”。逻辑与运算符在C语言中用两个&amp;（Ampersand）表示，上面的语句可以改写为：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="o">&amp;&amp;</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;b is between a and c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>对于 <code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span> <span class="pre">&amp;&amp;</span> <span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">c</span></code> 这个控制表达式，只有“ <code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></code> 的值非0”和“ <code class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;</span> <span class="pre">c</span></code> 的值非0”这两个条件同时成立，整个表达式的值才为1，否则整个表达式的值为0。换句话说，只有两个条件都为真，它们做逻辑与运算的结果才为真，只要有一个条件为假，逻辑与运算的结果就为假，如下表所示：</p>
+<table border="1" class="docutils" id="id7">
+<caption><span class="caption-text">AND的真值表</span><a class="headerlink" href="#id7" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">A</th>
+<th class="head">B</th>
+<th class="head">A AND B</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p id="index-7">这种表称为真值表（Truth Table）。注意逻辑与运算的操作数以非0表示真以0表示假，而运算结果（类型是 <code class="docutils literal"><span class="pre">int</span></code>）以1表示真以0表示假，我们忽略这些细微的差别，在表中全部以1表示真以0表示假。C语言还提供了逻辑或（Logical OR）运算符，用两个|线（Pipe Sign）表示，还有逻辑非（Logical NOT）运算符，用一个!号（Exclamation Mark）表示，它们的真值表如下：</p>
+<table border="1" class="docutils" id="id8">
+<caption><span class="caption-text">OR的真值表</span><a class="headerlink" href="#id8" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="13%" />
+<col width="13%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">A</th>
+<th class="head">B</th>
+<th class="head">A OR B</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils" id="id9">
+<caption><span class="caption-text">NOT的真值表</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">A</th>
+<th class="head">NOT A</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p id="index-8">逻辑或表示两个条件只要有一个为真，它们做逻辑或运算的结果就为真，只有两个条件都为假，逻辑或运算的结果才为假。逻辑非的作用是对原来的逻辑值取反，原来是真的就是假，原来是假的就是真。例如 <code class="docutils literal"><span class="pre">!(x</span> <span class="pre">&gt;</span> <span class="pre">1)</span></code> ，如果表达式 <code class="docutils literal"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> 的值非零，则 <code class="docutils literal"><span class="pre">!(x</span> <span class="pre">&gt;</span> <span class="pre">1)</span></code> 的值为0。逻辑非运算符只有一个操作数，称为单目运算符（Unary Operator），以前讲过的加减乘除、赋值、相等性、关系、逻辑与、逻辑或运算符都有两个操作数，称为双目运算符（Binary Operator）。</p>
+<p id="index-9">关于逻辑运算的数学体系称为布尔代数（Boolean Algebra），以它的创始人布尔命名。在编程语言中表示真和假的数据类型叫做布尔类型，在C语言中通常用 <code class="docutils literal"><span class="pre">int</span></code> 型来表示，非0表示真，0表示假 <a class="footnote-reference" href="#id4" id="id3">[1]</a> 。布尔逻辑是写程序的基本功之一，程序中的很多错误都可以归因于逻辑错误。以下是一些布尔代数的基本定理，为了简洁易读，真和假用1和0表示，AND用*号表示，OR用+号表示（从真值表可以看出AND和OR运算确实有点像乘法和加法运算），NOT用¬表示，变量x、y、z的值可能是0也可能是1，无论x、y、z怎么取值，以下等式都成立。</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>C99也定义了专门的布尔类型 <code class="docutils literal"><span class="pre">_Bool</span></code> ，但目前没有被广泛使用。</td></tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre>¬¬x=x
+
+x*0=0
+x+1=1
+
+x*1=x
+x+0=x
+
+x*x=x
+x+x=x
+
+x*¬x=0
+x+¬x=1
+
+x*y=y*x
+x+y=y+x
+
+x*(y*z)=(x*y)*z
+x+(y+z)=(x+y)+z
+
+x*(y+z)=x*y+x*z
+x+y*z=(x+y)*(x+z)
+
+x+x*y=x
+x*(x+y)=x
+
+x*y+x*¬y=x
+(x+y)*(x+¬y)=x
+
+¬(x*y)=¬x+¬y
+¬(x+y)=¬x*¬y
+
+x+¬x*y=x+y
+x*(¬x+y)=x*y
+
+x*y+¬x*z+y*z=x*y+¬x*z
+(x+y)*(¬x+z)*(y+z)=(x+y)*(¬x+z)
+</pre></div>
+</div>
+<p>除了第一个公式之外，这些公式都是每两个一组的，每组的两个公式就像对联一样：把其中一个公式中的*换成+、+换成*、0换成1、1换成0，就变成了与它对称的另一个公式。这些定理都可以用真值表来证明，更多细节可参考有关数字逻辑的教材，例如 <a class="reference internal" href="bibli.html#id2" id="id5">[数字逻辑基础]</a> 。我们将在本节的练习题中强化训练对这些定理的理解。</p>
+<p>目前为止介绍的这些运算符按优先级从高到低的顺序依次是：</p>
+<ul class="simple">
+<li>!</li>
+<li>* / %</li>
+<li>+ -</li>
+<li>&gt; &lt; &gt;= &lt;=</li>
+<li>== !=</li>
+<li>&amp;&amp;</li>
+<li>||</li>
+<li>=</li>
+</ul>
+<p>写一个表达式往往会用到好几种运算符，如果记不清楚运算符的优先级一定要多套括号。我们将在 <a class="reference internal" href="op.html#op-op"><span>运算符总结</span></a> 总结C语言所有运算符的优先级和结合性。</p>
+<p>最后要注意一点，浮点型的精度有限，不适合用 <code class="docutils literal"><span class="pre">==</span></code> 运算符做精确比较。以下代码可以说明问题：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">double</span> <span class="n">a</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">;</span>
+<span class="kt">double</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Equal</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;Unequal</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>程序的执行结果非常意外，居然是Unequal。虽然理论上 <code class="docutils literal"><span class="pre">a</span></code> 和 <code class="docutils literal"><span class="pre">b</span></code> 的值都应该是0.1， 但浮点型无法精确表示0.1这个值，实际上可能会存在一点偏差，由于 <code class="docutils literal"><span class="pre">a</span></code> 和 <code class="docutils literal"><span class="pre">b</span></code> 的值的计算过程不同，存在的偏差也不一样，最后两者做精确比较的结果是不相等。等学习了 <a class="reference internal" href="number.html#number-float"><span>浮点数</span></a> 你就知道为什么浮点型的精度有限了。如果你需要判断两个符点数是否近似相等，可以这样比较： <code class="docutils literal"><span class="pre">if</span> <span class="pre">(a</span> <span class="pre">&gt;</span> <span class="pre">b</span> <span class="pre">-</span> <span class="pre">0.001</span> <span class="pre">&amp;&amp;</span> <span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span> <span class="pre">+</span> <span class="pre">0.001)</span> <span class="pre">...</span></code> 。</p>
+<p class="rubric">习题</p>
+<ol class="arabic">
+<li><p class="first">把代码段</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;x is out of range.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>改写成下面这种形式：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">____</span> <span class="o">||</span> <span class="n">____</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is out of range.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>____应该怎么填？</p>
+</li>
+<li><p class="first">把代码段：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test OK!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test OK!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;Test failed!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>改写成下面这种形式：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">____</span> <span class="o">&amp;&amp;</span> <span class="n">____</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test failed!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;Test OK!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>____应该怎么填？</p>
+</li>
+<li><p class="first">有这样一段代码：</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>要进入最后一个else，x和y需要满足条件____ || ____。这里应该怎么填？</p>
+</li>
+<li><p class="first">以下哪一个 <code class="docutils literal"><span class="pre">if</span></code> 判断条件是多余的可以去掉？这里所谓的“多余”是指：在 <code class="docutils literal"><span class="pre">x</span></code> 和 <code class="docutils literal"><span class="pre">y</span></code> 取值的任何一种可能的情况下，如果本来应该打印 <code class="docutils literal"><span class="pre">Test</span> <span class="pre">OK</span></code> ，去掉这个多余条件后仍然打印 <code class="docutils literal"><span class="pre">Test</span> <span class="pre">OK</span></code> ，如果本来应该打印 <code class="docutils literal"><span class="pre">Test</span> <span class="pre">failed</span></code> ，去掉这个多余条件后仍然打印 <code class="docutils literal"><span class="pre">Test</span> <span class="pre">failed</span></code> 。</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&gt;=</span><span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">z</span><span class="o">&gt;</span><span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">z</span><span class="o">&lt;=</span><span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Test OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">else</span>
+        <span class="nf">printf</span><span class="p">(</span><span class="s">&quot;Test failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+</li>
+<li><p class="first">以下两段代码是否等价？</p>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">A</span> <span class="o">&amp;&amp;</span> <span class="n">B</span><span class="p">)</span>
+        <span class="n">statement1</span><span class="p">;</span>
+<span class="k">else</span>
+        <span class="n">statement2</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">B</span><span class="p">)</span>
+                <span class="n">statement1</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span>
+        <span class="n">statement2</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+</li>
+</ol>
+</div>
+<div class="section" id="switch">
+<span id="cond-switch"></span><h2>4.4. switch语句<a class="headerlink" href="#switch" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">switch</span></code> 语句可以产生具有多个分支的控制流程。它的格式是:</p>
+<div class="highlight-python"><div class="highlight"><pre>switch (控制表达式) {
+case 整型常量表达式： 零或多条语句
+case 整型常量表达式： 零或多条语句
+...
+default： 零或多条语句
+}
+</pre></div>
+</div>
+<p>例如以下程序根据传入的参数1~7分别打印Monday~Sunday：</p>
+<div class="figure" id="id10">
+<span id="cond-switch1"></span><img alt="../_images/cond.switch1.png" src="../_images/cond.switch1.png" />
+<p class="caption"><span class="caption-text">switch语句</span></p>
+</div>
+<p>如果传入的参数是2，则从 <code class="docutils literal"><span class="pre">case</span> <span class="pre">2</span></code> 分支开始执行，先是打印相应的信息，然后遇到 <code class="docutils literal"><span class="pre">break</span></code> 语句，它的作用是跳出整个 <code class="docutils literal"><span class="pre">switch</span></code> 语句块。C语言规定各 <code class="docutils literal"><span class="pre">case</span></code> 分支的常量表达式必须互不相同，如果控制表达式不等于任何一个常量表达式，则从 <code class="docutils literal"><span class="pre">default</span></code> 分支开始执行，通常的习惯是把 <code class="docutils literal"><span class="pre">default</span></code> 分支写在最后。</p>
+<p>使用 <code class="docutils literal"><span class="pre">switch</span></code> 语句要注意几点：</p>
+<ol class="arabic simple" id="index-10">
+<li><code class="docutils literal"><span class="pre">case</span></code> 后面跟的表达式必须是常量表达式，它的值和全局变量的初始值一样必须能在编译时计算出来。</li>
+<li>在上一节讲过浮点型不适合做精确比较，所以C语言规定case后面跟的必须是整型常量表达式。</li>
+<li>进入 <code class="docutils literal"><span class="pre">case</span></code> 后如果没有遇到 <code class="docutils literal"><span class="pre">break</span></code> 语句就会一直往下执行（这称为Fall Through），后面其他 <code class="docutils literal"><span class="pre">case</span></code> 或 <code class="docutils literal"><span class="pre">default</span></code> 分支的语句也会被执行到，直到遇到 <code class="docutils literal"><span class="pre">break</span></code> ，或者执行到整个 <code class="docutils literal"><span class="pre">switch</span></code> 语句块的末尾。通常每个 <code class="docutils literal"><span class="pre">case</span></code> 后面都要加上 <code class="docutils literal"><span class="pre">break</span></code> 语句，但有时会故意不加 <code class="docutils literal"><span class="pre">break</span></code> ，例如：</li>
+</ol>
+<div class="figure" id="id11">
+<span id="cond-switch2"></span><img alt="../_images/cond.switch2.png" src="../_images/cond.switch2.png" />
+<p class="caption"><span class="caption-text">缺break的switch语句</span></p>
+</div>
+<p><code class="docutils literal"><span class="pre">switch</span></code> 语句不是必不可缺的，显然可以用一组 <code class="docutils literal"><span class="pre">if</span> <span class="pre">...</span> <span class="pre">else</span> <span class="pre">if</span> <span class="pre">...</span> <span class="pre">else</span> <span class="pre">if</span> <span class="pre">...</span> <span class="pre">else</span> <span class="pre">...</span></code> 代替，但还是推荐写程序时多用 <code class="docutils literal"><span class="pre">switch</span></code> ：一方面用 <code class="docutils literal"><span class="pre">switch</span></code> 语句会使代码更清晰，另一方面，有时候编译器会对 <code class="docutils literal"><span class="pre">switch</span></code> 语句做整体优化，使它比等价的 <code class="docutils literal"><span class="pre">if/else</span></code> 语句所生成的指令执行效率更高。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4. 分支语句</a><ul>
+<li><a class="reference internal" href="#if">4.1. if语句</a></li>
+<li><a class="reference internal" href="#if-else">4.2. if/else语句</a></li>
+<li><a class="reference internal" href="#cond-bool">4.3. 布尔代数</a></li>
+<li><a class="reference internal" href="#switch">4.4. switch语句</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="func.html"
+                        title="previous chapter">3. 函数入门</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="func2.html"
+                        title="next chapter">5. 深入理解函数</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/zh/cond.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><table border=0 cellspacing=0 style="color: white;">
+<script type="text/javascript">
+  //<![CDATA[
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34437927-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  //]]>
+</script>
+<tr><td>
+   请输入您的email订阅<a href="http://groups.google.com/group/learning-linux-c-cpp">本书的邮件列表</a><br/>
+   (Please enter your email to subscribe to <a href="http://groups.google.com/group/learning-linux-c-cpp">this book's mailing list</a>)<br/>
+   <form action="http://groups.google.com/group/learning-linux-c-cpp/boxsubscribe"><input type=text name=email><input type=submit name="sub" value="订阅(Subscribe)"></form>
+</td></tr>
+
+<tr><td><br/>关注<a href="http://weibo.com/sansoong">我的微博</a></td></tr>
+
+<tr><td><br/>Checkout the source from github: <a href="https://github.com/learning-linux-c-cpp/akabook">https://github.com/learning-linux-c-cpp/akabook</a></td></tr>
+
+<tr><td>
+   <br/>感谢您的慷慨捐赠！<br/>
+   Thanks for your generous donation!<br/>
+   <a href="http://me.alipay.com/songjinshan" target="_blank"><img src="/akabook/_static/me.alipay.png" alt="捐赠"></a>
+</td></tr>
+</table>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="func2.html" title="5. 深入理解函数"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="func.html" title="3. 函数入门"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">akabook 3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >中文版：Linux C/C++编程一站式学习</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Sean Soong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>
