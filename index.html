@@ -15,6 +15,13 @@
   <!-- Google fonts -->
   <link href='style/fonts.css' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="style/style.css" />
+
+  <style>
+	table.assignment { border: solid 1px #666; width:90%; margin-top:2em}
+	table.assignment tr { border: solid 1px #666;}
+	table.assignment td { padding: 0.5em;}
+	table.assignment td.title {font-weight:bold; text-align:center; font-size:1.3em}
+  </style>
 </head>
 
 <body>
@@ -31,10 +38,11 @@
 		<h2>* 课程基本信息</h2>
 		<br>
 		<p><b>课程名称：</b> 编程导论</p>
-		<p><b>课程学年：</b> 2018 - 2019</b> 学年第一学期.</p>
+		<p><b>课程学/：</b> 2018 - 2019</b> 学/第一学期.</p>
 		<p><b>上课班级：</b> 18级网络工程.</p>
 		<p><b>上课时间：</b> 6-18周，每周四上午1~3节，北区25-0702教室</p>
 		<p><b>实验时间：</b> 6-18周，单周五上午4~5节，北区25-0702教室</p>
+		<p><b>联系方式：</b> 邮箱 ws1115@swu.edu.cn</p>
 	</div>
 </div>
 
@@ -84,75 +92,208 @@
 	<div class="container sec">
 		<h2>* 课程大纲与时间安排</h2>
 	</div>
-<!--
+
 <div class="container sec">
 <table class="table">
   <tr class="active">
-    <th></th><th>时 间</th><th>内 容 列 表</th><th>课 程 资 料</th>
+    <th></th><th>时 间</th><th>内 容 列 表</th>
   </tr>
+
   <tr>
-    <td>第一讲</td>
-    <td>2018年10月11日</td>
+    <td style="width:80px">第一讲</td>
+    <td>2018/10/11</td>
     <td>
-      <b></b> <br>
-	  1. <a target='_blank' href='https://blogs.oracle.com/scoter/networking-in-virtualbox-v2'>
-        VirtualBox: Networking options and how-to manage them</a><br>
-      2. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys'>
-		SSH Essentials: Working with SSH Servers, Clients, and Keys</a><br>
-	  3. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-ubuntu-1604'>
-		How To Set Up SSH Keys on Ubuntu 16.04 </a><br>
-	  4. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process'>
-		Understanding the SSH Encryption and Connection Process</a><br>
-	  5. <a target='_blank' href='https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/create-with-putty/'>
-		How to Create SSH Keys with PuTTY on Windows</a><br>
-    </td>
-    <td>
-		<a target='_blank' href='https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html'>1. putty 下载</a><br>
+      <b>课程简介</b><br>
+		1. 课程学习目的<br>
+		2. 课程要求与考勤<br>
+		3. 课程资源访问与使用方法<br>
     </td>
   </tr>
+
   <tr>
     <td>第二讲</td>
-    <td>2018年9月28日</td>
+    <td>2018/10/12/</td>
     <td>
-      <b>Web Server</b> <br>
-	  1. <a target='_blank' href='https://nginx.org/en/docs/install.html'>
-        Nginx Offical Installnation Document</a><br>
-      2. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04-quickstart'>
-		How To Install Nginx on Ubuntu 18.04 [Quickstart]</a><br>
-	  3. <a target='_blank' href='http://nginx.org/en/docs/beginners_guide.html'>
-		Beginner’s Guide </a><br>
-	  4. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-compile-nginx-from-source-on-a-centos-6-4-x64-vps'>
-		How To Compile Nginx from Source</a><br>
-	  5. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04'>
-		How To Create an SSL Certificate on Nginx for Ubuntu 14.04 </a><br>
-	  5. <a target='_blank' href='https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04'>
-		How To Set Up Nginx Server Blocks (Virtual Hosts) on Ubuntu 16.04 </a><br>
-    </td>
-    <td>
-		<a target='_blank' href='https://nginx.org/en/download.html'></a><br>
+      <b>课程实验平台的使用</b><br>
+		1. 实验平台环境简介<br>
+		2. Linux系统和登录使用<br>
+		3. Linux环境使用基本命令集<br>
+		4. GCC编译环境的基本使用方法<br>
     </td>
   </tr>
+
+  <tr>
+    <td>第三讲</td>
+    <td>2018/10/18/</td>
+    <td>
+      <b>计算机的基本原理</b><br>
+		1. 从数学危机到图灵机<br>
+		2. 图灵机的基本构成<br>
+		3. 图灵机的运行机理<br>
+		4. 数的二进制表示<br>
+		5. 二进制数的布尔运算<br>
+    </td>
+  </tr>
+
+  <tr>
+    <td>第四讲</td>
+    <td>2018/10/19/</td>
+    <td>
+      <b>计算机的历史与未来</b><br>
+		1. 历史上的计算设备 <br>
+		2. 从电子管到云计算 <br>
+		3. 摩尔定律下的计算危机 <br>
+		4. 量子计算机的基本原理 <br>
+		5. 量子计算机的发展状态 <br>
+    </td>
+  </tr>
+
+
+  <tr>
+    <td>第五讲</td>
+    <td>2018/10/25/</td>
+    <td>
+      <b>程序运行的基本原理</b><br>
+		1. 问题的提出 <br>
+		2. 冯诺依曼式计算机 <br>
+		3. 存储器的种类与特点 <br>
+		4. 存储器的原理与类型 <br>
+		5. CPU指令的执行 <br>
+		6. 程序的执行 <br>
+    </td>
+  </tr>
+
+  <tr>
+    <td>第六讲</td>
+    <td>2018/10/26/</td>
+    <td>
+      <b>感性认识计算机程序</b><br>
+		1 .程序是你告诉计算机的话 <br>
+		2. 如果你的大脑是台计算机 <br>
+		3. 如果你来设计一门编程语言 <br>
+		4. 快步走近C程序之一 <br>
+		5. 快步走近C程序之二 <br>
+		6. 快步走近C程序之三 <br>
+		7. 什么样的程序是好程序 <br>
+    </td>
+  </tr>
+
+  <tr>
+    <td>第七讲</td>
+    <td>2018/10/26/</td>
+    <td>
+      <b>从现实问题到计算机程序的</b><br>
+		1. 没有解决方案就没有程序 <br>
+		2. 先有构想再写程序 -- 示例1<br>
+		3. 先有构想再写程序 -- 示例2<br>
+		4. 体验结构化的程序 <br>
+    </td>
+  </tr>
+
+
   <tr>
     <td></td>
-    <td>实验报告-1</td>
+    <td>作业-1</td>
     <td>
-      <b>Nginx Web 服务器安装配置</b><br><br><p>
-	  截至时间：2019-10-9<p>
-	  实验要求：<p>
-	  1. 掌握Linux下通过源代码安装软件的基本模式。<br>
-	  2. 掌握Nginx服务器的基本配置（端口，主目录，错误页面等）。<br>
-	  3. 掌握Nginx服务器多端口服务的工作方式(一个端口一个服务)。<br>
-	  4. 掌握Nginx服务器二级目录的映射配置方法（多个二级应用挂接到同一服务下）<br>
-	  5. 掌握Nginx的代理访问配置方法。<br>
-	  6. 掌握Nginx通过域名过滤提供多个虚拟主机网站的配置方法（相同IP和端口，不同域名访问）。<br>
-	  7. 实验报告模板和上传方法，请详见本页顶部的实验相关说明。
-    </td>
-    <td>
+	  截至时间：2019-10-31<br/>
+      文件路径说明：在Linux中，波浪符号 ~ 代表用户的home目录<br>
+		<table class="assignment">
+			<tr>
+				<td colspan="2" class="title">计算三角形面积</td>
+			</tr>
+			<tr>
+				<td><b>文 件：</b></td>
+				<td>
+					~/assignment/a1/t1.cpp <br>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:7em"><b>描 述：</b></td>
+				<td>
+					给定三角形的三边长度，根据海伦公式求出三角形面积。<br>
+					海伦公式：S = √(p*(p-a)*(p-b)*(p-c)) <br>
+					其中a b c分别表示三角形的三条边的长度，p = (a+b+c)/2
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 入：</b></td>
+				<td>
+					第一行是一个整数n，表示的是输入数据有n行（n &lt; 100）。 <br>
+					接下来的n行，每行有3个数，表示三角形的三条边的长度。
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 出：</b></td>
+				<td>
+					对每一个三角形，输出其面积，结果保留2位小数。
+				</td>
+			</tr>
+			<tr>
+				<td><b>样例输入：</b></td>
+				<td>
+					1 <br>
+					3 4 5
+				</td>
+			</tr>
+			<tr>
+                <td><b>样例输出：</b></td>
+                <td>
+                    6.00
+                </td>
+            </tr>
+
+		</table>
+
+		<table class="assignment">
+			<tr>
+				<td colspan="2" class="title">数组逆序重放</td>
+			</tr>
+			<tr>
+				<td><b>文 件：</b></td>
+				<td>
+					~/assignment/a1/t2.cpp <br>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:7em"><b>描 述：</b></td>
+				<td>
+					将一个数组中的值按逆序重新存放。例如，原来的顺序为8,6,5,4,1。要求改为1,4,5,6,8。
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 入：</b></td>
+				<td>
+					输入为两行：第一行数组中元素的个数n（1 &lt; n &lt; 100)，第二行是n个整数，每两个整数之间用空格分隔。
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 出：</b></td>
+				<td>
+					输出为一行：输出逆序后数组的整数，每两个整数之间用空格分隔。
+				</td>
+			</tr>
+			<tr>
+				<td><b>样例输入：</b></td>
+				<td>
+					5 <br>
+					8 6 5 4 1
+				</td>
+			</tr>
+			<tr>
+                <td><b>样例输出：</b></td>
+                <td>
+                    1 4 5 6 8
+                </td>
+            </tr>
+		</table>
+
     </td>
   </tr>
 </table>
 </div>
--->
+
+
+
 </div>
 <br><br><br><br><br>
 <b><br><br><br><br>
