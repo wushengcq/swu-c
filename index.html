@@ -17,10 +17,11 @@
   <link rel="stylesheet" type="text/css" href="style/style.css" />
 
   <style>
-	table.assignment { border: solid 1px #666; width:90%; margin-top:2em}
+	table.assignment { border: solid 1px #666; width:90%; margin-top:2em; margin-bottom:2em}
 	table.assignment tr { border: solid 1px #666;}
 	table.assignment td { padding: 0.5em;}
 	table.assignment td.title {font-weight:bold; text-align:center; font-size:1.3em}
+	.en_tips {font-size:0.7em;text-decoration:italic;padding-left:0.8em;color:#777}
   </style>
 </head>
 
@@ -35,7 +36,7 @@
 
 <div class="sechighlight">
 	<div class="container sec">
-		<h2>* 课程基本信息</h2>
+		<h2>* 课程基本信息 <i class="en_tips">Basic Information</i></h2>
 		<br>
 		<p><b>课程名称：</b> 编程导论</p>
 		<p><b>课程学/：</b> 2018 - 2019</b> 学/第一学期.</p>
@@ -48,7 +49,7 @@
 
 <div class="sechighlight">
 	<div class="container sec">
-		<h2>* 实验报告</h2>
+		<h2>* 实验报告 <i class="en_tips">Experiment Report</i></h2>
 		<br>
 		<p>1. 实验报告按时完成后，提交到学院指定的ftp服务器中。登录用户名 wusheng, 登录密码 wusheng </p>
 		<p>2. 实验报告上传目录 <b>/2018-2019-1/编程导论/18网工/实验序号(如:实验1) </b></p>
@@ -60,7 +61,7 @@
 
 <div class="sechighlight">
 	<div class="container sec">
-		<h2>* 辅助编程环境</h2>
+		<h2>* 辅助编程环境 <i class="en_tips">Experimental Environment Utils</i></h2>
 		<br>
 		<p>1. <a href="/download/chrome_setup.exe" target="_blank">浏览器：Google Chrome Web Browser </a></p>
 		<p>2. <a href="/download/putty.exe" target="_blank">服务器连接工具： putty </a></p>
@@ -77,7 +78,7 @@
 
 <div class="sechighlight">
 	<div class="container sec">
-		<h2>* 教学资源</h2>
+		<h2>* 教学资源 <i class="en_tips">Teaching Resources</i></h2>
 		<br>
 		<p>1. <a href="https://www.icourse163.org/course/PKU-1002529002" target="_blank">计算概论与程序设计基础</a></p>
 		<p>2. <a href="./book/zh/index.html" target="_blank">Linux C 编程</a></p>
@@ -86,6 +87,15 @@
 		<p>4. <a href="https://www.le.ac.uk/users/rjm1/cotter/page_01.htm" target="_blank">Introduction to C Programming </a></p>
 	</div>
 </div>
+
+<div class="sechighlight">
+	<div class="container sec">
+		<h2>* 参考文献 <i class="en_tips">Reference Articles</i></h2>
+		<br>
+		<p>1. <a href="./articles/command_line_arguments.html" target="_blank">How to accept command line arguments</a></p>
+	</div>
+</div>
+
 
 
 <div class="sechighlight">
@@ -286,9 +296,89 @@
                 </td>
             </tr>
 		</table>
-
     </td>
   </tr>
+
+  <tr>
+    <td>第八讲</td>
+    <td>2018/11/1/</td>
+    <td>
+	  <b>理性认识C程序导论</b><br>
+		1. 明确学习进度<br>
+		2. C语言的由来<br>
+		3. C语言的标准<br>
+		4. C语言的构成<br>
+    </td>
+  </tr>
+
+  <tr>
+    <td></td>
+    <td>作业-2</td>
+    <td>
+	  截至时间：2019-10-2<br/>
+		<table class="assignment">
+			<tr>
+				<td colspan="2" class="title">三角形判断</td>
+			</tr>
+			<tr>
+				<td><b>文 件：</b></td>
+				<td>
+					~/assignment/a2/t1.cpp <br>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:7em"><b>描 述：</b></td>
+				<td>
+				输入三个正整数表示三条边的长度，判断这三条边能否构成一个三角形，如果能，则输出“yes”，否则输出“no”。
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 入：</b></td>
+				<td>
+					输入是三个正整型数，分别表示三条边的长度。
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 出：</b></td>
+				<td>
+					yes 或者 no
+				</td>
+			</tr>
+		</table>
+
+		<table class="assignment">
+			<tr>
+				<td colspan="2" class="title">奇数球和</td>
+			</tr>
+			<tr>
+				<td><b>文 件：</b></td>
+				<td>
+					~/assignment/a2/t2.cpp <br>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:7em"><b>描 述：</b></td>
+				<td>
+					计算非负整数 m 到 n（包括m 和 n ）之间的所有奇数的和，其中，m 不大于 n，且n 不大于300。例如 m=3, n=12, 其和则为：3+5+7+9+11=35
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 入：</b></td>
+				<td>
+					两个数 m 和 n，两个数以空格间隔，其中 0 &lt;= m &lt;= n &lt;= 300 。
+				</td>
+			</tr>
+			<tr>
+				<td><b>输 出：</b></td>
+				<td>
+					奇数之和
+				</td>
+			</tr>
+		</table>
+    </td>
+  </tr>
+
+
 </table>
 </div>
 

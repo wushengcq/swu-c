@@ -1,0 +1,77 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Jerffeson Souza">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en]C-SYMPA  (Win95; U) [Netscape]">
+   <title>Parsing Command Line Arguments in C++</title>
+</head>
+<body>
+
+<center><b><font size=+2>Command Line Arguments in C++</font></b></center>
+
+<p>In C++ it is possible to accept command-line arguments.
+<p>To pass command-line arguments into your program, C++ have a special
+argument list for <b><tt>main( )</tt></b>, which looks like this:
+<p><tt>int main(int argc, char* argv[]) {</tt>
+<br><tt>&nbsp;&nbsp; ...</tt>
+<br><tt>}</tt>
+<p>The first argument (<b><tt>argc</tt></b>) is the number of elements
+in the array, which is the second argument (<b><tt>argv</tt></b>). The
+second argument is always an array of <b><tt>char*</tt></b>, because the
+arguments are passed from the command line as character arrays (an array
+can be passed only as a pointer). Each whitespace-delimited cluster of
+characters on the command line is turned into a separate array argument.
+The following program (<a href="ParseArguments.cpp">download</a>) prints
+out all its command-line arguments by stepping through the array:
+<p><tt>#include &lt;iostream></tt>
+<br><tt>using namespace std;</tt>
+<p><tt>int main(int argc, char* argv[]) {</tt>
+<br><tt>&nbsp;&nbsp; cout &lt;&lt; "argc = " &lt;&lt; argc &lt;&lt; endl;</tt>
+<br><tt>&nbsp;&nbsp; for(int i = 0; i &lt; argc; i++)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cout &lt;&lt; "argv[" &lt;&lt; i
+&lt;&lt; "] = " &lt;&lt; argv[i] &lt;&lt; endl;</tt>
+<br><tt>&nbsp;&nbsp; return 0;</tt>
+<br><tt>}</tt>
+<p>You’ll notice that <b><tt>argv[0]</tt></b> is the path and name of the
+program itself. This allows the program to discover information about itself.
+It also adds one more to the array of program arguments, so a common error
+when fetching command-line arguments is to grab <b><tt>argv[0]</tt></b>
+when you want <b><tt>argv[1]</tt></b>.
+<p>You are not forced to use <tt>argc</tt> and <tt>argv</tt> as identifiers
+in <b><tt>main( )</tt>,<tt> </tt></b>those identifiers are only conventions
+(but it will confuse people if you don’t use them). Also, there is an alternate
+way to declare argv:
+<p><tt>int main(int argc, char** argv) {</tt>
+<br><tt>&nbsp;&nbsp; ...</tt>
+<br><tt>}</tt>
+<p>Both forms are equivalent.
+<p>All you get from the command-line is character arrays; if you want to
+treat an argument as some other type, you are responsible for converting
+it inside your program. To facilitate the conversion to numbers, there
+are some helper functions in the Standard C library, declared in <b><tt>&lt;cstdlib></tt></b>.
+The simplest ones to use are <b><tt>atoi( )</tt></b>, <b><tt>atol( )</tt></b>,
+and <b><tt>atof( )</tt></b> to convert an ASCII character array to an <b><tt>int</tt></b>,
+<b><tt>long</tt></b>,
+and <b><tt>double</tt></b>, respectively. Here’s an example using <b><tt>atoi(
+)</tt></b> (the other two functions are called the same way):
+<p><tt>#include &lt;iostream></tt>
+<br><tt>#include &lt;cstdlib></tt>
+<br><tt>using namespace std;</tt>
+<p><tt>int main(int argc, char* argv[]) {</tt>
+<br><tt>&nbsp;&nbsp; for(int i = 1; i &lt; argc; i++)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cout &lt;&lt; atoi(argv[i]) &lt;&lt;
+endl;</tt>
+<br><tt>&nbsp;&nbsp; return 0;</tt>
+<br><tt>}</tt>
+<p>In this program, you can put any number of arguments on the command
+line. You’ll notice that the <b><tt>for</tt></b> loop starts at the value
+<tt>1</tt>
+to skip over the program name at <tt><b>argv[0]</b>.</tt> Also, if you
+put a floating-point number containing a decimal point on the command line,
+<b><tt>atoi(
+)</tt></b> takes only the digits up to the decimal point. If you put non-numbers
+on the command line, these come back from <b><tt>atoi( )</tt></b> as zero.
+</body>
+</html>
+

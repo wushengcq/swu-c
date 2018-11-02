@@ -1,0 +1,346 @@
+<html><head><meta charset='utf-8'><style>.err{background-color:#f8bbd0}
+.fail{background-color:#e1bee7}
+.usr{background-color:#bbdefb}
+td{border:1px solid gray}
+pre{white-space:pre-wrap;}</style></head><body style='background-color:#333'><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2029</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2029/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2012</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2012/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2022</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2022/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2010</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2010/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2002</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2002/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int a[100], count = 0, i = 0;
+
+
+    cout << "Please input number count : ";
+    cin  >> count;
+    for (i=0; i<count; i++) {
+        cin >> a[i];
+    }
+
+    for (i=count - 1; i >= 0; i--) {
+        cout << a[i] << " ";
+    }
+
+    cout << endl;
+
+    return 0;
+}
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2002/assignment/a2/t2.cpp -lm
+
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2027</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2027/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2006</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2006/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2016</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2016/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include<iostream>
+using namespace std;
+int main(){
+	int m=0,n=0,temp=0;
+	cout<<"Please enter tow number as m and n,and m < n :"<<endl;
+	cin>>m>>n;
+	temp=m;
+	if (m>=0&&m<n&&n<=300){
+		if(m%2==0&&n%2==0){
+			int x=0;
+			for(int i=0;i<(n-temp)/2;i++){
+				x=x+m+1;
+				m=m+2;
+			}
+			cout<<"m到n的奇数和为 ："<<x<<endl;
+		} else if(m%2==0&&n%2!=0){
+			int x=0;
+			for(int i=0;i<(n-temp+1)/2;i++){
+				x=x+m+1;	
+				m=m+2;
+			}
+			cout<<"m到n的奇数和为 ："<<x<<endl;;
+		} else if(m%2!=0&&n%2==0){
+			int x=0;
+			for(int i=0;i<(n-temp+1)/2;i++){
+				x=x+m;
+				m=m+2;
+			}
+			cout<<"m到n的奇数和为 ："<<x<<endl;
+		} else {
+			int x=0;
+			for(int i=0;i<(n-temp)/2+1;i++){
+				x=x+m;
+				m=m+2;
+			}
+			cout<<"m到n的奇数和为 ："<<x<<endl;;
+			
+		}
+	
+	} else {
+		cout<<"The number you have entered are error!!"<<endl;
+	}
+	return 0;
+}
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2016/assignment/a2/t2.cpp -lm
+
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2013</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2013/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2028</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2028/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2001</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2001/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2019</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2019/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2011</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2011/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2003</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2003/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include <iostream>
+using namespace std;
+int main()
+{
+             int m,n,sum=0;
+             cin >> m >> n;
+             for(int i=m;i<=n;i++)
+                    {
+                        if(i%2==1)sum += i;
+                    }
+             cout << sum <<endl;
+
+
+
+
+
+
+
+
+
+
+
+
+               return 0;
+}
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2003/assignment/a2/t2.cpp -lm
+
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s0067</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s0067/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2017</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2017/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2025</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2025/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2005</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2005/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2007</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2007/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include <iostream>
+using namespace std;
+int main()
+{
+
+
+
+
+return 0;
+}
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2007/assignment/a2/t2.cpp -lm
+
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2004</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2004/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2014</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2014/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+
+#include<iostream>
+using namespace std;
+int main(){
+	int m=0,n=0;
+	cout<<"请输入两个正整数"<<endl;
+	cin>>m>>n;
+	
+	
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2014/assignment/a2/t2.cpp -lm
+
+/home/s2014/assignment/a2/t2.cpp: In function ‘int main()’:
+/home/s2014/assignment/a2/t2.cpp:7:11: error: expected ‘}’ at end of input
+  cin>>m>>n;
+           ^
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2020</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2020/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2015</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2015/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2026</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2026/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include <iostream>
+#include <>
+using namespace std;
+int main ()
+{
+	unsigned int 0<= m<=n<=300,m=0,j=0,n=0,i=0;
+	cout << "请输入m,n" ;
+	cin  >> m >> n ;
+	cout << " " << m << n << endl;
+	if (m%2!=0){
+		for (m<=i<=n;i=m;j=i;i+=2){
+			s=i+j;
+		}
+	}
+	else {
+		for (m<=i<=n;i=m+1;j=i;i+=2){
+			s=i+j;
+		}
+	}
+	return 0;
+}
+
+	
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2026/assignment/a2/t2.cpp -lm
+
+/home/s2026/assignment/a2/t2.cpp:2:10: error: empty filename in #include
+ #include <>
+          ^
+/home/s2026/assignment/a2/t2.cpp: In function ‘int main()’:
+/home/s2026/assignment/a2/t2.cpp:6:15: error: expected unqualified-id before numeric constant
+  unsigned int 0<= m<=n<=300,m=0,j=0,n=0,i=0;
+               ^
+/home/s2026/assignment/a2/t2.cpp:8:10: error: ‘m’ was not declared in this scope
+  cin  >> m >> n ;
+          ^
+/home/s2026/assignment/a2/t2.cpp:8:15: error: ‘n’ was not declared in this scope
+  cin  >> m >> n ;
+               ^
+/home/s2026/assignment/a2/t2.cpp:11:11: error: ‘i’ was not declared in this scope
+   for (m<=i<=n;i=m;j=i;i+=2){
+           ^
+/home/s2026/assignment/a2/t2.cpp:11:20: error: ‘j’ was not declared in this scope
+   for (m<=i<=n;i=m;j=i;i+=2){
+                    ^
+/home/s2026/assignment/a2/t2.cpp:11:23: error: expected ‘)’ before ‘;’ token
+   for (m<=i<=n;i=m;j=i;i+=2){
+                       ^
+/home/s2026/assignment/a2/t2.cpp:11:28: error: expected ‘;’ before ‘)’ token
+   for (m<=i<=n;i=m;j=i;i+=2){
+                            ^
+/home/s2026/assignment/a2/t2.cpp:16:11: error: ‘i’ was not declared in this scope
+   for (m<=i<=n;i=m+1;j=i;i+=2){
+           ^
+/home/s2026/assignment/a2/t2.cpp:16:22: error: ‘j’ was not declared in this scope
+   for (m<=i<=n;i=m+1;j=i;i+=2){
+                      ^
+/home/s2026/assignment/a2/t2.cpp:16:25: error: expected ‘)’ before ‘;’ token
+   for (m<=i<=n;i=m+1;j=i;i+=2){
+                         ^
+/home/s2026/assignment/a2/t2.cpp:16:30: error: expected ‘;’ before ‘)’ token
+   for (m<=i<=n;i=m+1;j=i;i+=2){
+                              ^
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2024</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2024/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include <iostream>
+#include <cmath>
+using namespace std;
+int main()
+{
+    int m,n,i,sum;
+    cout << "计算非负整数 m 到 n（包括m 和 n ）之间的所有奇数的和，其中，m 不大于 n，且n 不大于300。请输入m和n的值：" << endl;
+    cin >> m >> n;
+    for (i=m;i<=n;i++){
+        if(i%2==1)
+        sum+=i;}
+    cout << "sum=" << sum << endl;
+    return 0;
+}
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2024/assignment/a2/t2.cpp -lm
+
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2023</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2023/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2021</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2021/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2009</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2009/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2030</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2030/assignment/a2/t2.cpp</td></tr>
+<tr><td>源代码</td><td><pre>
+#include <iostream>
+#include <cmath>
+using namespace std;
+int main()
+{
+	int m,n,i,c;
+    cout<<"Please input two number:"<<endl;
+    cin>>m>>n;
+    for(i=m;i<=n<=300;i++)
+    {
+    if (i%2==1)
+    c+=i;}
+    cout<<"c="<<c<<endl;
+    return 0;
+}
+    
+</pre></td></tr>
+<tr><td>代码编译</td><td><pre>
+g++ -Wall -o ./t2.out /home/s2030/assignment/a2/t2.cpp -lm
+
+/home/s2030/assignment/a2/t2.cpp: In function ‘int main()’:
+/home/s2030/assignment/a2/t2.cpp:9:14: warning: comparisons like ‘X<=Y<=Z’ do not have their mathematical meaning [-Wparentheses]
+     for(i=m;i<=n<=300;i++)
+              ^
+</pre></td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2008</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2008/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br><table style='border-collapse:collapse;border:1px solid gray;background-color:#fff' width='95%' cellpadding='10'>
+<tr><td class='usr'>学号后四位</td><td class='usr'>s2018</td></tr><tr><td style='width:200px'>源代码路径</td><td>/home/s2018/assignment/a2/t2.cpp</td></tr>
+<tr><td></td><td class='err'>没有找到源代码文件！</td></tr>
+</table><br><br><br></body></html>
