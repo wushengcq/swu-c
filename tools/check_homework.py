@@ -39,6 +39,8 @@ def printSource(source_file, result_out):
 	result_out.write("<tr><td>源代码</td><td><pre>\n")
 	with open(source_file, 'r') as f:
 		for line in f:
+			line = line.replace("<", "&lt;")
+			line = line.replace(">", "&gt;")
 			result_out.write(line)
 	result_out.write("</pre></td></tr>\n")
 
